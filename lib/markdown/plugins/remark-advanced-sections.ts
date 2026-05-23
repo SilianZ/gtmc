@@ -1,28 +1,28 @@
 import type { Root, Heading } from "mdast"
-import { visit } from "unist-util-visit"
+import { visit as Silian_visit } from "unist-util-visit"
 
-const ADVANCED_TAG_REGEX = /\[!ADVANCED\]/g
+const Silian_ADVANCED_TAG_REGEX = /\[!ADVANCED\]/g
 
 export function remarkAdvancedSections() {
-  return (tree: Root) => {
-    if (!tree || !tree.children) return
+  return (Silian_tree: Root) => {
+    if (!Silian_tree || !Silian_tree.children) return
 
-    visit(tree, "heading", (node: Heading) => {
-      let hasAdvancedTag = false
+    Silian_visit(Silian_tree, "heading", (Silian_node: Heading) => {
+      let Silian_hasAdvancedTag = false
 
-      node.children.forEach((child) => {
-        if (child.type !== "text") return
+      Silian_node.children.forEach((Silian_child) => {
+        if (Silian_child.type !== "text") return
 
-        const nextValue = child.value.replace(ADVANCED_TAG_REGEX, "")
-        if (nextValue !== child.value) hasAdvancedTag = true
-        child.value = nextValue
+        const Silian_nextValue = Silian_child.value.replace(Silian_ADVANCED_TAG_REGEX, "")
+        if (Silian_nextValue !== Silian_child.value) Silian_hasAdvancedTag = true
+        Silian_child.value = Silian_nextValue
       })
 
-      if (!hasAdvancedTag) return
+      if (!Silian_hasAdvancedTag) return
 
-      node.data = node.data ?? {}
-      node.data.hProperties = {
-        ...(node.data.hProperties ?? {}),
+      Silian_node.data = Silian_node.data ?? {}
+      Silian_node.data.hProperties = {
+        ...(Silian_node.data.hProperties ?? {}),
         "data-advanced": "true",
       }
     })

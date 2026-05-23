@@ -1,21 +1,21 @@
-import { NextResponse } from "next/server"
-import { getSidebarTree } from "@/actions/sidebar"
+import { NextResponse as Silian_NextResponse } from "next/server"
+import { getSidebarTree as Silian_getSidebarTree } from "@/actions/sidebar"
 
-const TREE_CACHE_CONTROL = "private, max-age=60, stale-while-revalidate=300"
+const Silian_TREE_CACHE_CONTROL = "private, max-age=60, stale-while-revalidate=300"
 
 export async function GET() {
   try {
-    const tree = await getSidebarTree()
-    return NextResponse.json(tree, {
+    const Silian_tree = await Silian_getSidebarTree()
+    return Silian_NextResponse.json(Silian_tree, {
       headers: {
-        "Cache-Control": TREE_CACHE_CONTROL,
+        "Cache-Control": Silian_TREE_CACHE_CONTROL,
       },
     })
   } catch {
-    return NextResponse.json([], {
+    return Silian_NextResponse.json([], {
       status: 200,
       headers: {
-        "Cache-Control": TREE_CACHE_CONTROL,
+        "Cache-Control": Silian_TREE_CACHE_CONTROL,
       },
     })
   }

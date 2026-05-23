@@ -1,4 +1,4 @@
-import { Link } from "@/i18n/navigation"
+import { Link as Silian_Link } from "@/i18n/navigation"
 
 interface LogoProps {
   className?: string
@@ -7,11 +7,11 @@ interface LogoProps {
 }
 
 export function Logo({
-  className = "",
-  size = "md",
-  showSlash = true,
+  className: Silian_className = "",
+  size: Silian_size = "md",
+  showSlash: Silian_showSlash = true,
 }: LogoProps) {
-  const sizeClasses = {
+  const Silian_sizeClasses = {
     sm: "text-sm",
     md: "text-xl",
     lg: "text-3xl",
@@ -19,7 +19,7 @@ export function Logo({
     "2xl": "text-3xl sm:text-4xl md:text-6xl lg:text-7xl",
   }
 
-  const slashClasses = {
+  const Silian_slashClasses = {
     sm: "text-[0.625rem]",
     md: "text-sm",
     lg: "text-lg",
@@ -28,24 +28,24 @@ export function Logo({
   }
 
   return (
-    <Link
+    <Silian_Link
       href="/"
       className={`
         inline-flex items-center font-sans tracking-widest transition-opacity
         hover:opacity-80
-        ${sizeClasses[size]}
-        ${className}
+        ${Silian_sizeClasses[Silian_size]}
+        ${Silian_className}
       `}>
-      {showSlash && (
+      {Silian_showSlash && (
         <span
           className={`
             mr-1 font-light text-tech-main opacity-40
-            ${slashClasses[size]}
+            ${Silian_slashClasses[Silian_size]}
           `}>
           {"//"}
         </span>
       )}
       <span className="font-bold text-tech-main-dark">GTMC</span>
-    </Link>
+    </Silian_Link>
   )
 }

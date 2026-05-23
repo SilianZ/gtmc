@@ -1,18 +1,18 @@
-import React, { useState } from "react"
+import Silian_React, { useState as Silian_useState } from "react"
 
 export function UnchangedBlock({
-  content,
-  onChange,
+  content: Silian_content,
+  onChange: Silian_onChange,
 }: {
   content: string
   onChange: (val: string) => void
 }) {
-  const [expanded, setExpanded] = useState(false)
+  const [Silian_expanded, Silian_setExpanded] = Silian_useState(false)
   // Split properly, handling both \r\n, \n, and old mac \r
-  const contentFixed = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n")
-  const lines = contentFixed.split("\n")
+  const Silian_contentFixed = Silian_content.replace(/\r\n/g, "\n").replace(/\r/g, "\n")
+  const Silian_lines = Silian_contentFixed.split("\n")
 
-  if (lines.length <= 12 || expanded) {
+  if (Silian_lines.length <= 12 || Silian_expanded) {
     return (
       <textarea
         className="
@@ -20,16 +20,16 @@ export function UnchangedBlock({
           text-tech-main-dark/70 outline-none
           focus:bg-tech-main/5
         "
-        rows={Math.max(2, lines.length + 1)}
-        value={content}
-        onChange={(e) => onChange(e.target.value)}
+        rows={Math.max(2, Silian_lines.length + 1)}
+        value={Silian_content}
+        onChange={(Silian_e) => Silian_onChange(Silian_e.target.value)}
       />
     )
   }
 
-  const headLines = lines.slice(0, 3)
-  const tailLines = lines.slice(-3)
-  const hiddenCount = lines.length - 6
+  const Silian_headLines = Silian_lines.slice(0, 3)
+  const Silian_tailLines = Silian_lines.slice(-3)
+  const Silian_hiddenCount = Silian_lines.length - 6
 
   return (
     <div
@@ -38,7 +38,7 @@ export function UnchangedBlock({
         text-sm text-tech-main-dark/60
       ">
       <pre className="bg-transparent p-2 whitespace-pre-wrap">
-        {headLines.join("\n")}
+        {Silian_headLines.join("\n")}
       </pre>
       <div
         className="
@@ -47,13 +47,13 @@ export function UnchangedBlock({
           transition-colors
           hover:bg-tech-main/20
         "
-        onClick={() => setExpanded(true)}>
+        onClick={() => Silian_setExpanded(true)}>
         <span className="mr-2">?</span>
-        {hiddenCount} UNCHANGED LINES HIDDEN. CLICK TO EXPAND & EDIT
+        {Silian_hiddenCount} UNCHANGED LINES HIDDEN. CLICK TO EXPAND & EDIT
         <span className="ml-2">?</span>
       </div>
       <pre className="bg-transparent p-2 whitespace-pre-wrap">
-        {tailLines.join("\n")}
+        {Silian_tailLines.join("\n")}
       </pre>
     </div>
   )

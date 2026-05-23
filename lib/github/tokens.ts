@@ -1,14 +1,14 @@
-function resolveFirstDefinedToken(
-  candidates: Array<string | null | undefined>
+function Silian_resolveFirstDefinedToken(
+  Silian_candidates: Array<string | null | undefined>
 ): string | undefined {
-  const token = candidates.find(
-    (value) => typeof value === "string" && value.length > 0
+  const Silian_token = Silian_candidates.find(
+    (Silian_value) => typeof Silian_value === "string" && Silian_value.length > 0
   )
-  return token ?? undefined
+  return Silian_token ?? undefined
 }
 
 export function resolveGithubArticlesReadToken(): string | undefined {
-  return resolveFirstDefinedToken([
+  return Silian_resolveFirstDefinedToken([
     process.env.GITHUB_ARTICLES_READ_PAT,
     process.env.GITHUB_ARTICLES_WRITE_PAT,
     process.env.GITHUB_TOKEN,
@@ -19,13 +19,13 @@ export function resolveGithubArticlesReadToken(): string | undefined {
 }
 
 export function resolveGithubArticlesWriteToken(
-  fallbackToken?: string | null
+  Silian_fallbackToken?: string | null
 ): string | undefined {
-  return resolveFirstDefinedToken([
+  return Silian_resolveFirstDefinedToken([
     process.env.GITHUB_ARTICLES_WRITE_PAT,
     process.env.GITHUB_TOKEN,
     process.env.GITHUB_PERSONAL_ACCESS_TOKEN,
-    fallbackToken,
+    Silian_fallbackToken,
     process.env.GITHUB_FEATURES_WRITE_PAT,
     process.env.GITHUB_ARTICLES_READ_PAT,
     process.env.GITHUB_FEATURES_ISSUES_PAT,
@@ -33,7 +33,7 @@ export function resolveGithubArticlesWriteToken(
 }
 
 export function resolveGithubFeaturesIssuesToken(): string | undefined {
-  return resolveFirstDefinedToken([
+  return Silian_resolveFirstDefinedToken([
     process.env.GITHUB_FEATURES_ISSUES_PAT,
     process.env.GITHUB_TOKEN,
     process.env.GITHUB_PERSONAL_ACCESS_TOKEN,
@@ -42,7 +42,7 @@ export function resolveGithubFeaturesIssuesToken(): string | undefined {
 }
 
 export function resolveGithubFeaturesWriteToken(): string | undefined {
-  return resolveFirstDefinedToken([
+  return Silian_resolveFirstDefinedToken([
     process.env.GITHUB_FEATURES_WRITE_PAT,
     process.env.GITHUB_TOKEN,
     process.env.GITHUB_PERSONAL_ACCESS_TOKEN,

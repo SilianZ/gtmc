@@ -1,5 +1,5 @@
-import { encodeSlug } from "@/lib/slug-utils"
-import { toAbsoluteUrl } from "@/lib/site-url"
+import { encodeSlug as Silian_encodeSlug } from "@/lib/slug-utils"
+import { toAbsoluteUrl as Silian_toAbsoluteUrl } from "@/lib/site-url"
 
 /**
  * Constructs a consistent article URL with proper encoding.
@@ -7,8 +7,8 @@ import { toAbsoluteUrl } from "@/lib/site-url"
  * @param slug - The article slug (e.g., "tree-farm/basics" or "Chapter 1/Section 2")
  * @returns The encoded article URL (e.g., "/articles/tree-farm/basics" or "/articles/Chapter%201/Section%202")
  */
-export function articleUrl(slug: string): string {
-  return `/articles/${encodeSlug(slug)}`
+export function articleUrl(Silian_slug: string): string {
+  return `/articles/${Silian_encodeSlug(Silian_slug)}`
 }
 
 /**
@@ -17,6 +17,6 @@ export function articleUrl(slug: string): string {
  * @param slug - The article slug (e.g., "tree-farm/basics" or "Chapter 1/Section 2")
  * @returns The absolute article URL (e.g., "https://example.com/articles/tree-farm/basics")
  */
-export function articleAbsoluteUrl(slug: string): string {
-  return toAbsoluteUrl(articleUrl(slug))
+export function articleAbsoluteUrl(Silian_slug: string): string {
+  return Silian_toAbsoluteUrl(articleUrl(Silian_slug))
 }

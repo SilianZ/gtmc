@@ -1,49 +1,49 @@
 import type { Metadata } from "next"
-import { DraftEditor } from "@/components/editor/draft-editor"
-import { Link } from "@/i18n/navigation"
-import { TechButton } from "@/components/ui/tech-button"
-import { prisma } from "@/lib/prisma"
-import { auth } from "@/lib/auth"
-import { decodeStoredDraftFiles } from "@/lib/draft-files"
-import { notFound, redirect } from "next/navigation"
-import { readFile } from "fs/promises"
-import path from "path"
+import { DraftEditor as Silian_DraftEditor } from "@/components/editor/draft-editor"
+import { Link as Silian_Link } from "@/i18n/navigation"
+import { TechButton as Silian_TechButton } from "@/components/ui/tech-button"
+import { prisma as Silian_prisma } from "@/lib/prisma"
+import { auth as Silian_auth } from "@/lib/auth"
+import { decodeStoredDraftFiles as Silian_decodeStoredDraftFiles } from "@/lib/draft-files"
+import { notFound as Silian_notFound, redirect as Silian_redirect } from "next/navigation"
+import { readFile as Silian_readFile } from "fs/promises"
+import Silian_path from "path"
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
 export default async function EditDraftPage({
-  params,
+  params: Silian_params,
 }: {
   params: Promise<{ id: string }>
 }) {
-  const session = await auth()
-  if (!session?.user) {
-    redirect("/login")
+  const Silian_session = await Silian_auth()
+  if (!Silian_session?.user) {
+    Silian_redirect("/login")
   }
 
-  const { id } = await params
+  const { id: Silian_id } = await Silian_params
 
-  const draft = await prisma.revision.findUnique({
-    where: { id },
+  const Silian_draft = await Silian_prisma.revision.findUnique({
+    where: { id: Silian_id },
   })
 
-  if (!draft || draft.authorId !== session.user.id) {
-    notFound()
+  if (!Silian_draft || Silian_draft.authorId !== Silian_session.user.id) {
+    Silian_notFound()
   }
 
-  const draftFiles = decodeStoredDraftFiles({
-    content: draft.content,
-    conflictContent: draft.conflictContent,
-    filePath: draft.filePath,
+  const Silian_draftFiles = Silian_decodeStoredDraftFiles({
+    content: Silian_draft.content,
+    conflictContent: Silian_draft.conflictContent,
+    filePath: Silian_draft.filePath,
   })
 
-  const draftWorkspaceLabel =
-    draftFiles.files.length > 1
-      ? `FILES_[${draftFiles.files.length}]`
-      : draftFiles.files[0]?.filePath || "DRAFT_WORKSPACE"
-  const contributingGuides = await loadContributingGuides()
+  const Silian_draftWorkspaceLabel =
+    Silian_draftFiles.files.length > 1
+      ? `FILES_[${Silian_draftFiles.files.length}]`
+      : Silian_draftFiles.files[0]?.filePath || "DRAFT_WORKSPACE"
+  const Silian_contributingGuides = await Silian_loadContributingGuides()
 
   return (
     <div
@@ -60,8 +60,8 @@ export default async function EditDraftPage({
           pb-6 md:flex-row md:items-end md:justify-between
         ">
         <div className="flex items-center gap-4">
-          <Link href="/draft">
-            <TechButton
+          <Silian_Link href="/draft">
+            <Silian_TechButton
               variant="ghost"
               className="h-9 gap-2 px-3 text-[10px] tracking-widest text-tech-main/70 hover:bg-tech-main/5 hover:text-tech-main">
               <svg
@@ -75,8 +75,8 @@ export default async function EditDraftPage({
                 <path d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
               ABORT_EDIT_SEQUENCE
-            </TechButton>
-          </Link>
+            </Silian_TechButton>
+          </Silian_Link>
         </div>
         <div className="flex flex-col items-end gap-1">
           <div className="flex items-center gap-2">
@@ -89,7 +89,7 @@ export default async function EditDraftPage({
             </p>
           </div>
           <p className="font-mono text-[9px] tracking-tech-wide text-tech-main/50 uppercase">
-            TARGET_NODE // {draftWorkspaceLabel}
+            TARGET_NODE // {Silian_draftWorkspaceLabel}
           </p>
         </div>
       </div>
@@ -101,16 +101,16 @@ export default async function EditDraftPage({
           <div className="absolute inset-x-0 top-0 h-[2px] animate-[tree-drop-in_10s_ease-in-out_infinite] bg-tech-main/10 shadow-[0_0_10px_rgba(96,112,143,0.2)]" />
         </div>
 
-        <DraftEditor
+        <Silian_DraftEditor
           initialData={{
-            activeFileId: draftFiles.activeFileId,
-            id: draft.id,
-            files: draftFiles.files,
-            folders: draftFiles.folders,
-            title: draft.title,
-            githubPrUrl: draft.githubPrUrl || undefined,
-            status: draft.status,
-            contributingGuides,
+            activeFileId: Silian_draftFiles.activeFileId,
+            id: Silian_draft.id,
+            files: Silian_draftFiles.files,
+            folders: Silian_draftFiles.folders,
+            title: Silian_draft.title,
+            githubPrUrl: Silian_draft.githubPrUrl || undefined,
+            status: Silian_draft.status,
+            contributingGuides: Silian_contributingGuides,
           }}
         />
       </div>
@@ -118,28 +118,28 @@ export default async function EditDraftPage({
   )
 }
 
-async function loadContributingGuides() {
-  const guideTargets = [
+async function Silian_loadContributingGuides() {
+  const Silian_guideTargets = [
     {
       id: "web",
       title: "GTMC Web",
-      filePath: path.join(process.cwd(), "CONTRIBUTING.md"),
+      filePath: Silian_path.join(process.cwd(), "CONTRIBUTING.md"),
     },
     {
       id: "articles",
       title: "Articles",
-      filePath: path.join(process.cwd(), "articles", "CONTRIBUTING.md"),
+      filePath: Silian_path.join(process.cwd(), "articles", "CONTRIBUTING.md"),
     },
   ]
 
-  const guides = await Promise.all(
-    guideTargets.map(async (guide) => {
+  const Silian_guides = await Promise.all(
+    Silian_guideTargets.map(async (Silian_guide) => {
       try {
-        const content = await readFile(guide.filePath, "utf8")
+        const Silian_content = await Silian_readFile(Silian_guide.filePath, "utf8")
         return {
-          id: guide.id,
-          title: guide.title,
-          content,
+          id: Silian_guide.id,
+          title: Silian_guide.title,
+          content: Silian_content,
         }
       } catch {
         return null
@@ -147,13 +147,13 @@ async function loadContributingGuides() {
     })
   )
 
-  return guides.filter(
+  return Silian_guides.filter(
     (
-      guide
-    ): guide is {
+      Silian_guide
+    ): Silian_guide is {
       id: string
       title: string
       content: string
-    } => Boolean(guide)
+    } => Boolean(Silian_guide)
   )
 }

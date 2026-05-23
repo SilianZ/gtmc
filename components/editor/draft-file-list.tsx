@@ -1,9 +1,9 @@
 "use client"
 
-import * as React from "react"
-import { useTranslations } from "next-intl"
+import * as Silian_React from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 
-import { TechButton } from "@/components/ui/tech-button"
+import { TechButton as Silian_TechButton } from "@/components/ui/tech-button"
 import { type DraftFileCollection } from "@/lib/draft-files"
 
 interface DraftFileListProps {
@@ -17,15 +17,15 @@ interface DraftFileListProps {
 }
 
 export function DraftFileList({
-  files,
-  activeFileId,
-  unsavedFileIds,
-  onSelectFile,
-  onAddFile,
-  onRemoveFile,
-  isReadOnly,
+  files: Silian_files,
+  activeFileId: Silian_activeFileId,
+  unsavedFileIds: Silian_unsavedFileIds,
+  onSelectFile: Silian_onSelectFile,
+  onAddFile: Silian_onAddFile,
+  onRemoveFile: Silian_onRemoveFile,
+  isReadOnly: Silian_isReadOnly,
 }: DraftFileListProps) {
-  const t = useTranslations("DraftFiles")
+  const Silian_t = Silian_useTranslations("DraftFiles")
 
   return (
     <aside
@@ -44,7 +44,7 @@ export function DraftFileList({
               FILE_NODE_TREE
             </span>
             <span className="rounded-sm border border-tech-main/30 bg-tech-main/10 px-1 font-mono text-[9px]">
-              {files.length}
+              {Silian_files.length}
             </span>
           </div>
           <p
@@ -57,51 +57,51 @@ export function DraftFileList({
             SAVE_AND_REVIEW_APPLY_TO_ALL
           </p>
         </div>
-        {!isReadOnly ? (
-          <TechButton
+        {!Silian_isReadOnly ? (
+          <Silian_TechButton
             type="button"
             variant="secondary"
             size="sm"
             className="shrink-0 transition-colors hover:bg-tech-main/10"
-            onClick={onAddFile}>
-            <span className="mr-1">+</span> {t("addButton")}
-          </TechButton>
+            onClick={Silian_onAddFile}>
+            <span className="mr-1">+</span> {Silian_t("addButton")}
+          </Silian_TechButton>
         ) : null}
       </div>
 
       <div className="flex-1 space-y-[2px] overflow-y-auto p-2">
-        {files.map((file: { id: string; filePath: string }, index: number) => {
-          const fileLabel =
-            file.filePath.split("/").filter(Boolean).slice(-1)[0] ||
-            `UNTITLED_FILE_${index + 1}`
-          const isActive = file.id === activeFileId
-          const isUnsaved = unsavedFileIds?.has(file.id) ?? false
+        {Silian_files.map((Silian_file: { id: string; filePath: string }, Silian_index: number) => {
+          const Silian_fileLabel =
+            Silian_file.filePath.split("/").filter(Boolean).slice(-1)[0] ||
+            `UNTITLED_FILE_${Silian_index + 1}`
+          const Silian_isActive = Silian_file.id === Silian_activeFileId
+          const Silian_isUnsaved = Silian_unsavedFileIds?.has(Silian_file.id) ?? false
 
           return (
             <div
-              key={file.id}
+              key={Silian_file.id}
               className="group relative ml-1 flex items-stretch border-l-2"
               style={{
-                borderColor: isActive
+                borderColor: Silian_isActive
                   ? "var(--color-tech-main)"
                   : "transparent",
               }}>
               {/* Simple Tech Tree Connector */}
-              {!isActive && (
+              {!Silian_isActive && (
                 <div className="absolute top-1/2 left-[-6px] h-px w-1.5 bg-tech-main/20" />
               )}
-              {isActive && (
+              {Silian_isActive && (
                 <div className="absolute inset-y-0 left-[-2px] w-0.5 bg-tech-main group-hover:animate-target-blink" />
               )}
 
               <button
                 type="button"
-                onClick={() => onSelectFile(file.id)}
+                onClick={() => Silian_onSelectFile(Silian_file.id)}
                 className={`
                   ml-1 flex min-h-[46px] min-w-0 flex-1 flex-col items-start gap-[2px]
                   border px-3 py-2 text-left transition-all duration-200
                   ${
-                    isActive
+                    Silian_isActive
                       ? `z-10 scale-[1.01] border-tech-main bg-tech-main/8 shadow-[0_2px_10px_rgba(96,112,143,0.08)]`
                       : `
                         border-transparent bg-transparent
@@ -114,7 +114,7 @@ export function DraftFileList({
                     className={`
                       flex items-center gap-2 truncate
                       font-mono tracking-widest uppercase transition-colors
-                      ${isActive ? "text-xs font-bold text-tech-main" : "text-[11px] font-medium text-tech-main/70"}
+                      ${Silian_isActive ? "text-xs font-bold text-tech-main" : "text-[11px] font-medium text-tech-main/70"}
                     `}>
                     <svg
                       width="12"
@@ -124,14 +124,14 @@ export function DraftFileList({
                       stroke="currentColor"
                       strokeWidth="2"
                       className={
-                        isActive ? "text-tech-main" : "text-tech-main/40"
+                        Silian_isActive ? "text-tech-main" : "text-tech-main/40"
                       }>
                       <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                       <polyline points="13 2 13 9 20 9"></polyline>
                     </svg>
-                    {fileLabel}
+                    {Silian_fileLabel}
                   </span>
-                  {isUnsaved ? (
+                  {Silian_isUnsaved ? (
                     <span
                       className="size-[6px] shrink-0 animate-pulse border border-amber-900/10 bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.5)]"
                       title="UNSAVED_CHANGES"
@@ -142,22 +142,22 @@ export function DraftFileList({
                 <span
                   className={`
                      w-full truncate pl-5 font-mono text-[9px] transition-colors
-                     ${isActive ? "text-tech-main/80" : "text-tech-main/40"}
+                     ${Silian_isActive ? "text-tech-main/80" : "text-tech-main/40"}
                    `}>
-                  {file.filePath || "TARGET_PATH_NOT_SET"}
+                  {Silian_file.filePath || "TARGET_PATH_NOT_SET"}
                 </span>
               </button>
 
-              {!isReadOnly && files.length > 1 ? (
+              {!Silian_isReadOnly && Silian_files.length > 1 ? (
                 <button
                   type="button"
-                  onClick={() => onRemoveFile(file.id)}
-                  title={t("removeFile")}
+                  onClick={() => Silian_onRemoveFile(Silian_file.id)}
+                  title={Silian_t("removeFile")}
                   className={`
                     ml-px flex min-w-[32px] shrink-0 items-center
                     justify-center border-y border-r transition-all duration-200
                     ${
-                      isActive
+                      Silian_isActive
                         ? `
                           border-tech-main bg-tech-main/4 text-tech-main/60
                           hover:border-red-500/50 hover:bg-red-500/10
@@ -180,7 +180,7 @@ export function DraftFileList({
                     strokeWidth="2"
                     strokeLinecap="square"
                     strokeLinejoin="miter"
-                    aria-label={t("removeFile")}>
+                    aria-label={Silian_t("removeFile")}>
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                   </svg>

@@ -1,42 +1,42 @@
 "use client"
 
-import { formatAbsoluteTime, formatRelativeTime } from "@/lib/format-time"
-import Image from "next/image"
-import { useTranslations } from "next-intl"
-import { Link } from "@/i18n/navigation"
-import { useRouter } from "@/i18n/navigation"
-import { useState } from "react"
-import { CornerBrackets } from "@/components/ui/corner-brackets"
-import { ArticleBanner } from "@/components/articles/article-banner"
-import { ArticleLicenseNotice } from "@/components/articles/article-license-notice"
+import { formatAbsoluteTime as Silian_formatAbsoluteTime, formatRelativeTime as Silian_formatRelativeTime } from "@/lib/format-time"
+import Silian_Image from "next/image"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { Link as Silian_Link } from "@/i18n/navigation"
+import { useRouter as Silian_useRouter } from "@/i18n/navigation"
+import { useState as Silian_useState } from "react"
+import { CornerBrackets as Silian_CornerBrackets } from "@/components/ui/corner-brackets"
+import { ArticleBanner as Silian_ArticleBanner } from "@/components/articles/article-banner"
+import { ArticleLicenseNotice as Silian_ArticleLicenseNotice } from "@/components/articles/article-license-notice"
 
-function useLocalStorage<T>(
-  key: string,
-  initialValue: T
+function Silian_useLocalStorage<T>(
+  Silian_key: string,
+  Silian_initialValue: T
 ): [T, (value: T) => void] {
-  const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === "undefined") return initialValue
+  const [Silian_storedValue, Silian_setStoredValue] = Silian_useState<T>(() => {
+    if (typeof window === "undefined") return Silian_initialValue
     try {
-      const item = window.localStorage.getItem(key)
-      return item ? JSON.parse(item) : initialValue
-    } catch (error) {
-      console.error("Error reading localStorage:", error)
-      return initialValue
+      const Silian_item = window.localStorage.getItem(Silian_key)
+      return Silian_item ? JSON.parse(Silian_item) : Silian_initialValue
+    } catch (Silian_error) {
+      console.error("Error reading localStorage:", Silian_error)
+      return Silian_initialValue
     }
   })
 
-  const setValue = (value: T) => {
+  const Silian_setValue = (Silian_value: T) => {
     try {
-      setStoredValue(value)
+      Silian_setStoredValue(Silian_value)
       if (typeof window !== "undefined") {
-        window.localStorage.setItem(key, JSON.stringify(value))
+        window.localStorage.setItem(Silian_key, JSON.stringify(Silian_value))
       }
-    } catch (error) {
-      console.error("Error writing localStorage:", error)
+    } catch (Silian_error) {
+      console.error("Error writing localStorage:", Silian_error)
     }
   }
 
-  return [storedValue, setValue]
+  return [Silian_storedValue, Silian_setValue]
 }
 
 interface ArticleMetadataProps {
@@ -56,48 +56,48 @@ interface ArticleMetadataProps {
 }
 
 export function ArticleMetadata({
-  title,
-  author,
-  coAuthors = [],
-  createdAt,
-  lastModified,
-  canonicalUrl,
-  filePath,
-  wordCount,
-  readingTime,
-  editPath,
-  isAdvanced,
-  bannerPath,
-  bannerAlt,
+  title: Silian_title,
+  author: Silian_author,
+  coAuthors: Silian_coAuthors = [],
+  createdAt: Silian_createdAt,
+  lastModified: Silian_lastModified,
+  canonicalUrl: Silian_canonicalUrl,
+  filePath: Silian_filePath,
+  wordCount: Silian_wordCount,
+  readingTime: Silian_readingTime,
+  editPath: Silian_editPath,
+  isAdvanced: Silian_isAdvanced,
+  bannerPath: Silian_bannerPath,
+  bannerAlt: Silian_bannerAlt,
 }: ArticleMetadataProps) {
-  const t = useTranslations("ArticleMeta")
-  const router = useRouter()
-  const [copied, setCopied] = useState(false)
+  const Silian_t = Silian_useTranslations("ArticleMeta")
+  const Silian_router = Silian_useRouter()
+  const [Silian_copied, Silian_setCopied] = Silian_useState(false)
 
-  const storageKey = "article-metadata-collapsed"
-  const [isCollapsed, setIsCollapsed] = useLocalStorage(storageKey, false)
+  const Silian_storageKey = "article-metadata-collapsed"
+  const [Silian_isCollapsed, Silian_setIsCollapsed] = Silian_useLocalStorage(Silian_storageKey, false)
 
-  const getAvatarUrl = (username: string) => {
-    return `https://github.com/${username}.png`
+  const Silian_getAvatarUrl = (Silian_username: string) => {
+    return `https://github.com/${Silian_username}.png`
   }
 
-  const allContributors = [author, ...coAuthors]
-  const displayContributors = allContributors.slice(0, 5)
-  const remainingCount = allContributors.length - 5
+  const Silian_allContributors = [Silian_author, ...Silian_coAuthors]
+  const Silian_displayContributors = Silian_allContributors.slice(0, 5)
+  const Silian_remainingCount = Silian_allContributors.length - 5
 
-  const handleCopy = async () => {
+  const Silian_handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(canonicalUrl)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
-      console.error("Failed to copy:", err)
+      await navigator.clipboard.writeText(Silian_canonicalUrl)
+      Silian_setCopied(true)
+      setTimeout(() => Silian_setCopied(false), 2000)
+    } catch (Silian_err) {
+      console.error("Failed to copy:", Silian_err)
     }
   }
 
   return (
     <header>
-      <CornerBrackets />
+      <Silian_CornerBrackets />
 
       <div
         className="
@@ -118,20 +118,20 @@ export function ArticleMetadata({
               hidden items-center gap-3
               sm:inline-flex
             ">
-            {t("pathLabel")} {filePath}
+            {Silian_t("pathLabel")} {Silian_filePath}
           </span>
           <button
             type="button"
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={() => Silian_setIsCollapsed(!Silian_isCollapsed)}
             className="
               cursor-pointer border guide-line bg-white px-2 py-0.5
               transition-colors
               hover:bg-tech-accent/10
             "
             aria-label={
-              isCollapsed ? t("expandMetadata") : t("collapseMetadata")
+              Silian_isCollapsed ? Silian_t("expandMetadata") : Silian_t("collapseMetadata")
             }>
-            {isCollapsed ? "[+]" : "[-]"}
+            {Silian_isCollapsed ? "[+]" : "[-]"}
           </button>
         </div>
 
@@ -139,7 +139,7 @@ export function ArticleMetadata({
           className={`
             flex flex-col gap-4 transition-all duration-500 ease-in-out
             ${
-              isCollapsed
+              Silian_isCollapsed
                 ? "max-h-0 overflow-hidden opacity-0"
                 : `mt-4 max-h-screen opacity-100`
             }
@@ -157,69 +157,69 @@ export function ArticleMetadata({
                     relative size-6 border guide-line
                     sm:size-10
                   ">
-                  <Link
-                    href={`https://github.com/${author}`}
+                  <Silian_Link
+                    href={`https://github.com/${Silian_author}`}
                     target="_blank"
-                    aria-label={author}
+                    aria-label={Silian_author}
                     className="
                       relative inline-block size-6
                       sm:size-10
                     ">
-                    <Image
-                      src={getAvatarUrl(author)}
-                      alt={author}
+                    <Silian_Image
+                      src={Silian_getAvatarUrl(Silian_author)}
+                      alt={Silian_author}
                       className="border guide-line"
                       fill
                       sizes="(max-width: 640px) 24px, 40px"
                     />
-                  </Link>
+                  </Silian_Link>
                 </span>
-                <Link
-                  href={`https://github.com/${author}`}
+                <Silian_Link
+                  href={`https://github.com/${Silian_author}`}
                   target="_blank"
                   className="text-xs text-tech-main underline">
-                  {author}
-                </Link>
+                  {Silian_author}
+                </Silian_Link>
               </span>
 
               <span className="text-tech-main/60">&&</span>
 
               {/* Co-Authors */}
-              {coAuthors.length > 0 && (
+              {Silian_coAuthors.length > 0 && (
                 <span
                   className="
                     flex flex-col gap-3
                     sm:flex-row sm:items-center sm:gap-4
                   ">
                   <span className="flex items-center gap-1">
-                    {displayContributors.slice(1).map((contributor) => (
+                    {Silian_displayContributors.slice(1).map((Silian_contributor) => (
                       <span
-                        key={contributor}
+                        key={Silian_contributor}
                         className="
                           relative size-4 border guide-line
                           sm:size-6
                         ">
-                        <Link
-                          href={`https://github.com/${contributor}`}
+                        <Silian_Link
+                          href={`https://github.com/${Silian_contributor}`}
                           target="_blank"
-                          aria-label={contributor}
+                          aria-label={Silian_contributor}
                           className="
                             relative inline-block size-4
                             sm:size-6
                           ">
-                          <Image
-                            src={getAvatarUrl(contributor)}
-                            alt={contributor}
+                          <Silian_Image
+                            src={Silian_getAvatarUrl(Silian_contributor)}
+                            alt={Silian_contributor}
                             fill
-                            title={contributor}
+                            title={Silian_contributor}
                             sizes="(max-width: 640px) 16px, 24px"
                           />
-                        </Link>
+                        </Silian_Link>
                       </span>
                     ))}
-                    {remainingCount > 0 && (
+                    {Silian_remainingCount > 0 && (
                       <span className="ml-1 text-tech-main/60">
-                        +{remainingCount}
+                        +{Silian_remainingCount}
                       </span>
                     )}
                   </span>
@@ -229,7 +229,7 @@ export function ArticleMetadata({
             <button
               type="button"
               onClick={() =>
-                router.push(`/draft/new?file=${encodeURIComponent(editPath)}`)
+                Silian_router.push(`/draft/new?file=${encodeURIComponent(Silian_editPath)}`)
               }
               className="
                 cursor-pointer items-center overflow-hidden border
@@ -237,7 +237,7 @@ export function ArticleMetadata({
                 uppercase transition-all duration-300
                 hover:bg-tech-main hover:text-white
               ">
-              {t("editArticle")}
+              {Silian_t("editArticle")}
             </button>
           </div>
 
@@ -249,9 +249,9 @@ export function ArticleMetadata({
                 font-mono text-xl font-bold tracking-tight text-tech-main-dark
                 sm:text-2xl
               ">
-              {title}
+              {Silian_title}
             </h1>
-            {isAdvanced && (
+            {Silian_isAdvanced && (
               <span
                 className="
                   mx-2 shrink-0 bg-[#4c5b96] px-1.5 py-0.5 font-mono text-[0.625rem]
@@ -265,10 +265,10 @@ export function ArticleMetadata({
           <div className="text-tech-main/60">
             {/* Edit History */}
             <p>
-              {t("created")} 
+              {Silian_t("created")}
               <span className="text-tech-main">
-                <time dateTime={createdAt}>
-                  {formatAbsoluteTime(createdAt, false)}
+                <time dateTime={Silian_createdAt}>
+                  {Silian_formatAbsoluteTime(Silian_createdAt, false)}
                 </time>
               </span>
               <br
@@ -284,18 +284,18 @@ export function ArticleMetadata({
                 ">
                 {" | "}
               </span>
-              {t("lastEdited")} 
+              {Silian_t("lastEdited")}
               <span className="text-tech-main">
-                <time dateTime={lastModified}>
-                  {formatRelativeTime(lastModified)}
+                <time dateTime={Silian_lastModified}>
+                  {Silian_formatRelativeTime(Silian_lastModified)}
                 </time>
               </span>
               <br />
 
               {/* Reading Stats */}
-              {t("wordCount")} 
+              {Silian_t("wordCount")}
               <span className="text-tech-main">
-                {wordCount.toLocaleString()}
+                {Silian_wordCount.toLocaleString()}
               </span>
               <br
                 className="
@@ -310,28 +310,28 @@ export function ArticleMetadata({
                 ">
                 {" | "}
               </span>
-              {t("estReadTime")} 
+              {Silian_t("estReadTime")}
               <span className="text-tech-main">
-                {readingTime} {t("minuteUnit")}
+                {Silian_readingTime} {Silian_t("minuteUnit")}
               </span>
             </p>
           </div>
 
           <div className="flex flex-row items-center gap-2">
-            <span className="text-tech-main/60">{t("urlLabel")}</span>
+            <span className="text-tech-main/60">{Silian_t("urlLabel")}</span>
             <code
               className="
                 truncate border guide-line bg-tech-accent/10 px-1.5 py-0.5
               ">
-              {canonicalUrl}
+              {Silian_canonicalUrl}
             </code>
             <button
               type="button"
-              onClick={handleCopy}
+              onClick={Silian_handleCopy}
               className={`
                 border guide-line px-2 py-0.5 transition-colors
                 ${
-                  copied
+                  Silian_copied
                     ? `bg-tech-main text-tech-bg`
                     : `
                       bg-white
@@ -339,24 +339,24 @@ export function ArticleMetadata({
                     `
                 }
               `}
-              aria-label={t("copyButton")}>
-              {copied ? "✓" : t("copyButton")}
+              aria-label={Silian_t("copyButton")}>
+              {Silian_copied ? "✓" : Silian_t("copyButton")}
             </button>
           </div>
 
-          <ArticleLicenseNotice
-            title={title}
-            canonicalUrl={canonicalUrl}
-            attributionDate={lastModified || createdAt}
-            authors={[author, ...coAuthors]}
+          <Silian_ArticleLicenseNotice
+            title={Silian_title}
+            canonicalUrl={Silian_canonicalUrl}
+            attributionDate={Silian_lastModified || Silian_createdAt}
+            authors={[Silian_author, ...Silian_coAuthors]}
           />
         </div>
       </div>
 
-      {bannerPath && (
-        <ArticleBanner
-          src={`/api/assets/banner/${bannerPath}`}
-          alt={bannerAlt || title}
+      {Silian_bannerPath && (
+        <Silian_ArticleBanner
+          src={`/api/assets/banner/${Silian_bannerPath}`}
+          alt={Silian_bannerAlt || Silian_title}
         />
       )}
     </header>

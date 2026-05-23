@@ -1,44 +1,44 @@
 import {
-  ARTICLES_REPO_NAME,
-  ARTICLES_REPO_OWNER,
-  getOctokit,
+  ARTICLES_REPO_NAME as Silian_ARTICLES_REPO_NAME,
+  ARTICLES_REPO_OWNER as Silian_ARTICLES_REPO_OWNER,
+  getOctokit as Silian_getOctokit,
 } from "@/lib/github/articles-repo"
-import { serializeDraftFilesForStorage } from "@/lib/draft-files"
+import { serializeDraftFilesForStorage as Silian_serializeDraftFilesForStorage } from "@/lib/draft-files"
 import {
-  applyAutoAppliedResolutions,
-  autoApplyRerere,
-  parseConflictBlocks,
+  applyAutoAppliedResolutions as Silian_applyAutoAppliedResolutions,
+  autoApplyRerere as Silian_autoApplyRerere,
+  parseConflictBlocks as Silian_parseConflictBlocks,
   type ConflictBlock,
 } from "@/lib/rerere"
-import { Prisma } from "@prisma/client"
-import { getMergeLibrary, type MergeConflictBlock } from "./merge-strategy"
+import { Prisma as Silian_Prisma } from "@prisma/client"
+import { getMergeLibrary as Silian_getMergeLibrary, type MergeConflictBlock } from "./merge-strategy"
 import type {
   FileRebaseState,
   RebaseCommitInfo,
   RebaseState,
 } from "../types/rebase"
-import { prisma } from "@/lib/prisma"
+import { prisma as Silian_prisma } from "@/lib/prisma"
 
-function reviewLog(action: string, details: Record<string, unknown>) {
-  console.log(`[review:${action}]`, details)
+function Silian_reviewLog(Silian_action: string, Silian_details: Record<string, unknown>) {
+  console.log(`[review:${Silian_action}]`, Silian_details)
 }
 
-function reviewError(
-  action: string,
-  error: unknown,
-  details: Record<string, unknown>
+function Silian_reviewError(
+  Silian_action: string,
+  Silian_error: unknown,
+  Silian_details: Record<string, unknown>
 ) {
-  console.error(`[review:${action}]`, {
-    ...details,
+  console.error(`[review:${Silian_action}]`, {
+    ...Silian_details,
     error:
-      error instanceof Error
-        ? { name: error.name, message: error.message, stack: error.stack }
-        : error,
+      Silian_error instanceof Error
+        ? { name: Silian_error.name, message: Silian_error.message, stack: Silian_error.stack }
+        : Silian_error,
   })
 }
 
-function summarizeSha(sha?: string | null) {
-  return sha ? sha.slice(0, 7) : null
+function Silian_summarizeSha(Silian_sha?: string | null) {
+  return Silian_sha ? Silian_sha.slice(0, 7) : null
 }
 
 export type RebaseRecommendation = "REBASE_RECOMMENDED" | "QUICK_MERGE_OK"
@@ -172,33 +172,33 @@ interface CompareCommitFileInfo {
   touchedFilePaths: string[]
 }
 
-async function getFileSnapshot(
-  filePath: string,
-  ref: string,
-  token?: string
+async function Silian_getFileSnapshot(
+  Silian_filePath: string,
+  Silian_ref: string,
+  Silian_token?: string
 ): Promise<{ content: string; sha?: string } | null> {
-  const octokit = getOctokit(token)
+  const Silian_octokit = Silian_getOctokit(Silian_token)
 
   try {
-    const { data } = await octokit.repos.getContent({
-      owner: ARTICLES_REPO_OWNER,
-      repo: ARTICLES_REPO_NAME,
-      path: filePath,
-      ref,
+    const { data: Silian_data } = await Silian_octokit.repos.getContent({
+      owner: Silian_ARTICLES_REPO_OWNER,
+      repo: Silian_ARTICLES_REPO_NAME,
+      path: Silian_filePath,
+      ref: Silian_ref,
     })
 
-    if (Array.isArray(data) || data.type !== "file") {
+    if (Array.isArray(Silian_data) || Silian_data.type !== "file") {
       return null
     }
 
     return {
-      content: Buffer.from(data.content, "base64").toString("utf-8"),
-      sha: data.sha,
+      content: Buffer.from(Silian_data.content, "base64").toString("utf-8"),
+      sha: Silian_data.sha,
     }
-  } catch (error) {
-    reviewError("getFileSnapshot", error, {
-      filePath,
-      ref: summarizeSha(ref),
+  } catch (Silian_error) {
+    Silian_reviewError("getFileSnapshot", Silian_error, {
+      filePath: Silian_filePath,
+      ref: Silian_summarizeSha(Silian_ref),
       status: "github-api-error",
       operation: "repos.getContent",
     })
@@ -206,32 +206,32 @@ async function getFileSnapshot(
   }
 }
 
-function buildFileStates(
-  files: Array<{ filePath: string; content: string }>
+function Silian_buildFileStates(
+  Silian_files: Array<{ filePath: string; content: string }>
 ): Record<string, FileRebaseState> {
   return Object.fromEntries(
-    files.map((file) => [
-      file.filePath,
+    Silian_files.map((Silian_file) => [
+      Silian_file.filePath,
       {
-        filePath: file.filePath,
+        filePath: Silian_file.filePath,
         status: "pending",
-        currentContent: file.content,
-        originalContent: file.content,
+        currentContent: Silian_file.content,
+        originalContent: Silian_file.content,
       } satisfies FileRebaseState,
     ])
   )
 }
 
-function fileStatesToFiles(
-  fileStates: Record<string, FileRebaseState> | undefined
+function Silian_fileStatesToFiles(
+  Silian_fileStates: Record<string, FileRebaseState> | undefined
 ): RebasedFileContent[] {
-  return Object.values(fileStates ?? {}).map((fileState) => ({
-    filePath: fileState.filePath,
-    content: fileState.currentContent,
+  return Object.values(Silian_fileStates ?? {}).map((Silian_fileState) => ({
+    filePath: Silian_fileState.filePath,
+    content: Silian_fileState.currentContent,
   }))
 }
 
-async function autoResolveConflictContent(input: {
+async function Silian_autoResolveConflictContent(Silian_input: {
   content: string
   filePath: string
   baseContent: string
@@ -240,54 +240,54 @@ async function autoResolveConflictContent(input: {
   applied: ConflictBlock[]
   remaining: ConflictBlock[]
 }> {
-  const blocks = parseConflictBlocks(
-    input.content,
-    input.filePath,
-    input.baseContent
+  const Silian_blocks = Silian_parseConflictBlocks(
+    Silian_input.content,
+    Silian_input.filePath,
+    Silian_input.baseContent
   )
 
-  reviewLog("applyRerere", {
-    filePath: input.filePath,
+  Silian_reviewLog("applyRerere", {
+    filePath: Silian_input.filePath,
     status: "start",
-    blockCount: blocks.length,
+    blockCount: Silian_blocks.length,
   })
 
-  if (blocks.length === 0) {
-    reviewLog("applyRerere", {
-      filePath: input.filePath,
+  if (Silian_blocks.length === 0) {
+    Silian_reviewLog("applyRerere", {
+      filePath: Silian_input.filePath,
       status: "complete",
       matchesFound: 0,
       remainingCount: 0,
     })
-    return { content: input.content, applied: [], remaining: [] }
+    return { content: Silian_input.content, applied: [], remaining: [] }
   }
 
-  const { applied, remaining } = await autoApplyRerere(blocks)
+  const { applied: Silian_applied, remaining: Silian_remaining } = await Silian_autoApplyRerere(Silian_blocks)
 
-  reviewLog("applyRerere", {
-    filePath: input.filePath,
+  Silian_reviewLog("applyRerere", {
+    filePath: Silian_input.filePath,
     status: "complete",
-    matchesFound: applied.length,
-    remainingCount: remaining.length,
+    matchesFound: Silian_applied.length,
+    remainingCount: Silian_remaining.length,
   })
 
   return {
-    content: applyAutoAppliedResolutions(input.content, applied),
-    applied,
-    remaining,
+    content: Silian_applyAutoAppliedResolutions(Silian_input.content, Silian_applied),
+    applied: Silian_applied,
+    remaining: Silian_remaining,
   }
 }
 
-function conflictBlockFromRerere(block: ConflictBlock): MergeConflictBlock {
+function Silian_conflictBlockFromRerere(Silian_block: ConflictBlock): MergeConflictBlock {
   return {
     type: "conflict",
-    ours: block.ours.replace(/\n$/, "").split("\n"),
-    base: block.base.replace(/\n$/, "").split("\n"),
-    theirs: block.theirs.replace(/\n$/, "").split("\n"),
+    ours: Silian_block.ours.replace(/\n$/, "").split("\n"),
+    base: Silian_block.base.replace(/\n$/, "").split("\n"),
+    theirs: Silian_block.theirs.replace(/\n$/, "").split("\n"),
   }
 }
 
-async function getCompareCommitFileInfos(input: {
+async function Silian_getCompareCommitFileInfos(Silian_input: {
   filePaths: string[]
   baseMainSha: string
   latestMainSha: string
@@ -296,132 +296,132 @@ async function getCompareCommitFileInfos(input: {
   totalCommits: number
   commitFileInfos: CompareCommitFileInfo[]
 }> {
-  const { filePaths, baseMainSha, latestMainSha, token } = input
+  const { filePaths: Silian_filePaths, baseMainSha: Silian_baseMainSha, latestMainSha: Silian_latestMainSha, token: Silian_token } = Silian_input
 
-  if (baseMainSha === latestMainSha) {
+  if (Silian_baseMainSha === Silian_latestMainSha) {
     return { totalCommits: 0, commitFileInfos: [] }
   }
 
-  const trackedPaths = new Set(filePaths)
-  const octokit = getOctokit(token)
+  const Silian_trackedPaths = new Set(Silian_filePaths)
+  const Silian_octokit = Silian_getOctokit(Silian_token)
 
-  const { data: compareData } = await octokit.repos.compareCommits({
-    owner: ARTICLES_REPO_OWNER,
-    repo: ARTICLES_REPO_NAME,
-    base: baseMainSha,
-    head: latestMainSha,
+  const { data: Silian_compareData } = await Silian_octokit.repos.compareCommits({
+    owner: Silian_ARTICLES_REPO_OWNER,
+    repo: Silian_ARTICLES_REPO_NAME,
+    base: Silian_baseMainSha,
+    head: Silian_latestMainSha,
   })
 
-  const commitFileInfos: CompareCommitFileInfo[] = []
+  const Silian_commitFileInfos: CompareCommitFileInfo[] = []
 
-  for (const commit of compareData.commits) {
-    const { data: commitData } = await octokit.repos.getCommit({
-      owner: ARTICLES_REPO_OWNER,
-      repo: ARTICLES_REPO_NAME,
-      ref: commit.sha,
+  for (const Silian_commit of Silian_compareData.commits) {
+    const { data: Silian_commitData } = await Silian_octokit.repos.getCommit({
+      owner: Silian_ARTICLES_REPO_OWNER,
+      repo: Silian_ARTICLES_REPO_NAME,
+      ref: Silian_commit.sha,
     })
 
-    const touchedFilePaths =
-      commitData.files
-        ?.map((file) => file.filename)
-        .filter((filePath): filePath is string => trackedPaths.has(filePath)) ??
+    const Silian_touchedFilePaths =
+      Silian_commitData.files
+        ?.map((Silian_file) => Silian_file.filename)
+        .filter((Silian_filePath): Silian_filePath is string => Silian_trackedPaths.has(Silian_filePath)) ??
       []
 
-    if (touchedFilePaths.length === 0) {
+    if (Silian_touchedFilePaths.length === 0) {
       continue
     }
 
-    commitFileInfos.push({
-      sha: commit.sha,
+    Silian_commitFileInfos.push({
+      sha: Silian_commit.sha,
       info: {
-        sha: commit.sha,
-        message: commit.commit.message,
-        author: commit.commit.author?.name || "Unknown",
-        timestamp: commit.commit.author?.date || new Date().toISOString(),
+        sha: Silian_commit.sha,
+        message: Silian_commit.commit.message,
+        author: Silian_commit.commit.author?.name || "Unknown",
+        timestamp: Silian_commit.commit.author?.date || new Date().toISOString(),
       },
-      touchedFilePaths,
+      touchedFilePaths: Silian_touchedFilePaths,
     })
   }
 
   return {
-    totalCommits: compareData.commits.length,
-    commitFileInfos,
+    totalCommits: Silian_compareData.commits.length,
+    commitFileInfos: Silian_commitFileInfos,
   }
 }
 
-async function analyzeRebaseNeedInternal(input: {
+async function Silian_analyzeRebaseNeedInternal(Silian_input: {
   filePaths: string[]
   baseMainSha: string
   latestMainSha: string
   token?: string
 }): Promise<RebaseAnalysis> {
-  const { filePaths, baseMainSha, latestMainSha, token } = input
+  const { filePaths: Silian_filePaths, baseMainSha: Silian_baseMainSha, latestMainSha: Silian_latestMainSha, token: Silian_token } = Silian_input
 
-  if (baseMainSha === latestMainSha) {
+  if (Silian_baseMainSha === Silian_latestMainSha) {
     return {
       recommendation: "QUICK_MERGE_OK",
       totalCommits: 0,
       fileEditCount: 0,
       commitInfos: [],
       adminMessage: "No changes in main since draft was created.",
-      fileAnalyses: filePaths.map((filePath) => ({
-        filePath,
+      fileAnalyses: Silian_filePaths.map((Silian_filePath) => ({
+        filePath: Silian_filePath,
         fileEditCount: 0,
         commitInfos: [],
       })),
     }
   }
 
-  const { totalCommits, commitFileInfos } = await getCompareCommitFileInfos({
-    filePaths,
-    baseMainSha,
-    latestMainSha,
-    token,
+  const { totalCommits: Silian_totalCommits, commitFileInfos: Silian_commitFileInfos } = await Silian_getCompareCommitFileInfos({
+    filePaths: Silian_filePaths,
+    baseMainSha: Silian_baseMainSha,
+    latestMainSha: Silian_latestMainSha,
+    token: Silian_token,
   })
 
-  const perFileCommits = new Map<string, RebaseCommitInfo[]>()
-  for (const filePath of filePaths) {
-    perFileCommits.set(filePath, [])
+  const Silian_perFileCommits = new Map<string, RebaseCommitInfo[]>()
+  for (const Silian_filePath of Silian_filePaths) {
+    Silian_perFileCommits.set(Silian_filePath, [])
   }
 
-  for (const commit of commitFileInfos) {
-    for (const filePath of commit.touchedFilePaths) {
-      perFileCommits.get(filePath)?.push(commit.info)
+  for (const Silian_commit of Silian_commitFileInfos) {
+    for (const Silian_filePath of Silian_commit.touchedFilePaths) {
+      Silian_perFileCommits.get(Silian_filePath)?.push(Silian_commit.info)
     }
   }
 
-  const fileAnalyses = filePaths.map((filePath) => ({
-    filePath,
-    fileEditCount: perFileCommits.get(filePath)?.length ?? 0,
-    commitInfos: perFileCommits.get(filePath) ?? [],
+  const Silian_fileAnalyses = Silian_filePaths.map((Silian_filePath) => ({
+    filePath: Silian_filePath,
+    fileEditCount: Silian_perFileCommits.get(Silian_filePath)?.length ?? 0,
+    commitInfos: Silian_perFileCommits.get(Silian_filePath) ?? [],
   }))
 
-  const fileEditCount = fileAnalyses.reduce(
-    (sum, analysis) => sum + analysis.fileEditCount,
+  const Silian_fileEditCount = Silian_fileAnalyses.reduce(
+    (Silian_sum, Silian_analysis) => Silian_sum + Silian_analysis.fileEditCount,
     0
   )
-  const recommendation: RebaseRecommendation = fileAnalyses.some(
-    (analysis) => analysis.fileEditCount >= 2
+  const Silian_recommendation: RebaseRecommendation = Silian_fileAnalyses.some(
+    (Silian_analysis) => Silian_analysis.fileEditCount >= 2
   )
     ? "REBASE_RECOMMENDED"
     : "QUICK_MERGE_OK"
 
-  const adminMessage =
-    recommendation === "REBASE_RECOMMENDED"
-      ? `Main modified ${fileAnalyses.filter((analysis) => analysis.fileEditCount > 0).length || "no"} tracked file${fileAnalyses.filter((analysis) => analysis.fileEditCount > 0).length === 1 ? "" : "s"} across ${fileEditCount} file-level edit${fileEditCount === 1 ? "" : "s"}. Fine-grained rebase is recommended.`
-      : `Main modified the tracked files in ${fileEditCount === 0 ? "no" : fileEditCount} file-level edit${fileEditCount === 1 ? "" : "s"}. A quick merge should suffice.`
+  const Silian_adminMessage =
+    Silian_recommendation === "REBASE_RECOMMENDED"
+      ? `Main modified ${Silian_fileAnalyses.filter((Silian_analysis) => Silian_analysis.fileEditCount > 0).length || "no"} tracked file${Silian_fileAnalyses.filter((Silian_analysis) => Silian_analysis.fileEditCount > 0).length === 1 ? "" : "s"} across ${Silian_fileEditCount} file-level edit${Silian_fileEditCount === 1 ? "" : "s"}. Fine-grained rebase is recommended.`
+      : `Main modified the tracked files in ${Silian_fileEditCount === 0 ? "no" : Silian_fileEditCount} file-level edit${Silian_fileEditCount === 1 ? "" : "s"}. A quick merge should suffice.`
 
   return {
-    recommendation,
-    totalCommits,
-    fileEditCount,
-    commitInfos: commitFileInfos.map((commit) => commit.info),
-    adminMessage,
-    fileAnalyses,
+    recommendation: Silian_recommendation,
+    totalCommits: Silian_totalCommits,
+    fileEditCount: Silian_fileEditCount,
+    commitInfos: Silian_commitFileInfos.map((Silian_commit) => Silian_commit.info),
+    adminMessage: Silian_adminMessage,
+    fileAnalyses: Silian_fileAnalyses,
   }
 }
 
-async function applyRebaseCommits(input: {
+async function Silian_applyRebaseCommits(Silian_input: {
   draftId: string
   filePath: string
   token?: string
@@ -437,210 +437,210 @@ async function applyRebaseCommits(input: {
   >
 > {
   const {
-    draftId,
-    filePath,
-    token,
-    rebaseState,
-    startIndex,
-    startingContent,
-    previousSha: initialPreviousSha,
-    appliedCommitsBefore,
-  } = input
+    draftId: Silian_draftId,
+    filePath: Silian_filePath,
+    token: Silian_token,
+    rebaseState: Silian_rebaseState,
+    startIndex: Silian_startIndex,
+    startingContent: Silian_startingContent,
+    previousSha: Silian_initialPreviousSha,
+    appliedCommitsBefore: Silian_appliedCommitsBefore,
+  } = Silian_input
 
-  let currentContent = startingContent
-  let previousSha = initialPreviousSha
-  const appliedCommits = [...appliedCommitsBefore]
+  let Silian_currentContent = Silian_startingContent
+  let Silian_previousSha = Silian_initialPreviousSha
+  const Silian_appliedCommits = [...Silian_appliedCommitsBefore]
 
-  for (let i = startIndex; i < rebaseState.commitInfos.length; i++) {
-    const commit = rebaseState.commitInfos[i]
-    reviewLog("rebaseArticleContent", {
-      draftId,
-      filePath,
+  for (let Silian_i = Silian_startIndex; Silian_i < Silian_rebaseState.commitInfos.length; Silian_i++) {
+    const Silian_commit = Silian_rebaseState.commitInfos[Silian_i]
+    Silian_reviewLog("rebaseArticleContent", {
+      draftId: Silian_draftId,
+      filePath: Silian_filePath,
       status: "process-commit",
-      commitIndex: i,
-      commitSha: summarizeSha(commit.sha),
+      commitIndex: Silian_i,
+      commitSha: Silian_summarizeSha(Silian_commit.sha),
     })
-    const baseSnapshot = await getFileSnapshot(filePath, previousSha, token)
-    const latestSnapshot = await getFileSnapshot(filePath, commit.sha, token)
+    const Silian_baseSnapshot = await Silian_getFileSnapshot(Silian_filePath, Silian_previousSha, Silian_token)
+    const Silian_latestSnapshot = await Silian_getFileSnapshot(Silian_filePath, Silian_commit.sha, Silian_token)
 
-    if (!baseSnapshot) {
+    if (!Silian_baseSnapshot) {
       // Missing base is unexpected — skip this commit
       continue
     }
 
-    if (!latestSnapshot) {
+    if (!Silian_latestSnapshot) {
       // File was deleted in this commit but draft has content — deletion conflict
-      const deletedState: RebaseState = {
-        ...rebaseState,
+      const Silian_deletedState: RebaseState = {
+        ...Silian_rebaseState,
         status: "CONFLICT",
-        currentCommitIndex: i,
-        conflictedCommitSha: commit.sha,
+        currentCommitIndex: Silian_i,
+        conflictedCommitSha: Silian_commit.sha,
       }
-      reviewLog("rebaseArticleContent", {
-        draftId,
-        filePath,
+      Silian_reviewLog("rebaseArticleContent", {
+        draftId: Silian_draftId,
+        filePath: Silian_filePath,
         status: "db-write-before",
         branch: "FILE_DELETED_CONFLICT",
-        commitSha: summarizeSha(commit.sha),
+        commitSha: Silian_summarizeSha(Silian_commit.sha),
       })
-      await prisma.revision.update({
-        where: { id: draftId },
-        data: { rebaseState: deletedState as unknown as Prisma.InputJsonValue },
+      await Silian_prisma.revision.update({
+        where: { id: Silian_draftId },
+        data: { rebaseState: Silian_deletedState as unknown as Silian_Prisma.InputJsonValue },
       })
-      reviewLog("rebaseArticleContent", {
-        draftId,
-        filePath,
+      Silian_reviewLog("rebaseArticleContent", {
+        draftId: Silian_draftId,
+        filePath: Silian_filePath,
         status: "db-write-after",
         branch: "FILE_DELETED_CONFLICT",
-        commitSha: summarizeSha(commit.sha),
+        commitSha: Silian_summarizeSha(Silian_commit.sha),
       })
       return {
         status: "FILE_DELETED_CONFLICT",
-        draftContent: currentContent,
-        deletedAtCommit: commit,
-        appliedCommits,
+        draftContent: Silian_currentContent,
+        deletedAtCommit: Silian_commit,
+        appliedCommits: Silian_appliedCommits,
       }
     }
 
-    const mergeResult = getMergeLibrary().merge({
-      baseContent: baseSnapshot.content,
-      draftContent: currentContent,
-      latestMainContent: latestSnapshot.content,
+    const Silian_mergeResult = Silian_getMergeLibrary().merge({
+      baseContent: Silian_baseSnapshot.content,
+      draftContent: Silian_currentContent,
+      latestMainContent: Silian_latestSnapshot.content,
     })
 
-    if (mergeResult.conflict) {
-      const conflictBlock = mergeResult.blocks.find(
-        (b) => b.type === "conflict"
+    if (Silian_mergeResult.conflict) {
+      const Silian_conflictBlock = Silian_mergeResult.blocks.find(
+        (Silian_b) => Silian_b.type === "conflict"
       ) as MergeConflictBlock
-      const rerereResult = await autoResolveConflictContent({
-        content: mergeResult.content,
-        filePath,
-        baseContent: baseSnapshot.content,
+      const Silian_rerereResult = await Silian_autoResolveConflictContent({
+        content: Silian_mergeResult.content,
+        filePath: Silian_filePath,
+        baseContent: Silian_baseSnapshot.content,
       })
 
       if (
-        rerereResult.remaining.length === 0 &&
-        rerereResult.applied.length > 0
+        Silian_rerereResult.remaining.length === 0 &&
+        Silian_rerereResult.applied.length > 0
       ) {
-        reviewLog("rebaseArticleContent", {
-          draftId,
-          filePath,
+        Silian_reviewLog("rebaseArticleContent", {
+          draftId: Silian_draftId,
+          filePath: Silian_filePath,
           status: "commit-auto-resolved",
-          commitSha: summarizeSha(commit.sha),
-          matchesFound: rerereResult.applied.length,
+          commitSha: Silian_summarizeSha(Silian_commit.sha),
+          matchesFound: Silian_rerereResult.applied.length,
         })
-        currentContent = rerereResult.content
-        appliedCommits.push(commit)
-        previousSha = commit.sha
+        Silian_currentContent = Silian_rerereResult.content
+        Silian_appliedCommits.push(Silian_commit)
+        Silian_previousSha = Silian_commit.sha
         continue
       }
 
-      const remainingCommitShas = rebaseState.commitInfos
-        .slice(i + 1)
-        .map((c) => c.sha)
+      const Silian_remainingCommitShas = Silian_rebaseState.commitInfos
+        .slice(Silian_i + 1)
+        .map((Silian_c) => Silian_c.sha)
 
-      const conflictState: RebaseState = {
-        ...rebaseState,
+      const Silian_conflictState: RebaseState = {
+        ...Silian_rebaseState,
         status: "CONFLICT",
-        currentCommitIndex: i,
-        conflictedCommitSha: commit.sha,
+        currentCommitIndex: Silian_i,
+        conflictedCommitSha: Silian_commit.sha,
         resolvedContent: undefined,
-        rerereApplied: rerereResult.applied,
+        rerereApplied: Silian_rerereResult.applied,
       }
 
-      reviewLog("rebaseArticleContent", {
-        draftId,
-        filePath,
+      Silian_reviewLog("rebaseArticleContent", {
+        draftId: Silian_draftId,
+        filePath: Silian_filePath,
         status: "db-write-before",
         branch: "CONFLICT",
-        commitSha: summarizeSha(commit.sha),
+        commitSha: Silian_summarizeSha(Silian_commit.sha),
       })
-      await prisma.revision.update({
-        where: { id: draftId },
+      await Silian_prisma.revision.update({
+        where: { id: Silian_draftId },
         data: {
-          rebaseState: conflictState as unknown as Prisma.InputJsonValue,
+          rebaseState: Silian_conflictState as unknown as Silian_Prisma.InputJsonValue,
         },
       })
-      reviewLog("rebaseArticleContent", {
-        draftId,
-        filePath,
+      Silian_reviewLog("rebaseArticleContent", {
+        draftId: Silian_draftId,
+        filePath: Silian_filePath,
         status: "db-write-after",
         branch: "CONFLICT",
-        commitSha: summarizeSha(commit.sha),
+        commitSha: Silian_summarizeSha(Silian_commit.sha),
       })
 
-      reviewLog("rebaseArticleContent", {
-        draftId,
-        filePath,
+      Silian_reviewLog("rebaseArticleContent", {
+        draftId: Silian_draftId,
+        filePath: Silian_filePath,
         status: "conflict-detected",
-        commitSha: summarizeSha(commit.sha),
-        rerereAppliedCount: rerereResult.applied.length,
+        commitSha: Silian_summarizeSha(Silian_commit.sha),
+        rerereAppliedCount: Silian_rerereResult.applied.length,
       })
 
       return {
         status: "CONFLICT",
-        conflictContent: rerereResult.content,
+        conflictContent: Silian_rerereResult.content,
         conflictBlock:
-          rerereResult.remaining[0] !== undefined
-            ? conflictBlockFromRerere(rerereResult.remaining[0])
-            : conflictBlock,
-        conflictCommit: commit,
-        appliedCommits,
-        remainingCommitShas,
-        rerereApplied: rerereResult.applied,
+          Silian_rerereResult.remaining[0] !== undefined
+            ? Silian_conflictBlockFromRerere(Silian_rerereResult.remaining[0])
+            : Silian_conflictBlock,
+        conflictCommit: Silian_commit,
+        appliedCommits: Silian_appliedCommits,
+        remainingCommitShas: Silian_remainingCommitShas,
+        rerereApplied: Silian_rerereResult.applied,
       }
     }
 
-    currentContent = mergeResult.content
-    appliedCommits.push(commit)
-    previousSha = commit.sha
+    Silian_currentContent = Silian_mergeResult.content
+    Silian_appliedCommits.push(Silian_commit)
+    Silian_previousSha = Silian_commit.sha
   }
 
-  const completedState: RebaseState = {
-    ...rebaseState,
+  const Silian_completedState: RebaseState = {
+    ...Silian_rebaseState,
     status: "COMPLETED",
-    currentCommitIndex: rebaseState.commitInfos.length,
+    currentCommitIndex: Silian_rebaseState.commitInfos.length,
     conflictedCommitSha: undefined,
-    resolvedContent: currentContent,
+    resolvedContent: Silian_currentContent,
   }
 
-  reviewLog("rebaseArticleContent", {
-    draftId,
-    filePath,
+  Silian_reviewLog("rebaseArticleContent", {
+    draftId: Silian_draftId,
+    filePath: Silian_filePath,
     status: "db-write-before",
     branch: "COMPLETED",
-    commitCount: rebaseState.commitInfos.length,
+    commitCount: Silian_rebaseState.commitInfos.length,
   })
-  await prisma.revision.update({
-    where: { id: draftId },
+  await Silian_prisma.revision.update({
+    where: { id: Silian_draftId },
     data: {
-      rebaseState: completedState as unknown as Prisma.InputJsonValue,
+      rebaseState: Silian_completedState as unknown as Silian_Prisma.InputJsonValue,
     },
   })
-  reviewLog("rebaseArticleContent", {
-    draftId,
-    filePath,
+  Silian_reviewLog("rebaseArticleContent", {
+    draftId: Silian_draftId,
+    filePath: Silian_filePath,
     status: "db-write-after",
     branch: "COMPLETED",
-    commitCount: rebaseState.commitInfos.length,
+    commitCount: Silian_rebaseState.commitInfos.length,
   })
 
-  reviewLog("rebaseArticleContent", {
-    draftId,
-    filePath,
+  Silian_reviewLog("rebaseArticleContent", {
+    draftId: Silian_draftId,
+    filePath: Silian_filePath,
     status: "complete",
     resultStatus: "SUCCESS",
-    appliedCommitCount: appliedCommits.length,
+    appliedCommitCount: Silian_appliedCommits.length,
   })
 
   return {
     status: "SUCCESS",
-    finalContent: currentContent,
-    appliedCommits,
+    finalContent: Silian_currentContent,
+    appliedCommits: Silian_appliedCommits,
   }
 }
 
-async function applyRebaseCommitsMultiFile(input: {
+async function Silian_applyRebaseCommitsMultiFile(Silian_input: {
   draftId: string
   token?: string
   rebaseState: RebaseState
@@ -654,214 +654,214 @@ async function applyRebaseCommitsMultiFile(input: {
   >
 > {
   const {
-    draftId,
-    token,
-    rebaseState,
-    startIndex,
-    previousSha: initialPreviousSha,
-  } = input
+    draftId: Silian_draftId,
+    token: Silian_token,
+    rebaseState: Silian_rebaseState,
+    startIndex: Silian_startIndex,
+    previousSha: Silian_initialPreviousSha,
+  } = Silian_input
 
-  const fileStates = Object.fromEntries(
-    Object.entries(rebaseState.fileStates ?? {}).map(
-      ([filePath, fileState]) => [filePath, { ...fileState }]
+  const Silian_fileStates = Object.fromEntries(
+    Object.entries(Silian_rebaseState.fileStates ?? {}).map(
+      ([Silian_filePath, Silian_fileState]) => [Silian_filePath, { ...Silian_fileState }]
     )
   )
-  const trackedFilePaths = Object.keys(fileStates)
-  const appliedCommits = [...input.appliedCommitsBefore]
-  const octokit = getOctokit(token)
-  let previousSha = initialPreviousSha
+  const Silian_trackedFilePaths = Object.keys(Silian_fileStates)
+  const Silian_appliedCommits = [...Silian_input.appliedCommitsBefore]
+  const Silian_octokit = Silian_getOctokit(Silian_token)
+  let Silian_previousSha = Silian_initialPreviousSha
 
-  for (let i = startIndex; i < rebaseState.commitInfos.length; i++) {
-    const commit = rebaseState.commitInfos[i]
-    const { data: commitData } = await octokit.repos.getCommit({
-      owner: ARTICLES_REPO_OWNER,
-      repo: ARTICLES_REPO_NAME,
-      ref: commit.sha,
+  for (let Silian_i = Silian_startIndex; Silian_i < Silian_rebaseState.commitInfos.length; Silian_i++) {
+    const Silian_commit = Silian_rebaseState.commitInfos[Silian_i]
+    const { data: Silian_commitData } = await Silian_octokit.repos.getCommit({
+      owner: Silian_ARTICLES_REPO_OWNER,
+      repo: Silian_ARTICLES_REPO_NAME,
+      ref: Silian_commit.sha,
     })
 
-    const touchedFilePaths =
-      commitData.files
-        ?.map((file) => file.filename)
-        .filter((filePath): filePath is string =>
-          trackedFilePaths.includes(filePath)
+    const Silian_touchedFilePaths =
+      Silian_commitData.files
+        ?.map((Silian_file) => Silian_file.filename)
+        .filter((Silian_filePath): Silian_filePath is string =>
+          Silian_trackedFilePaths.includes(Silian_filePath)
         ) ?? []
 
-    for (const filePath of touchedFilePaths) {
-      fileStates[filePath] = {
-        ...fileStates[filePath],
+    for (const Silian_filePath of Silian_touchedFilePaths) {
+      Silian_fileStates[Silian_filePath] = {
+        ...Silian_fileStates[Silian_filePath],
         status: "in_progress",
       }
     }
 
-    for (const filePath of touchedFilePaths) {
-      const currentFileState = fileStates[filePath]
-      const baseSnapshot = await getFileSnapshot(filePath, previousSha, token)
-      const latestSnapshot = await getFileSnapshot(filePath, commit.sha, token)
+    for (const Silian_filePath of Silian_touchedFilePaths) {
+      const Silian_currentFileState = Silian_fileStates[Silian_filePath]
+      const Silian_baseSnapshot = await Silian_getFileSnapshot(Silian_filePath, Silian_previousSha, Silian_token)
+      const Silian_latestSnapshot = await Silian_getFileSnapshot(Silian_filePath, Silian_commit.sha, Silian_token)
 
-      if (!latestSnapshot) {
-        const nextFileStates: Record<string, FileRebaseState> = {
-          ...fileStates,
-          [filePath]: {
-            ...currentFileState,
+      if (!Silian_latestSnapshot) {
+        const Silian_nextFileStates: Record<string, FileRebaseState> = {
+          ...Silian_fileStates,
+          [Silian_filePath]: {
+            ...Silian_currentFileState,
             status: "conflict" as const,
           },
         }
-        const deletedState: RebaseState = {
-          ...rebaseState,
+        const Silian_deletedState: RebaseState = {
+          ...Silian_rebaseState,
           status: "CONFLICT",
-          currentCommitIndex: i,
-          conflictedCommitSha: commit.sha,
-          fileStates: nextFileStates,
+          currentCommitIndex: Silian_i,
+          conflictedCommitSha: Silian_commit.sha,
+          fileStates: Silian_nextFileStates,
         }
-        await prisma.revision.update({
-          where: { id: draftId },
+        await Silian_prisma.revision.update({
+          where: { id: Silian_draftId },
           data: {
-            rebaseState: deletedState as unknown as Prisma.InputJsonValue,
+            rebaseState: Silian_deletedState as unknown as Silian_Prisma.InputJsonValue,
           },
         })
         return {
           status: "FILE_DELETED_CONFLICT",
-          draftContent: currentFileState.currentContent,
-          deletedAtCommit: commit,
-          appliedCommits,
-          files: fileStatesToFiles(nextFileStates),
-          deletedFilePath: filePath,
+          draftContent: Silian_currentFileState.currentContent,
+          deletedAtCommit: Silian_commit,
+          appliedCommits: Silian_appliedCommits,
+          files: Silian_fileStatesToFiles(Silian_nextFileStates),
+          deletedFilePath: Silian_filePath,
         }
       }
 
-      const mergeResult = getMergeLibrary().merge({
-        baseContent: baseSnapshot?.content ?? "",
-        draftContent: currentFileState.currentContent,
-        latestMainContent: latestSnapshot.content,
+      const Silian_mergeResult = Silian_getMergeLibrary().merge({
+        baseContent: Silian_baseSnapshot?.content ?? "",
+        draftContent: Silian_currentFileState.currentContent,
+        latestMainContent: Silian_latestSnapshot.content,
       })
 
-      if (mergeResult.conflict) {
-        const conflictBlock = mergeResult.blocks.find(
-          (block) => block.type === "conflict"
+      if (Silian_mergeResult.conflict) {
+        const Silian_conflictBlock = Silian_mergeResult.blocks.find(
+          (Silian_block) => Silian_block.type === "conflict"
         ) as MergeConflictBlock
-        const rerereResult = await autoResolveConflictContent({
-          content: mergeResult.content,
-          filePath,
-          baseContent: baseSnapshot?.content ?? "",
+        const Silian_rerereResult = await Silian_autoResolveConflictContent({
+          content: Silian_mergeResult.content,
+          filePath: Silian_filePath,
+          baseContent: Silian_baseSnapshot?.content ?? "",
         })
 
         if (
-          rerereResult.remaining.length === 0 &&
-          rerereResult.applied.length > 0
+          Silian_rerereResult.remaining.length === 0 &&
+          Silian_rerereResult.applied.length > 0
         ) {
-          fileStates[filePath] = {
-            ...currentFileState,
+          Silian_fileStates[Silian_filePath] = {
+            ...Silian_currentFileState,
             status: "completed",
-            currentContent: rerereResult.content,
+            currentContent: Silian_rerereResult.content,
           }
           continue
         }
 
-        const remainingCommitShas = rebaseState.commitInfos
-          .slice(i + 1)
-          .map((nextCommit) => nextCommit.sha)
-        const nextFileStates: Record<string, FileRebaseState> = {
-          ...fileStates,
-          [filePath]: {
-            ...currentFileState,
+        const Silian_remainingCommitShas = Silian_rebaseState.commitInfos
+          .slice(Silian_i + 1)
+          .map((Silian_nextCommit) => Silian_nextCommit.sha)
+        const Silian_nextFileStates: Record<string, FileRebaseState> = {
+          ...Silian_fileStates,
+          [Silian_filePath]: {
+            ...Silian_currentFileState,
             status: "conflict" as const,
           },
         }
-        const conflictState: RebaseState = {
-          ...rebaseState,
+        const Silian_conflictState: RebaseState = {
+          ...Silian_rebaseState,
           status: "CONFLICT",
-          currentCommitIndex: i,
-          conflictedCommitSha: commit.sha,
+          currentCommitIndex: Silian_i,
+          conflictedCommitSha: Silian_commit.sha,
           resolvedContent: undefined,
-          fileStates: nextFileStates,
-          rerereApplied: rerereResult.applied,
+          fileStates: Silian_nextFileStates,
+          rerereApplied: Silian_rerereResult.applied,
         }
 
-        await prisma.revision.update({
-          where: { id: draftId },
+        await Silian_prisma.revision.update({
+          where: { id: Silian_draftId },
           data: {
-            rebaseState: conflictState as unknown as Prisma.InputJsonValue,
+            rebaseState: Silian_conflictState as unknown as Silian_Prisma.InputJsonValue,
           },
         })
 
         return {
           status: "CONFLICT",
-          conflictContent: rerereResult.content,
+          conflictContent: Silian_rerereResult.content,
           conflictBlock:
-            rerereResult.remaining[0] !== undefined
-              ? conflictBlockFromRerere(rerereResult.remaining[0])
-              : conflictBlock,
-          conflictCommit: commit,
-          appliedCommits,
-          remainingCommitShas,
-          files: fileStatesToFiles(nextFileStates),
-          conflictFilePath: filePath,
-          rerereApplied: rerereResult.applied,
+            Silian_rerereResult.remaining[0] !== undefined
+              ? Silian_conflictBlockFromRerere(Silian_rerereResult.remaining[0])
+              : Silian_conflictBlock,
+          conflictCommit: Silian_commit,
+          appliedCommits: Silian_appliedCommits,
+          remainingCommitShas: Silian_remainingCommitShas,
+          files: Silian_fileStatesToFiles(Silian_nextFileStates),
+          conflictFilePath: Silian_filePath,
+          rerereApplied: Silian_rerereResult.applied,
         }
       }
 
-      fileStates[filePath] = {
-        ...currentFileState,
+      Silian_fileStates[Silian_filePath] = {
+        ...Silian_currentFileState,
         status: "completed",
-        currentContent: mergeResult.content,
+        currentContent: Silian_mergeResult.content,
       }
     }
 
-    appliedCommits.push(commit)
-    previousSha = commit.sha
+    Silian_appliedCommits.push(Silian_commit)
+    Silian_previousSha = Silian_commit.sha
   }
 
-  const completedState: RebaseState = {
-    ...rebaseState,
+  const Silian_completedState: RebaseState = {
+    ...Silian_rebaseState,
     status: "COMPLETED",
-    currentCommitIndex: rebaseState.commitInfos.length,
+    currentCommitIndex: Silian_rebaseState.commitInfos.length,
     conflictedCommitSha: undefined,
-    resolvedContent: serializeDraftFilesForStorage({
-      activeFileId: Object.values(fileStates)[0]?.filePath ?? "",
+    resolvedContent: Silian_serializeDraftFilesForStorage({
+      activeFileId: Object.values(Silian_fileStates)[0]?.filePath ?? "",
       folders: [],
-      files: fileStatesToFiles(fileStates).map((file) => ({
-        id: file.filePath,
-        filePath: file.filePath,
-        content: file.content,
+      files: Silian_fileStatesToFiles(Silian_fileStates).map((Silian_file) => ({
+        id: Silian_file.filePath,
+        filePath: Silian_file.filePath,
+        content: Silian_file.content,
       })),
     }).content,
-    fileStates,
+    fileStates: Silian_fileStates,
   }
 
-  await prisma.revision.update({
-    where: { id: draftId },
+  await Silian_prisma.revision.update({
+    where: { id: Silian_draftId },
     data: {
-      rebaseState: completedState as unknown as Prisma.InputJsonValue,
+      rebaseState: Silian_completedState as unknown as Silian_Prisma.InputJsonValue,
     },
   })
 
   return {
     status: "SUCCESS",
-    finalContent: Object.values(fileStates)[0]?.currentContent ?? "",
-    appliedCommits,
-    files: fileStatesToFiles(fileStates),
+    finalContent: Object.values(Silian_fileStates)[0]?.currentContent ?? "",
+    appliedCommits: Silian_appliedCommits,
+    files: Silian_fileStatesToFiles(Silian_fileStates),
   }
 }
 
 export async function rebaseArticleContent(
-  input: RebaseInput
+  Silian_input: RebaseInput
 ): Promise<RebaseOutcome> {
-  const { draftId, filePath, baseMainSha, latestMainSha, draftContent, token } =
-    input
+  const { draftId: Silian_draftId, filePath: Silian_filePath, baseMainSha: Silian_baseMainSha, latestMainSha: Silian_latestMainSha, draftContent: Silian_draftContent, token: Silian_token } =
+    Silian_input
 
-  reviewLog("rebaseArticleContent", {
-    draftId,
-    filePath,
+  Silian_reviewLog("rebaseArticleContent", {
+    draftId: Silian_draftId,
+    filePath: Silian_filePath,
     status: "start",
     fileCount: 1,
-    baseMainSha: summarizeSha(baseMainSha),
-    latestMainSha: summarizeSha(latestMainSha),
+    baseMainSha: Silian_summarizeSha(Silian_baseMainSha),
+    latestMainSha: Silian_summarizeSha(Silian_latestMainSha),
   })
 
-  if (baseMainSha === latestMainSha) {
-    reviewLog("rebaseArticleContent", {
-      draftId,
-      filePath,
+  if (Silian_baseMainSha === Silian_latestMainSha) {
+    Silian_reviewLog("rebaseArticleContent", {
+      draftId: Silian_draftId,
+      filePath: Silian_filePath,
       status: "branch-decision",
       branch: "NO_CHANGE",
       reason: "same-main-sha",
@@ -869,103 +869,103 @@ export async function rebaseArticleContent(
     return { status: "NO_CHANGE", message: "No commits to rebase" }
   }
 
-  const octokit = getOctokit(token)
+  const Silian_octokit = Silian_getOctokit(Silian_token)
 
-  const { data: compareData } = await octokit.repos.compareCommits({
-    owner: ARTICLES_REPO_OWNER,
-    repo: ARTICLES_REPO_NAME,
-    base: baseMainSha,
-    head: latestMainSha,
+  const { data: Silian_compareData } = await Silian_octokit.repos.compareCommits({
+    owner: Silian_ARTICLES_REPO_OWNER,
+    repo: Silian_ARTICLES_REPO_NAME,
+    base: Silian_baseMainSha,
+    head: Silian_latestMainSha,
   })
 
-  const relevantCommits: RebaseCommitInfo[] = []
-  for (const commit of compareData.commits) {
-    const { data: commitData } = await octokit.repos.getCommit({
-      owner: ARTICLES_REPO_OWNER,
-      repo: ARTICLES_REPO_NAME,
-      ref: commit.sha,
+  const Silian_relevantCommits: RebaseCommitInfo[] = []
+  for (const Silian_commit of Silian_compareData.commits) {
+    const { data: Silian_commitData } = await Silian_octokit.repos.getCommit({
+      owner: Silian_ARTICLES_REPO_OWNER,
+      repo: Silian_ARTICLES_REPO_NAME,
+      ref: Silian_commit.sha,
     })
 
-    const modifiedFile = commitData.files?.some((f) => f.filename === filePath)
-    if (modifiedFile) {
-      relevantCommits.push({
-        sha: commit.sha,
-        message: commit.commit.message,
-        author: commit.commit.author?.name || "Unknown",
-        timestamp: commit.commit.author?.date || new Date().toISOString(),
+    const Silian_modifiedFile = Silian_commitData.files?.some((Silian_f) => Silian_f.filename === Silian_filePath)
+    if (Silian_modifiedFile) {
+      Silian_relevantCommits.push({
+        sha: Silian_commit.sha,
+        message: Silian_commit.commit.message,
+        author: Silian_commit.commit.author?.name || "Unknown",
+        timestamp: Silian_commit.commit.author?.date || new Date().toISOString(),
       })
     }
   }
 
-  if (relevantCommits.length === 0) {
-    reviewLog("rebaseArticleContent", {
-      draftId,
-      filePath,
+  if (Silian_relevantCommits.length === 0) {
+    Silian_reviewLog("rebaseArticleContent", {
+      draftId: Silian_draftId,
+      filePath: Silian_filePath,
       status: "branch-decision",
       branch: "NO_CHANGE",
       reason: "no-relevant-commits",
-      commitCount: compareData.commits.length,
+      commitCount: Silian_compareData.commits.length,
     })
     return { status: "NO_CHANGE", message: "No commits modified this file" }
   }
 
-  const initialState: RebaseState = {
+  const Silian_initialState: RebaseState = {
     status: "IN_PROGRESS",
-    commitShas: relevantCommits.map((c) => c.sha),
+    commitShas: Silian_relevantCommits.map((Silian_c) => Silian_c.sha),
     currentCommitIndex: 0,
-    originalContent: draftContent,
-    commitInfos: relevantCommits,
+    originalContent: Silian_draftContent,
+    commitInfos: Silian_relevantCommits,
   }
 
-  reviewLog("rebaseArticleContent", {
-    draftId,
-    filePath,
+  Silian_reviewLog("rebaseArticleContent", {
+    draftId: Silian_draftId,
+    filePath: Silian_filePath,
     status: "db-write-before",
     branch: "IN_PROGRESS",
-    commitCount: relevantCommits.length,
+    commitCount: Silian_relevantCommits.length,
   })
-  await prisma.revision.update({
-    where: { id: draftId },
+  await Silian_prisma.revision.update({
+    where: { id: Silian_draftId },
     data: {
-      rebaseState: initialState as unknown as Prisma.InputJsonValue,
+      rebaseState: Silian_initialState as unknown as Silian_Prisma.InputJsonValue,
     },
   })
-  reviewLog("rebaseArticleContent", {
-    draftId,
-    filePath,
+  Silian_reviewLog("rebaseArticleContent", {
+    draftId: Silian_draftId,
+    filePath: Silian_filePath,
     status: "db-write-after",
     branch: "IN_PROGRESS",
-    commitCount: relevantCommits.length,
+    commitCount: Silian_relevantCommits.length,
   })
 
-  return applyRebaseCommits({
-    draftId,
-    filePath,
-    token,
-    rebaseState: initialState,
+  return Silian_applyRebaseCommits({
+    draftId: Silian_draftId,
+    filePath: Silian_filePath,
+    token: Silian_token,
+    rebaseState: Silian_initialState,
     startIndex: 0,
-    startingContent: draftContent,
-    previousSha: baseMainSha,
+    startingContent: Silian_draftContent,
+    previousSha: Silian_baseMainSha,
     appliedCommitsBefore: [],
   })
 }
 
 export async function rebaseArticleContentMultiFile(
-  input: MultiFileRebaseInput
+  Silian_input: MultiFileRebaseInput
 ): Promise<RebaseOutcome> {
-  const { draftId, files, baseMainSha, latestMainSha, token } = input
+  const { draftId: Silian_draftId, files: Silian_files, baseMainSha: Silian_baseMainSha, latestMainSha: Silian_latestMainSha, token: Silian_token } = Silian_input
 
-  reviewLog("rebaseArticleContentMultiFile", {
-    draftId,
+  Silian_reviewLog("rebaseArticleContentMultiFile", {
+    draftId: Silian_draftId,
     status: "start",
-    fileCount: files.length,
-    baseMainSha: summarizeSha(baseMainSha),
-    latestMainSha: summarizeSha(latestMainSha),
+    fileCount: Silian_files.length,
+    baseMainSha: Silian_summarizeSha(Silian_baseMainSha),
+    latestMainSha: Silian_summarizeSha(Silian_latestMainSha),
   })
 
-  if (baseMainSha === latestMainSha) {
-    reviewLog("rebaseArticleContentMultiFile", {
-      draftId,
+  if (Silian_baseMainSha === Silian_latestMainSha) {
+    Silian_reviewLog("rebaseArticleContentMultiFile", {
+      draftId: Silian_draftId,
       status: "branch-decision",
       branch: "NO_CHANGE",
       reason: "same-main-sha",
@@ -973,253 +973,253 @@ export async function rebaseArticleContentMultiFile(
     return { status: "NO_CHANGE", message: "No commits to rebase" }
   }
 
-  const normalizedFiles = files.filter((file) => file.filePath)
-  const { commitFileInfos } = await getCompareCommitFileInfos({
-    filePaths: normalizedFiles.map((file) => file.filePath),
-    baseMainSha,
-    latestMainSha,
-    token,
+  const Silian_normalizedFiles = Silian_files.filter((Silian_file) => Silian_file.filePath)
+  const { commitFileInfos: Silian_commitFileInfos } = await Silian_getCompareCommitFileInfos({
+    filePaths: Silian_normalizedFiles.map((Silian_file) => Silian_file.filePath),
+    baseMainSha: Silian_baseMainSha,
+    latestMainSha: Silian_latestMainSha,
+    token: Silian_token,
   })
 
-  if (commitFileInfos.length === 0) {
-    reviewLog("rebaseArticleContentMultiFile", {
-      draftId,
+  if (Silian_commitFileInfos.length === 0) {
+    Silian_reviewLog("rebaseArticleContentMultiFile", {
+      draftId: Silian_draftId,
       status: "branch-decision",
       branch: "NO_CHANGE",
       reason: "no-relevant-commits",
-      fileCount: normalizedFiles.length,
+      fileCount: Silian_normalizedFiles.length,
     })
     return { status: "NO_CHANGE", message: "No commits modified these files" }
   }
 
-  const draftStorage = serializeDraftFilesForStorage({
-    activeFileId: normalizedFiles[0]?.filePath ?? "",
+  const Silian_draftStorage = Silian_serializeDraftFilesForStorage({
+    activeFileId: Silian_normalizedFiles[0]?.filePath ?? "",
     folders: [],
-    files: normalizedFiles.map((file) => ({
-      id: file.filePath,
-      filePath: file.filePath,
-      content: file.content,
+    files: Silian_normalizedFiles.map((Silian_file) => ({
+      id: Silian_file.filePath,
+      filePath: Silian_file.filePath,
+      content: Silian_file.content,
     })),
   })
 
-  const initialState: RebaseState = {
+  const Silian_initialState: RebaseState = {
     status: "IN_PROGRESS",
-    commitShas: commitFileInfos.map((commit) => commit.sha),
+    commitShas: Silian_commitFileInfos.map((Silian_commit) => Silian_commit.sha),
     currentCommitIndex: 0,
-    originalContent: draftStorage.content,
-    commitInfos: commitFileInfos.map((commit) => commit.info),
-    fileStates: buildFileStates(normalizedFiles),
+    originalContent: Silian_draftStorage.content,
+    commitInfos: Silian_commitFileInfos.map((Silian_commit) => Silian_commit.info),
+    fileStates: Silian_buildFileStates(Silian_normalizedFiles),
   }
 
-  reviewLog("rebaseArticleContentMultiFile", {
-    draftId,
+  Silian_reviewLog("rebaseArticleContentMultiFile", {
+    draftId: Silian_draftId,
     status: "db-write-before",
     branch: "IN_PROGRESS",
-    commitCount: commitFileInfos.length,
-    fileCount: normalizedFiles.length,
+    commitCount: Silian_commitFileInfos.length,
+    fileCount: Silian_normalizedFiles.length,
   })
-  await prisma.revision.update({
-    where: { id: draftId },
+  await Silian_prisma.revision.update({
+    where: { id: Silian_draftId },
     data: {
-      rebaseState: initialState as unknown as Prisma.InputJsonValue,
+      rebaseState: Silian_initialState as unknown as Silian_Prisma.InputJsonValue,
     },
   })
-  reviewLog("rebaseArticleContentMultiFile", {
-    draftId,
+  Silian_reviewLog("rebaseArticleContentMultiFile", {
+    draftId: Silian_draftId,
     status: "db-write-after",
     branch: "IN_PROGRESS",
-    commitCount: commitFileInfos.length,
-    fileCount: normalizedFiles.length,
+    commitCount: Silian_commitFileInfos.length,
+    fileCount: Silian_normalizedFiles.length,
   })
 
-  return applyRebaseCommitsMultiFile({
-    draftId,
-    token,
-    rebaseState: initialState,
+  return Silian_applyRebaseCommitsMultiFile({
+    draftId: Silian_draftId,
+    token: Silian_token,
+    rebaseState: Silian_initialState,
     startIndex: 0,
-    previousSha: baseMainSha,
+    previousSha: Silian_baseMainSha,
     appliedCommitsBefore: [],
   })
 }
 
 export async function abortRebase(
-  input: AbortRebaseInput
+  Silian_input: AbortRebaseInput
 ): Promise<AbortRebaseOutcome> {
-  reviewLog("abortRebase", { draftId: input.draftId, status: "start" })
-  const revision = await prisma.revision.findUnique({
-    where: { id: input.draftId },
+  Silian_reviewLog("abortRebase", { draftId: Silian_input.draftId, status: "start" })
+  const Silian_revision = await Silian_prisma.revision.findUnique({
+    where: { id: Silian_input.draftId },
   })
 
-  const rebaseState = (revision?.rebaseState as RebaseState | null) ?? null
+  const Silian_rebaseState = (Silian_revision?.rebaseState as RebaseState | null) ?? null
 
   if (
-    !rebaseState ||
-    (rebaseState.status !== "IN_PROGRESS" && rebaseState.status !== "CONFLICT")
+    !Silian_rebaseState ||
+    (Silian_rebaseState.status !== "IN_PROGRESS" && Silian_rebaseState.status !== "CONFLICT")
   ) {
-    reviewLog("abortRebase", {
-      draftId: input.draftId,
+    Silian_reviewLog("abortRebase", {
+      draftId: Silian_input.draftId,
       status: "branch-decision",
       branch: "NO_ACTIVE_REBASE",
     })
     return { status: "ERROR", message: "No active rebase to abort" }
   }
 
-  const originalContent = rebaseState.originalContent
+  const Silian_originalContent = Silian_rebaseState.originalContent
 
-  reviewLog("abortRebase", {
-    draftId: input.draftId,
+  Silian_reviewLog("abortRebase", {
+    draftId: Silian_input.draftId,
     status: "db-write-before",
     fields: ["content", "conflictContent", "status", "rebaseState"],
     nextStatus: "IN_REVIEW",
   })
-  await prisma.revision.update({
-    where: { id: input.draftId },
+  await Silian_prisma.revision.update({
+    where: { id: Silian_input.draftId },
     data: {
-      content: originalContent,
+      content: Silian_originalContent,
       conflictContent: null,
       status: "IN_REVIEW",
       rebaseState: {
-        ...rebaseState,
+        ...Silian_rebaseState,
         status: "ABORTED",
-      } as unknown as Prisma.InputJsonValue,
-    } as Prisma.RevisionUpdateInput,
+      } as unknown as Silian_Prisma.InputJsonValue,
+    } as Silian_Prisma.RevisionUpdateInput,
   })
 
-  reviewLog("abortRebase", {
-    draftId: input.draftId,
+  Silian_reviewLog("abortRebase", {
+    draftId: Silian_input.draftId,
     status: "db-write-after",
     fields: ["content", "conflictContent", "status", "rebaseState"],
     nextStatus: "IN_REVIEW",
-    restoredContentLength: originalContent.length,
+    restoredContentLength: Silian_originalContent.length,
   })
 
-  reviewLog("abortRebase", {
-    draftId: input.draftId,
+  Silian_reviewLog("abortRebase", {
+    draftId: Silian_input.draftId,
     status: "complete",
   })
 
-  return { status: "ABORTED", originalContent }
+  return { status: "ABORTED", originalContent: Silian_originalContent }
 }
 
 export async function resumeRebase(
-  input: ResumeRebaseInput
+  Silian_input: ResumeRebaseInput
 ): Promise<ResumeRebaseOutcome> {
-  const revision = await prisma.revision.findUnique({
-    where: { id: input.draftId },
+  const Silian_revision = await Silian_prisma.revision.findUnique({
+    where: { id: Silian_input.draftId },
   })
 
-  if (!revision) {
+  if (!Silian_revision) {
     return { status: "ERROR", message: "No conflict to resume from" }
   }
 
-  const rebaseState = (revision.rebaseState as RebaseState | null) ?? null
+  const Silian_rebaseState = (Silian_revision.rebaseState as RebaseState | null) ?? null
 
-  if (!rebaseState || rebaseState.status !== "CONFLICT") {
+  if (!Silian_rebaseState || Silian_rebaseState.status !== "CONFLICT") {
     return { status: "ERROR", message: "No conflict to resume from" }
   }
 
-  const conflictedCommitSha =
-    rebaseState.conflictedCommitSha ||
-    rebaseState.commitShas[rebaseState.currentCommitIndex]
+  const Silian_conflictedCommitSha =
+    Silian_rebaseState.conflictedCommitSha ||
+    Silian_rebaseState.commitShas[Silian_rebaseState.currentCommitIndex]
 
-  if (!conflictedCommitSha) {
+  if (!Silian_conflictedCommitSha) {
     return { status: "ERROR", message: "No conflict to resume from" }
   }
 
   if (
-    rebaseState.fileStates &&
-    Object.keys(rebaseState.fileStates).length > 0
+    Silian_rebaseState.fileStates &&
+    Object.keys(Silian_rebaseState.fileStates).length > 0
   ) {
-    const resolvedFilesMap = new Map(
-      (input.resolvedFiles ?? []).map((file) => [file.filePath, file.content])
+    const Silian_resolvedFilesMap = new Map(
+      (Silian_input.resolvedFiles ?? []).map((Silian_file) => [Silian_file.filePath, Silian_file.content])
     )
-    const nextFileStates: Record<string, FileRebaseState> = Object.fromEntries(
-      Object.entries(rebaseState.fileStates).map(([filePath, fileState]) => [
-        filePath,
+    const Silian_nextFileStates: Record<string, FileRebaseState> = Object.fromEntries(
+      Object.entries(Silian_rebaseState.fileStates).map(([Silian_filePath, Silian_fileState]) => [
+        Silian_filePath,
         {
-          ...fileState,
+          ...Silian_fileState,
           currentContent:
-            resolvedFilesMap.get(filePath) ??
-            (fileState.status === "conflict"
-              ? (input.resolvedContent ?? fileState.currentContent)
-              : fileState.currentContent),
+            Silian_resolvedFilesMap.get(Silian_filePath) ??
+            (Silian_fileState.status === "conflict"
+              ? (Silian_input.resolvedContent ?? Silian_fileState.currentContent)
+              : Silian_fileState.currentContent),
           status:
-            fileState.status === "conflict"
+            Silian_fileState.status === "conflict"
               ? ("completed" as const)
-              : fileState.status,
+              : Silian_fileState.status,
         },
       ])
     )
 
-    return applyRebaseCommitsMultiFile({
-      draftId: input.draftId,
-      token: input.token,
+    return Silian_applyRebaseCommitsMultiFile({
+      draftId: Silian_input.draftId,
+      token: Silian_input.token,
       rebaseState: {
-        ...rebaseState,
+        ...Silian_rebaseState,
         status: "IN_PROGRESS",
-        fileStates: nextFileStates,
+        fileStates: Silian_nextFileStates,
       },
-      startIndex: rebaseState.currentCommitIndex + 1,
-      previousSha: conflictedCommitSha,
-      appliedCommitsBefore: rebaseState.commitInfos.slice(
+      startIndex: Silian_rebaseState.currentCommitIndex + 1,
+      previousSha: Silian_conflictedCommitSha,
+      appliedCommitsBefore: Silian_rebaseState.commitInfos.slice(
         0,
-        rebaseState.currentCommitIndex
+        Silian_rebaseState.currentCommitIndex
       ),
     })
   }
 
-  const filePath = (revision as { filePath?: string }).filePath
-  if (!filePath) {
+  const Silian_filePath = (Silian_revision as { filePath?: string }).filePath
+  if (!Silian_filePath) {
     return { status: "ERROR", message: "No conflict to resume from" }
   }
 
-  const appliedCommitsBefore = rebaseState.commitInfos.slice(
+  const Silian_appliedCommitsBefore = Silian_rebaseState.commitInfos.slice(
     0,
-    rebaseState.currentCommitIndex
+    Silian_rebaseState.currentCommitIndex
   )
 
-  return applyRebaseCommits({
-    draftId: input.draftId,
-    filePath,
-    token: input.token,
-    rebaseState,
-    startIndex: rebaseState.currentCommitIndex + 1,
-    startingContent: input.resolvedContent ?? "",
-    previousSha: conflictedCommitSha,
-    appliedCommitsBefore,
+  return Silian_applyRebaseCommits({
+    draftId: Silian_input.draftId,
+    filePath: Silian_filePath,
+    token: Silian_input.token,
+    rebaseState: Silian_rebaseState,
+    startIndex: Silian_rebaseState.currentCommitIndex + 1,
+    startingContent: Silian_input.resolvedContent ?? "",
+    previousSha: Silian_conflictedCommitSha,
+    appliedCommitsBefore: Silian_appliedCommitsBefore,
   })
 }
 
 export async function analyzeRebaseNeedMultiFile(
-  input: MultiFileAnalyzeInput
+  Silian_input: MultiFileAnalyzeInput
 ): Promise<RebaseAnalysis> {
-  return analyzeRebaseNeedInternal({
-    filePaths: input.files.map((file) => file.filePath),
-    baseMainSha: input.baseMainSha,
-    latestMainSha: input.latestMainSha,
-    token: input.token,
+  return Silian_analyzeRebaseNeedInternal({
+    filePaths: Silian_input.files.map((Silian_file) => Silian_file.filePath),
+    baseMainSha: Silian_input.baseMainSha,
+    latestMainSha: Silian_input.latestMainSha,
+    token: Silian_input.token,
   })
 }
 
 export async function analyzeRebaseNeed(
-  input: AnalyzeRebaseInput
+  Silian_input: AnalyzeRebaseInput
 ): Promise<RebaseAnalysis> {
-  const result = await analyzeRebaseNeedInternal({
-    filePaths: [input.filePath],
-    baseMainSha: input.baseMainSha,
-    latestMainSha: input.latestMainSha,
-    token: input.token,
+  const Silian_result = await Silian_analyzeRebaseNeedInternal({
+    filePaths: [Silian_input.filePath],
+    baseMainSha: Silian_input.baseMainSha,
+    latestMainSha: Silian_input.latestMainSha,
+    token: Silian_input.token,
   })
 
   return {
-    recommendation: result.recommendation,
-    totalCommits: result.totalCommits,
-    fileEditCount: result.fileEditCount,
-    commitInfos: result.commitInfos,
+    recommendation: Silian_result.recommendation,
+    totalCommits: Silian_result.totalCommits,
+    fileEditCount: Silian_result.fileEditCount,
+    commitInfos: Silian_result.commitInfos,
     adminMessage:
-      result.commitInfos.length >= 2
-        ? `The article was modified in ${result.fileEditCount} separate commits. Fine-grained rebase is recommended to resolve each change individually.`
-        : `The article was modified in ${result.fileEditCount === 0 ? "no" : "1"} commit. A quick merge should suffice.`,
-    fileAnalyses: result.fileAnalyses,
+      Silian_result.commitInfos.length >= 2
+        ? `The article was modified in ${Silian_result.fileEditCount} separate commits. Fine-grained rebase is recommended to resolve each change individually.`
+        : `The article was modified in ${Silian_result.fileEditCount === 0 ? "no" : "1"} commit. A quick merge should suffice.`,
+    fileAnalyses: Silian_result.fileAnalyses,
   }
 }

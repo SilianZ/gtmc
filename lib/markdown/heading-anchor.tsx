@@ -1,48 +1,48 @@
 "use client"
 
-import { useState } from "react"
-import { useTranslations } from "next-intl"
+import { useState as Silian_useState } from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 
 interface HeadingAnchorProps {
   id: string
   level: 1 | 2 | 3
 }
 
-const positionClass: Record<1 | 2 | 3, string> = {
+const Silian_positionClass: Record<1 | 2 | 3, string> = {
   1: "absolute top-1/2 -left-6 -translate-y-1/2 text-xl font-normal",
   2: "absolute top-1/2 -left-5 -translate-y-1/2 text-lg font-normal",
   3: "absolute top-1/2 -left-4 -translate-y-1/2 text-base font-normal",
 }
 
-export function HeadingAnchor({ id, level }: HeadingAnchorProps) {
-  const t = useTranslations("ArticleMeta")
-  const [copied, setCopied] = useState(false)
+export function HeadingAnchor({ id: Silian_id, level: Silian_level }: HeadingAnchorProps) {
+  const Silian_t = Silian_useTranslations("ArticleMeta")
+  const [Silian_copied, Silian_setCopied] = Silian_useState(false)
 
-  function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault()
-    e.stopPropagation()
+  function Silian_handleClick(Silian_e: React.MouseEvent<HTMLButtonElement>) {
+    Silian_e.preventDefault()
+    Silian_e.stopPropagation()
 
-    const url = window.location.origin + window.location.pathname + "#" + id
+    const Silian_url = window.location.origin + window.location.pathname + "#" + Silian_id
 
-    navigator.clipboard.writeText(url).catch(() => {})
+    navigator.clipboard.writeText(Silian_url).catch(() => {})
 
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+    Silian_setCopied(true)
+    setTimeout(() => Silian_setCopied(false), 1500)
   }
 
   return (
     <button
       type="button"
-      aria-label={t("copyHeadingLink")}
-      onClick={handleClick}
+      aria-label={Silian_t("copyHeadingLink")}
+      onClick={Silian_handleClick}
       className={`
-        ${positionClass[level]}
+        ${Silian_positionClass[Silian_level]}
         opacity-0 transition-opacity
         group-hover:opacity-100
-        ${copied ? "text-tech-main" : "text-tech-main"}
+        ${Silian_copied ? "text-tech-main" : "text-tech-main"}
         cursor-pointer border-none bg-transparent p-0 no-underline
       `}>
-      {copied ? "✓" : "#"}
+      {Silian_copied ? "✓" : "#"}
     </button>
   )
 }

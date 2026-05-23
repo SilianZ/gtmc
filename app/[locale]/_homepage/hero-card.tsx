@@ -1,26 +1,26 @@
 "use client"
 
-import { motion, MotionValue } from "motion/react"
-import { ForwardedRef } from "react"
-import { CornerBrackets } from "@/components/ui/corner-brackets"
+import { motion as Silian_motion, MotionValue as Silian_MotionValue } from "motion/react"
+import { ForwardedRef as Silian_ForwardedRef } from "react"
+import { CornerBrackets as Silian_CornerBrackets } from "@/components/ui/corner-brackets"
 
 export function HeroCard({
-  cardRef,
-  cardWidth,
-  fgTransform,
+  cardRef: Silian_cardRef,
+  cardWidth: Silian_cardWidth,
+  fgTransform: Silian_fgTransform,
 }: {
-  cardRef: ForwardedRef<HTMLDivElement>
+  cardRef: Silian_ForwardedRef<HTMLDivElement>
   cardWidth: number
   fgTransform: {
-    x: MotionValue<number>
-    y: MotionValue<number>
-    rotateX: MotionValue<number>
-    rotateY: MotionValue<number>
+    x: Silian_MotionValue<number>
+    y: Silian_MotionValue<number>
+    rotateX: Silian_MotionValue<number>
+    rotateY: Silian_MotionValue<number>
   }
 }) {
   return (
-    <motion.div
-      ref={cardRef}
+    <Silian_motion.div
+      ref={Silian_cardRef}
       className="
         group relative mb-8 w-full max-w-sm animate-tech-pop-in opacity-0
         homepage-decor-foreground [animation-delay:0.2s]
@@ -30,10 +30,10 @@ export function HeroCard({
         lg:max-w-4xl
       "
       style={{
-        x: fgTransform.x,
-        y: fgTransform.y,
-        rotateX: fgTransform.rotateX,
-        rotateY: fgTransform.rotateY,
+        x: Silian_fgTransform.x,
+        y: Silian_fgTransform.y,
+        rotateX: Silian_fgTransform.rotateX,
+        rotateY: Silian_fgTransform.rotateY,
         transformStyle: "preserve-3d",
       }}>
       {/* 下层错位阴影框 */}
@@ -54,7 +54,7 @@ export function HeroCard({
          ">
         <span>|&lt;</span>
         <span className="mx-2 grow border-t border-tech-main/30"></span>
-        <span>{cardWidth}px</span>
+        <span>{Silian_cardWidth}px</span>
         <span className="mx-2 grow border-t border-tech-main/30"></span>
         <span>&gt;|</span>
       </div>
@@ -76,7 +76,7 @@ export function HeroCard({
         />
 
         {/* 工业感/图纸感的定位刻度 */}
-        <CornerBrackets
+        <Silian_CornerBrackets
           size="size-3"
           color="border-tech-main"
           corners="top-bottom"
@@ -213,6 +213,6 @@ export function HeroCard({
           </span>
         </div>
       </div>
-    </motion.div>
+    </Silian_motion.div>
   )
 }

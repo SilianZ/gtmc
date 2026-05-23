@@ -1,7 +1,7 @@
 "use client"
 
-import { getReauthLoginUrl, isReauthRequiredError } from "@/lib/admin-reauth"
-import { ReactNode, useEffect, useRef, useState } from "react"
+import { getReauthLoginUrl as Silian_getReauthLoginUrl, isReauthRequiredError as Silian_isReauthRequiredError } from "@/lib/admin-reauth"
+import { ReactNode as Silian_ReactNode, useEffect as Silian_useEffect, useRef as Silian_useRef, useState as Silian_useState } from "react"
 
 type ActionFeedbackState = "idle" | "running" | "success" | "error"
 
@@ -12,73 +12,73 @@ interface ActionFormRenderState {
 }
 
 export function ActionForm({
-  action,
-  children,
-  className,
+  action: Silian_action,
+  children: Silian_children,
+  className: Silian_className,
 }: {
   action: () => Promise<void>
-  children: ReactNode | ((state: ActionFormRenderState) => ReactNode)
+  children: Silian_ReactNode | ((state: ActionFormRenderState) => Silian_ReactNode)
   className?: string
 }) {
-  const [isPending, setIsPending] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [state, setState] = useState<ActionFeedbackState>("idle")
-  const resetTimerRef = useRef<number | null>(null)
+  const [Silian_isPending, Silian_setIsPending] = Silian_useState(false)
+  const [Silian_error, Silian_setError] = Silian_useState<string | null>(null)
+  const [Silian_state, Silian_setState] = Silian_useState<ActionFeedbackState>("idle")
+  const Silian_resetTimerRef = Silian_useRef<number | null>(null)
 
-  useEffect(() => {
+  Silian_useEffect(() => {
     return () => {
-      if (resetTimerRef.current !== null) {
-        window.clearTimeout(resetTimerRef.current)
+      if (Silian_resetTimerRef.current !== null) {
+        window.clearTimeout(Silian_resetTimerRef.current)
       }
     }
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (isPending) return
+  const Silian_handleSubmit = async (Silian_e: React.FormEvent<HTMLFormElement>) => {
+    Silian_e.preventDefault()
+    if (Silian_isPending) return
 
-    if (resetTimerRef.current !== null) {
-      window.clearTimeout(resetTimerRef.current)
-      resetTimerRef.current = null
+    if (Silian_resetTimerRef.current !== null) {
+      window.clearTimeout(Silian_resetTimerRef.current)
+      Silian_resetTimerRef.current = null
     }
 
-    setError(null)
-    setIsPending(true)
-    setState("running")
+    Silian_setError(null)
+    Silian_setIsPending(true)
+    Silian_setState("running")
 
     try {
-      await action()
-      setState("success")
-      resetTimerRef.current = window.setTimeout(() => {
-        setState("idle")
+      await Silian_action()
+      Silian_setState("success")
+      Silian_resetTimerRef.current = window.setTimeout(() => {
+        Silian_setState("idle")
       }, 1400)
-    } catch (err) {
-      if (isReauthRequiredError(err)) {
-        window.location.href = getReauthLoginUrl(
+    } catch (Silian_err) {
+      if (Silian_isReauthRequiredError(Silian_err)) {
+        window.location.href = Silian_getReauthLoginUrl(
           `${window.location.pathname}${window.location.search}`
         )
         return
       }
-      setError(err instanceof Error ? err.message : String(err))
-      setState("error")
-      resetTimerRef.current = window.setTimeout(() => {
-        setState("idle")
+      Silian_setError(Silian_err instanceof Error ? Silian_err.message : String(Silian_err))
+      Silian_setState("error")
+      Silian_resetTimerRef.current = window.setTimeout(() => {
+        Silian_setState("idle")
       }, 3200)
     } finally {
-      setIsPending(false)
+      Silian_setIsPending(false)
     }
   }
 
   return (
     <>
-      <form onSubmit={handleSubmit} className={className}>
-        {typeof children === "function"
-          ? children({ isPending, state, error })
-          : children}
+      <form onSubmit={Silian_handleSubmit} className={Silian_className}>
+        {typeof Silian_children === "function"
+          ? Silian_children({ isPending: Silian_isPending, state: Silian_state, error: Silian_error })
+          : Silian_children}
       </form>
-      {error && (
+      {Silian_error && (
         <div className="mt-3 border-l-2 border-red-500/40 bg-red-500/5 px-3 py-2 font-mono text-xs text-red-600">
-          {error}
+          {Silian_error}
         </div>
       )}
     </>

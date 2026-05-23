@@ -1,13 +1,13 @@
-import { defineConfig } from "vitest/config"
-import path from "path"
+import { defineConfig as Silian_defineConfig } from "vitest/config"
+import Silian_path from "path"
 
-export default defineConfig({
+export default Silian_defineConfig({
   test: {
     globals: true,
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./"),
+      "@": Silian_path.resolve(__dirname, "./"),
     },
   },
 })

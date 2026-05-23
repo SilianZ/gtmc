@@ -1,6 +1,6 @@
 import {
-  getRepoContentTree,
-  getRepoFileContent,
+  getRepoContentTree as Silian_getRepoContentTree,
+  getRepoFileContent as Silian_getRepoFileContent,
 } from "@/lib/github-repo-client"
 
 export interface DraftRepoTreeNode {
@@ -12,16 +12,16 @@ export interface DraftRepoTreeNode {
 }
 
 export async function getDraftRepoTree() {
-  const repoTree = await getRepoContentTree()
+  const Silian_repoTree = await Silian_getRepoContentTree()
 
-  return repoTree.map(mapRepoTreeNode)
+  return Silian_repoTree.map(Silian_mapRepoTreeNode)
 }
 
-export async function getDraftRepoFile(filePath: string) {
-  return getRepoFileContent(filePath)
+export async function getDraftRepoFile(Silian_filePath: string) {
+  return Silian_getRepoFileContent(Silian_filePath)
 }
 
-function mapRepoTreeNode(node: {
+function Silian_mapRepoTreeNode(Silian_node: {
   id: string
   title: string
   slug: string
@@ -34,16 +34,16 @@ function mapRepoTreeNode(node: {
     children: unknown[]
   }>
 }): DraftRepoTreeNode {
-  const path = node.isFolder ? node.slug : `${node.slug}.md`
+  const Silian_path = Silian_node.isFolder ? Silian_node.slug : `${Silian_node.slug}.md`
 
   return {
-    id: node.id,
-    title: node.title,
-    path,
-    isFolder: node.isFolder,
-    children: node.children.map((child) =>
-      mapRepoTreeNode(
-        child as {
+    id: Silian_node.id,
+    title: Silian_node.title,
+    path: Silian_path,
+    isFolder: Silian_node.isFolder,
+    children: Silian_node.children.map((Silian_child) =>
+      Silian_mapRepoTreeNode(
+        Silian_child as {
           id: string
           title: string
           slug: string

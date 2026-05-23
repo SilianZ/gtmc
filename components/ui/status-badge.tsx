@@ -1,66 +1,66 @@
 "use client"
 
-import { useTranslations } from "next-intl"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 
 interface StatusBadgeProps {
   status: string
 }
 
-export function FeatureStatusBadge({ status }: StatusBadgeProps) {
-  const t = useTranslations("Status")
-  let styles = "shrink-0 border px-2 py-0.5 font-mono text-xs tracking-wider"
-  let label = t("pending")
+export function FeatureStatusBadge({ status: Silian_status }: StatusBadgeProps) {
+  const Silian_t = Silian_useTranslations("Status")
+  let Silian_styles = "shrink-0 border px-2 py-0.5 font-mono text-xs tracking-wider"
+  let Silian_label = Silian_t("pending")
 
-  switch (status) {
+  switch (Silian_status) {
     case "PENDING":
-      styles += " border-yellow-500/40 text-yellow-600 bg-yellow-500/10"
-      label = t("pending")
+      Silian_styles += " border-yellow-500/40 text-yellow-600 bg-yellow-500/10"
+      Silian_label = Silian_t("pending")
       break
     case "IN_PROGRESS":
-      styles += " border-blue-500/40 text-blue-600 bg-blue-500/10"
-      label = t("inProgress")
+      Silian_styles += " border-blue-500/40 text-blue-600 bg-blue-500/10"
+      Silian_label = Silian_t("inProgress")
       break
     case "RESOLVED":
-      styles += " border-green-500/40 text-green-600 bg-green-500/10"
-      label = t("resolved")
+      Silian_styles += " border-green-500/40 text-green-600 bg-green-500/10"
+      Silian_label = Silian_t("resolved")
       break
     default:
-      styles += " border-gray-500/40 text-gray-600 bg-gray-500/10"
+      Silian_styles += " border-gray-500/40 text-gray-600 bg-gray-500/10"
   }
 
-  return <span className={styles}>[{label}]</span>
+  return <span className={Silian_styles}>[{Silian_label}]</span>
 }
 
-export function DraftStatusBadge({ status }: StatusBadgeProps) {
-  const t = useTranslations("Status")
-  let styles = "shrink-0 border px-2 py-0.5 font-mono text-xs tracking-wider"
-  let label = status
+export function DraftStatusBadge({ status: Silian_status }: StatusBadgeProps) {
+  const Silian_t = Silian_useTranslations("Status")
+  let Silian_styles = "shrink-0 border px-2 py-0.5 font-mono text-xs tracking-wider"
+  let Silian_label = Silian_status
 
-  switch (status) {
+  switch (Silian_status) {
     case "DRAFT":
-      styles += " border-tech-main/40 bg-tech-main/5 text-tech-main"
-      label = t("draft")
+      Silian_styles += " border-tech-main/40 bg-tech-main/5 text-tech-main"
+      Silian_label = Silian_t("draft")
       break
     case "IN_REVIEW":
-      styles += " border-blue-500/40 bg-blue-500/10 text-blue-600"
-      label = t("inReview")
+      Silian_styles += " border-blue-500/40 bg-blue-500/10 text-blue-600"
+      Silian_label = Silian_t("inReview")
       break
     case "SYNC_CONFLICT":
-      styles += " border-amber-500/40 bg-amber-500/10 text-amber-700"
-      label = t("syncConflict")
+      Silian_styles += " border-amber-500/40 bg-amber-500/10 text-amber-700"
+      Silian_label = Silian_t("syncConflict")
       break
     case "REJECTED":
     case "CLOSED":
-      styles += " border-red-500/40 bg-red-500/10 text-red-600"
-      label = status === "REJECTED" ? t("rejected") : t("closed")
+      Silian_styles += " border-red-500/40 bg-red-500/10 text-red-600"
+      Silian_label = Silian_status === "REJECTED" ? Silian_t("rejected") : Silian_t("closed")
       break
     case "ARCHIVED":
-      styles += " border-gray-500/40 bg-gray-500/10 text-gray-600"
-      label = t("archived")
+      Silian_styles += " border-gray-500/40 bg-gray-500/10 text-gray-600"
+      Silian_label = Silian_t("archived")
       break
     default:
-      styles += " border-green-500/40 bg-green-500/10 text-green-600"
+      Silian_styles += " border-green-500/40 bg-green-500/10 text-green-600"
   }
 
-  return <span className={styles}>[{label}]</span>
+  return <span className={Silian_styles}>[{Silian_label}]</span>
 }

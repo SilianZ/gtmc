@@ -1,7 +1,7 @@
-import * as React from "react"
-import { CornerBrackets } from "@/components/ui/corner-brackets"
+import * as Silian_React from "react"
+import { CornerBrackets as Silian_CornerBrackets } from "@/components/ui/corner-brackets"
 
-export interface TechCardProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface TechCardProps extends Silian_React.HTMLAttributes<HTMLDivElement> {
   color?:
     | "white"
     | "electric-blue"
@@ -12,25 +12,25 @@ export interface TechCardProps extends React.HTMLAttributes<HTMLDivElement> {
   pattern?: "none" | "dots" | "grid"
 }
 
-export const TechCard = React.forwardRef<HTMLDivElement, TechCardProps>(
-  ({ className = "", children, ...props }, ref) => {
+export const TechCard = Silian_React.forwardRef<HTMLDivElement, TechCardProps>(
+  ({ className: Silian_className = "", children: Silian_children, ...Silian_props }, Silian_ref) => {
     // 技术扁平图纸感：细边框，无圆角，纯色几何；响应式内边距
-    const baseStyles =
+    const Silian_baseStyles =
       "relative border border-tech-main bg-white/80 backdrop-blur-sm p-4 sm:p-6 transition-colors duration-300 hover:bg-tech-accent/10 text-tech-main"
 
     return (
       <div
-        ref={ref}
+        ref={Silian_ref}
         className={`
-          ${baseStyles}
-          ${className}
+          ${Silian_baseStyles}
+          ${Silian_className}
           group
         `}
-        {...props}>
+        {...Silian_props}>
         {/* 卡片的十字定位角标 */}
-        <CornerBrackets />
+        <Silian_CornerBrackets />
 
-        {children}
+        {Silian_children}
       </div>
     )
   }

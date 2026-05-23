@@ -1,5 +1,5 @@
-import fs from "fs"
-import path from "path"
+import Silian_fs from "fs"
+import Silian_path from "path"
 import { type ArticleTreeNode } from "./github-repo-client"
 import { type SlugMapEntry } from "./slug-resolver"
 
@@ -10,79 +10,79 @@ export interface LocalizedArticleMetadata {
   introTitle: string
 }
 
-const ARTICLES_DIR = path.join(process.cwd(), "articles")
-const SUBMODULE_GIT = path.join(ARTICLES_DIR, ".git")
-const SLUG_MAP_PATH = path.join(process.cwd(), "lib/slug-map.json")
+const Silian_ARTICLES_DIR = Silian_path.join(process.cwd(), "articles")
+const Silian_SUBMODULE_GIT = Silian_path.join(Silian_ARTICLES_DIR, ".git")
+const Silian_SLUG_MAP_PATH = Silian_path.join(process.cwd(), "lib/slug-map.json")
 
-const slugMap: Record<string, SlugMapEntry> = (() => {
+const Silian_slugMap: Record<string, SlugMapEntry> = (() => {
   try {
-    const raw = fs.readFileSync(SLUG_MAP_PATH, "utf-8")
-    const parsed = JSON.parse(raw) as Record<string, unknown>
-    const normalized: Record<string, SlugMapEntry> = {}
+    const Silian_raw = Silian_fs.readFileSync(Silian_SLUG_MAP_PATH, "utf-8")
+    const Silian_parsed = JSON.parse(Silian_raw) as Record<string, unknown>
+    const Silian_normalized: Record<string, SlugMapEntry> = {}
 
-    for (const [slugKey, value] of Object.entries(parsed)) {
-      if (typeof value !== "object" || value === null) continue
+    for (const [Silian_slugKey, Silian_value] of Object.entries(Silian_parsed)) {
+      if (typeof Silian_value !== "object" || Silian_value === null) continue
 
-      const entry = value as Partial<SlugMapEntry>
-      if (typeof entry.filePath !== "string") continue
+      const Silian_entry = Silian_value as Partial<SlugMapEntry>
+      if (typeof Silian_entry.filePath !== "string") continue
 
-      normalized[slugKey] = {
-        filePath: entry.filePath,
-        slug: typeof entry.slug === "string" ? entry.slug : slugKey,
-        title: typeof entry.title === "string" ? entry.title : undefined,
+      Silian_normalized[Silian_slugKey] = {
+        filePath: Silian_entry.filePath,
+        slug: typeof Silian_entry.slug === "string" ? Silian_entry.slug : Silian_slugKey,
+        title: typeof Silian_entry.title === "string" ? Silian_entry.title : undefined,
         chapterTitle:
-          typeof entry.chapterTitle === "string" ? entry.chapterTitle : "",
+          typeof Silian_entry.chapterTitle === "string" ? Silian_entry.chapterTitle : "",
         chapterTitleEn:
-          typeof entry.chapterTitleEn === "string" ? entry.chapterTitleEn : "",
+          typeof Silian_entry.chapterTitleEn === "string" ? Silian_entry.chapterTitleEn : "",
         introTitle:
-          typeof entry.introTitle === "string" ? entry.introTitle : "",
+          typeof Silian_entry.introTitle === "string" ? Silian_entry.introTitle : "",
         introTitleEn:
-          typeof entry.introTitleEn === "string" ? entry.introTitleEn : "",
+          typeof Silian_entry.introTitleEn === "string" ? Silian_entry.introTitleEn : "",
         hasIntro:
-          typeof entry.hasIntro === "boolean"
-            ? entry.hasIntro
-            : (typeof entry.introTitle === "string" &&
-                entry.introTitle !== "") ||
-              (typeof entry.introTitleEn === "string" &&
-                entry.introTitleEn !== ""),
-        index: typeof entry.index === "number" ? entry.index : 0,
-        isFolder: entry.isFolder === true,
-        isAppendix: entry.isAppendix === true,
-        isPreface: entry.isPreface === true,
+          typeof Silian_entry.hasIntro === "boolean"
+            ? Silian_entry.hasIntro
+            : (typeof Silian_entry.introTitle === "string" &&
+                Silian_entry.introTitle !== "") ||
+              (typeof Silian_entry.introTitleEn === "string" &&
+                Silian_entry.introTitleEn !== ""),
+        index: typeof Silian_entry.index === "number" ? Silian_entry.index : 0,
+        isFolder: Silian_entry.isFolder === true,
+        isAppendix: Silian_entry.isAppendix === true,
+        isPreface: Silian_entry.isPreface === true,
         parentSlug:
-          typeof entry.parentSlug === "string" ? entry.parentSlug : undefined,
-        children: Array.isArray(entry.children)
-          ? (entry.children as SlugMapEntry[])
+          typeof Silian_entry.parentSlug === "string" ? Silian_entry.parentSlug : undefined,
+        children: Array.isArray(Silian_entry.children)
+          ? (Silian_entry.children as SlugMapEntry[])
           : undefined,
-        author: typeof entry.author === "string" ? entry.author : undefined,
-        coAuthors: Array.isArray(entry.coAuthors) ? entry.coAuthors : undefined,
-        date: typeof entry.date === "string" ? entry.date : undefined,
-        lastmod: typeof entry.lastmod === "string" ? entry.lastmod : undefined,
-        isAdvanced: entry.isAdvanced === true,
+        author: typeof Silian_entry.author === "string" ? Silian_entry.author : undefined,
+        coAuthors: Array.isArray(Silian_entry.coAuthors) ? Silian_entry.coAuthors : undefined,
+        date: typeof Silian_entry.date === "string" ? Silian_entry.date : undefined,
+        lastmod: typeof Silian_entry.lastmod === "string" ? Silian_entry.lastmod : undefined,
+        isAdvanced: Silian_entry.isAdvanced === true,
       }
     }
 
-    return normalized
+    return Silian_normalized
   } catch {
     return {}
   }
 })()
 
 export function isSubmoduleAvailable(): boolean {
-  return fs.existsSync(SUBMODULE_GIT)
+  return Silian_fs.existsSync(Silian_SUBMODULE_GIT)
 }
 
 export async function getArticleContent(
-  filePath: string
+  Silian_filePath: string
 ): Promise<string | null> {
   if (isSubmoduleAvailable()) {
-    const localPath = path.join(ARTICLES_DIR, filePath)
+    const Silian_localPath = Silian_path.join(Silian_ARTICLES_DIR, Silian_filePath)
     try {
-      return fs.readFileSync(localPath, "utf-8")
+      return Silian_fs.readFileSync(Silian_localPath, "utf-8")
     } catch {
       if (process.env.NODE_ENV === "development") {
         console.warn(
-          `[article-loader] File not in submodule: ${filePath}, falling back to API`
+          `[article-loader] File not in submodule: ${Silian_filePath}, falling back to API`
         )
       }
     }
@@ -93,18 +93,18 @@ export async function getArticleContent(
   return null
 }
 
-const localTreeCache = new Map<ArticleLocale, ArticleTreeNode[]>()
+const Silian_localTreeCache = new Map<ArticleLocale, ArticleTreeNode[]>()
 
 export async function getArticleTree(
-  locale: ArticleLocale = "zh"
+  Silian_locale: ArticleLocale = "zh"
 ): Promise<ArticleTreeNode[]> {
   if (isSubmoduleAvailable()) {
-    const cached = localTreeCache.get(locale)
-    if (cached) return cached
+    const Silian_cached = Silian_localTreeCache.get(Silian_locale)
+    if (Silian_cached) return Silian_cached
     try {
-      const tree = buildLocalTree(locale)
-      localTreeCache.set(locale, tree)
-      return tree
+      const Silian_tree = Silian_buildLocalTree(Silian_locale)
+      Silian_localTreeCache.set(Silian_locale, Silian_tree)
+      return Silian_tree
     } catch {
       if (process.env.NODE_ENV === "development") {
         console.warn(
@@ -120,167 +120,167 @@ export async function getArticleTree(
 }
 
 export function getLocalizedArticleMetadata(
-  entry: SlugMapEntry | null | undefined,
-  locale: ArticleLocale = "zh"
+  Silian_entry: SlugMapEntry | null | undefined,
+  Silian_locale: ArticleLocale = "zh"
 ): LocalizedArticleMetadata {
-  if (!entry) {
+  if (!Silian_entry) {
     return {
       chapterTitle: "",
       introTitle: "",
     }
   }
 
-  const chapterTitle =
-    locale === "en"
-      ? entry.chapterTitleEn.trim() || entry.chapterTitle.trim()
-      : entry.chapterTitle.trim()
+  const Silian_chapterTitle =
+    Silian_locale === "en"
+      ? Silian_entry.chapterTitleEn.trim() || Silian_entry.chapterTitle.trim()
+      : Silian_entry.chapterTitle.trim()
 
-  const introTitle =
-    locale === "en"
-      ? entry.introTitleEn.trim() || entry.introTitle.trim()
-      : entry.introTitle.trim()
+  const Silian_introTitle =
+    Silian_locale === "en"
+      ? Silian_entry.introTitleEn.trim() || Silian_entry.introTitle.trim()
+      : Silian_entry.introTitle.trim()
 
   return {
-    chapterTitle,
-    introTitle,
+    chapterTitle: Silian_chapterTitle,
+    introTitle: Silian_introTitle,
   }
 }
 
 export function getLocalizedSlugMapEntry(
-  slugPath: string,
-  locale: ArticleLocale = "zh"
+  Silian_slugPath: string,
+  Silian_locale: ArticleLocale = "zh"
 ): (SlugMapEntry & LocalizedArticleMetadata) | null {
-  const entry = slugMap[slugPath]
-  if (!entry) {
+  const Silian_entry = Silian_slugMap[Silian_slugPath]
+  if (!Silian_entry) {
     return null
   }
 
   return {
-    ...entry,
-    ...getLocalizedArticleMetadata(entry, locale),
+    ...Silian_entry,
+    ...getLocalizedArticleMetadata(Silian_entry, Silian_locale),
   }
 }
 
-function buildLocalTree(locale: ArticleLocale): ArticleTreeNode[] {
-  const entries = Object.values(slugMap)
-  if (entries.length === 0) {
+function Silian_buildLocalTree(Silian_locale: ArticleLocale): ArticleTreeNode[] {
+  const Silian_entries = Object.values(Silian_slugMap)
+  if (Silian_entries.length === 0) {
     return []
   }
 
-  const parentIndex = new Map<string, SlugMapEntry[]>()
-  for (const entry of entries) {
-    if (!entry.parentSlug) continue
-    const siblings = parentIndex.get(entry.parentSlug) ?? []
-    siblings.push(entry)
-    parentIndex.set(entry.parentSlug, siblings)
+  const Silian_parentIndex = new Map<string, SlugMapEntry[]>()
+  for (const Silian_entry of Silian_entries) {
+    if (!Silian_entry.parentSlug) continue
+    const Silian_siblings = Silian_parentIndex.get(Silian_entry.parentSlug) ?? []
+    Silian_siblings.push(Silian_entry)
+    Silian_parentIndex.set(Silian_entry.parentSlug, Silian_siblings)
   }
 
-  const roots = entries
-    .filter((entry) => !entry.parentSlug || !slugMap[entry.parentSlug])
-    .sort((a, b) => compareEntries(a, b, locale))
+  const Silian_roots = Silian_entries
+    .filter((Silian_entry) => !Silian_entry.parentSlug || !Silian_slugMap[Silian_entry.parentSlug])
+    .sort((Silian_a, Silian_b) => Silian_compareEntries(Silian_a, Silian_b, Silian_locale))
 
-  return roots.map((entry) => buildTreeNode(entry, parentIndex, locale))
+  return Silian_roots.map((Silian_entry) => Silian_buildTreeNode(Silian_entry, Silian_parentIndex, Silian_locale))
 }
 
-function buildTreeNode(
-  entry: SlugMapEntry,
-  parentIndex: Map<string, SlugMapEntry[]>,
-  locale: ArticleLocale
+function Silian_buildTreeNode(
+  Silian_entry: SlugMapEntry,
+  Silian_parentIndex: Map<string, SlugMapEntry[]>,
+  Silian_locale: ArticleLocale
 ): ArticleTreeNode {
-  const childrenFromSlug = entry.children ?? []
-  const childrenFromParent = parentIndex.get(entry.slug) ?? []
+  const Silian_childrenFromSlug = Silian_entry.children ?? []
+  const Silian_childrenFromParent = Silian_parentIndex.get(Silian_entry.slug) ?? []
 
-  const mergedChildrenBySlug = new Map<string, SlugMapEntry>()
-  for (const child of childrenFromSlug) {
-    mergedChildrenBySlug.set(child.slug, slugMap[child.slug] ?? child)
+  const Silian_mergedChildrenBySlug = new Map<string, SlugMapEntry>()
+  for (const Silian_child of Silian_childrenFromSlug) {
+    Silian_mergedChildrenBySlug.set(Silian_child.slug, Silian_slugMap[Silian_child.slug] ?? Silian_child)
   }
-  for (const child of childrenFromParent) {
-    mergedChildrenBySlug.set(child.slug, child)
+  for (const Silian_child of Silian_childrenFromParent) {
+    Silian_mergedChildrenBySlug.set(Silian_child.slug, Silian_child)
   }
 
-  const children = Array.from(mergedChildrenBySlug.values())
-    .sort((a, b) => compareEntries(a, b, locale))
-    .map((child) => buildTreeNode(child, parentIndex, locale))
+  const Silian_children = Array.from(Silian_mergedChildrenBySlug.values())
+    .sort((Silian_a, Silian_b) => Silian_compareEntries(Silian_a, Silian_b, Silian_locale))
+    .map((Silian_child) => Silian_buildTreeNode(Silian_child, Silian_parentIndex, Silian_locale))
 
-  const localizedMetadata = getLocalizedArticleMetadata(entry, locale)
+  const Silian_localizedMetadata = getLocalizedArticleMetadata(Silian_entry, Silian_locale)
 
-  const node: ArticleTreeNode & {
+  const Silian_node: ArticleTreeNode & {
     index: number
     isAppendix: boolean
     isPreface: boolean
     introTitle?: string
     isAdvanced?: boolean
   } = {
-    id: entry.isFolder ? entry.slug : entry.filePath.replace(/\.md$/i, ""),
-    title: getNodeTitle(entry, locale),
-    slug: entry.slug,
-    isFolder: entry.isFolder,
-    index: entry.index,
-    isAppendix: entry.isAppendix,
-    isPreface: entry.isPreface,
-    introTitle: localizedMetadata.introTitle,
-    isAdvanced: entry.isAdvanced,
-    parentId: entry.parentSlug ?? null,
-    children,
+    id: Silian_entry.isFolder ? Silian_entry.slug : Silian_entry.filePath.replace(/\.md$/i, ""),
+    title: Silian_getNodeTitle(Silian_entry, Silian_locale),
+    slug: Silian_entry.slug,
+    isFolder: Silian_entry.isFolder,
+    index: Silian_entry.index,
+    isAppendix: Silian_entry.isAppendix,
+    isPreface: Silian_entry.isPreface,
+    introTitle: Silian_localizedMetadata.introTitle,
+    isAdvanced: Silian_entry.isAdvanced,
+    parentId: Silian_entry.parentSlug ?? null,
+    children: Silian_children,
   }
 
-  return node
+  return Silian_node
 }
 
-function compareEntries(
-  a: SlugMapEntry,
-  b: SlugMapEntry,
-  locale: ArticleLocale
+function Silian_compareEntries(
+  Silian_a: SlugMapEntry,
+  Silian_b: SlugMapEntry,
+  Silian_locale: ArticleLocale
 ): number {
-  if (a.isFolder === b.isFolder) {
-    return getNodeTitle(a, locale).localeCompare(getNodeTitle(b, locale))
+  if (Silian_a.isFolder === Silian_b.isFolder) {
+    return Silian_getNodeTitle(Silian_a, Silian_locale).localeCompare(Silian_getNodeTitle(Silian_b, Silian_locale))
   }
-  return a.isFolder ? -1 : 1
+  return Silian_a.isFolder ? -1 : 1
 }
 
-function getNodeTitle(entry: SlugMapEntry, locale: ArticleLocale): string {
-  const { chapterTitle } = getLocalizedArticleMetadata(entry, locale)
+function Silian_getNodeTitle(Silian_entry: SlugMapEntry, Silian_locale: ArticleLocale): string {
+  const { chapterTitle: Silian_chapterTitle } = getLocalizedArticleMetadata(Silian_entry, Silian_locale)
 
-  if (entry.isPreface) {
+  if (Silian_entry.isPreface) {
     return (
-      entry.title || chapterTitle || entry.slug.split("/").pop() || entry.slug
+      Silian_entry.title || Silian_chapterTitle || Silian_entry.slug.split("/").pop() || Silian_entry.slug
     )
   }
 
-  if (entry.isFolder) {
-    return chapterTitle || entry.slug.split("/").pop() || entry.slug
+  if (Silian_entry.isFolder) {
+    return Silian_chapterTitle || Silian_entry.slug.split("/").pop() || Silian_entry.slug
   }
 
-  if (entry.isAppendix) {
+  if (Silian_entry.isAppendix) {
     return (
-      chapterTitle ||
-      entry.title ||
-      entry.filePath.split("/").pop()?.replace(/\.md$/i, "") ||
-      entry.slug.split("/").pop() ||
-      entry.slug
+      Silian_chapterTitle ||
+      Silian_entry.title ||
+      Silian_entry.filePath.split("/").pop()?.replace(/\.md$/i, "") ||
+      Silian_entry.slug.split("/").pop() ||
+      Silian_entry.slug
     )
   }
 
   return (
-    chapterTitle ||
-    entry.title ||
-    entry.filePath.split("/").pop()?.replace(/\.md$/i, "") ||
-    entry.slug.split("/").pop() ||
-    entry.slug
+    Silian_chapterTitle ||
+    Silian_entry.title ||
+    Silian_entry.filePath.split("/").pop()?.replace(/\.md$/i, "") ||
+    Silian_entry.slug.split("/").pop() ||
+    Silian_entry.slug
   )
 }
 
 export async function getArticleBuffer(
-  filePath: string
+  Silian_filePath: string
 ): Promise<Buffer | null> {
   if (isSubmoduleAvailable()) {
-    const localPath = path.join(ARTICLES_DIR, filePath)
+    const Silian_localPath = Silian_path.join(Silian_ARTICLES_DIR, Silian_filePath)
     try {
-      return fs.readFileSync(localPath)
+      return Silian_fs.readFileSync(Silian_localPath)
     } catch {
       if (process.env.NODE_ENV === "development") {
         console.warn(
-          `[article-loader] Buffer not in submodule: ${filePath}, falling back to API`
+          `[article-loader] Buffer not in submodule: ${Silian_filePath}, falling back to API`
         )
       }
     }

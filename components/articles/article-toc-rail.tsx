@@ -1,31 +1,31 @@
 "use client"
 
-import * as React from "react"
-import { Link } from "@/i18n/navigation"
-import { useSidebarContext } from "@/app/[locale]/(dashboard)/articles/sidebar/sidebar-context"
+import * as Silian_React from "react"
+import { Link as Silian_Link } from "@/i18n/navigation"
+import { useSidebarContext as Silian_useSidebarContext } from "@/app/[locale]/(dashboard)/articles/sidebar/sidebar-context"
 
-function useScrollProgress() {
-  const [progress, setProgress] = React.useState(0)
+function Silian_useScrollProgress() {
+  const [Silian_progress, Silian_setProgress] = Silian_React.useState(0)
 
-  React.useEffect(() => {
-    const onScroll = () => {
-      const scrollTop = window.scrollY
-      const docHeight = document.body.scrollHeight - window.innerHeight
-      setProgress(docHeight > 0 ? scrollTop / docHeight : 0)
+  Silian_React.useEffect(() => {
+    const Silian_onScroll = () => {
+      const Silian_scrollTop = window.scrollY
+      const Silian_docHeight = document.body.scrollHeight - window.innerHeight
+      Silian_setProgress(Silian_docHeight > 0 ? Silian_scrollTop / Silian_docHeight : 0)
     }
-    onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
+    Silian_onScroll()
+    window.addEventListener("scroll", Silian_onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", Silian_onScroll)
   }, [])
 
-  return progress
+  return Silian_progress
 }
 
 export function ArticleTocRail() {
-  const { toc, activeHeadingId } = useSidebarContext()
-  const progress = useScrollProgress()
+  const { toc: Silian_toc, activeHeadingId: Silian_activeHeadingId } = Silian_useSidebarContext()
+  const Silian_progress = Silian_useScrollProgress()
 
-  if (toc.length === 0) return null
+  if (Silian_toc.length === 0) return null
 
   return (
     <nav
@@ -44,7 +44,7 @@ export function ArticleTocRail() {
       <div className="absolute top-0 left-0 h-0.5 w-full bg-tech-main/15">
         <div
           className="h-full bg-tech-main transition-[width] duration-100"
-          style={{ width: `${progress * 100}%` }}
+          style={{ width: `${Silian_progress * 100}%` }}
         />
       </div>
 
@@ -70,24 +70,24 @@ export function ArticleTocRail() {
         </div>
 
         <ul className="flex flex-col gap-0">
-          {toc.map((item) => {
-            const isActive = item.id === activeHeadingId
+          {Silian_toc.map((Silian_item) => {
+            const Silian_isActive = Silian_item.id === Silian_activeHeadingId
             return (
-              <li key={item.id}>
-                <Link
-                  href={`#${item.id}`}
+              <li key={Silian_item.id}>
+                <Silian_Link
+                  href={`#${Silian_item.id}`}
                   className={`
                     block border-l-[3px] py-1.5 pr-1 pl-3 text-sm/snug
                     wrap-break-word transition-all
                     duration-200
-                    ${isActive
+                    ${Silian_isActive
                       ? "border-tech-main font-semibold text-tech-main"
                       : "border-transparent text-tech-main/50 hover:border-tech-main/30 hover:text-tech-main"
                     }
                   `}
                 >
-                  {item.text}
-                </Link>
+                  {Silian_item.text}
+                </Silian_Link>
               </li>
             )
           })}

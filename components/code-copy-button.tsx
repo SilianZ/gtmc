@@ -1,28 +1,28 @@
 "use client"
 
-import { useState } from "react"
-import { useTranslations } from "next-intl"
+import { useState as Silian_useState } from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 
-export function CodeCopyButton({ code }: { code: string }) {
-  const t = useTranslations("ArticleMeta")
-  const [copied, setCopied] = useState(false)
+export function CodeCopyButton({ code: Silian_code }: { code: string }) {
+  const Silian_t = Silian_useTranslations("ArticleMeta")
+  const [Silian_copied, Silian_setCopied] = Silian_useState(false)
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(code)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+  const Silian_handleCopy = async () => {
+    await navigator.clipboard.writeText(Silian_code)
+    Silian_setCopied(true)
+    setTimeout(() => Silian_setCopied(false), 2000)
   }
 
   return (
     <button
       type="button"
-      onClick={handleCopy}
+      onClick={Silian_handleCopy}
       className="
         font-mono text-[0.625rem] tracking-widest text-tech-main uppercase
         transition-colors
         hover:text-tech-main/80
       ">
-      {copied ? t("copiedButton") : t("copyButton")}
+      {Silian_copied ? Silian_t("copiedButton") : Silian_t("copyButton")}
     </button>
   )
 }

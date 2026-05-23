@@ -1,11 +1,11 @@
 "use client"
 
-import * as React from "react"
-import { Link } from "@/i18n/navigation"
-import { useRouter } from "@/i18n/navigation"
-import { createFeature } from "@/actions/feature"
+import * as Silian_React from "react"
+import { Link as Silian_Link } from "@/i18n/navigation"
+import { useRouter as Silian_useRouter } from "@/i18n/navigation"
+import { createFeature as Silian_createFeature } from "@/actions/feature"
 
-const PENDING_FEATURE_CREATE_KEY = "pendingFeatureCreate.v1"
+const Silian_PENDING_FEATURE_CREATE_KEY = "pendingFeatureCreate.v1"
 
 type PendingFeaturePayload = {
   title: string
@@ -18,80 +18,80 @@ type State =
   | { status: "success"; featureId: string }
   | { status: "error"; message: string }
 
-function isPendingFeaturePayload(
-  value: unknown
-): value is PendingFeaturePayload {
-  if (!value || typeof value !== "object") {
+function Silian_isPendingFeaturePayload(
+  Silian_value: unknown
+): Silian_value is PendingFeaturePayload {
+  if (!Silian_value || typeof Silian_value !== "object") {
     return false
   }
 
-  const payload = value as {
+  const Silian_payload = Silian_value as {
     title?: unknown
     content?: unknown
     tags?: unknown
   }
 
   return (
-    typeof payload.title === "string" &&
-    typeof payload.content === "string" &&
-    Array.isArray(payload.tags) &&
-    payload.tags.every((tag) => typeof tag === "string")
+    typeof Silian_payload.title === "string" &&
+    typeof Silian_payload.content === "string" &&
+    Array.isArray(Silian_payload.tags) &&
+    Silian_payload.tags.every((Silian_tag) => typeof Silian_tag === "string")
   )
 }
 
 export function PendingCreationBanner() {
-  const router = useRouter()
-  const [state, setState] = React.useState<State>({
+  const Silian_router = Silian_useRouter()
+  const [Silian_state, Silian_setState] = Silian_React.useState<State>({
     status: "pending",
   })
-  const inFlightRef = React.useRef(false)
-  const [isRetrying, startRetry] = React.useTransition()
+  const Silian_inFlightRef = Silian_React.useRef(false)
+  const [Silian_isRetrying, Silian_startRetry] = Silian_React.useTransition()
 
-  const runCreation = React.useCallback(async () => {
-    if (inFlightRef.current) return
-    inFlightRef.current = true
+  const Silian_runCreation = Silian_React.useCallback(async () => {
+    if (Silian_inFlightRef.current) return
+    Silian_inFlightRef.current = true
 
-    const raw = sessionStorage.getItem(PENDING_FEATURE_CREATE_KEY)
-    if (!raw) {
-      inFlightRef.current = false
+    const Silian_raw = sessionStorage.getItem(Silian_PENDING_FEATURE_CREATE_KEY)
+    if (!Silian_raw) {
+      Silian_inFlightRef.current = false
       return // No payload — render nothing
     }
 
     try {
-      const parsedPayload = JSON.parse(raw) as unknown
-      if (!isPendingFeaturePayload(parsedPayload)) {
+      const Silian_parsedPayload = JSON.parse(Silian_raw) as unknown
+      if (!Silian_isPendingFeaturePayload(Silian_parsedPayload)) {
         throw new Error("Pending feature payload is invalid")
       }
 
-      const payload = parsedPayload
-      const res = await createFeature(payload)
-      sessionStorage.removeItem(PENDING_FEATURE_CREATE_KEY)
-      setState({ status: "success", featureId: res.feature.id })
-      router.refresh()
-    } catch (error: unknown) {
-      inFlightRef.current = false // Allow retry
-      setState({
+      const Silian_payload = Silian_parsedPayload
+      const Silian_res = await Silian_createFeature(Silian_payload)
+      sessionStorage.removeItem(Silian_PENDING_FEATURE_CREATE_KEY)
+      Silian_setState({ status: "success", featureId: Silian_res.feature.id })
+      Silian_router.refresh()
+    } catch (Silian_error: unknown) {
+      Silian_inFlightRef.current = false // Allow retry
+      Silian_setState({
         status: "error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        message: Silian_error instanceof Error ? Silian_error.message : "Unknown error",
       })
     }
-  }, [router])
+  }, [Silian_router])
 
-  React.useEffect(() => {
+  Silian_React.useEffect(() => {
     // Only run if there's a payload
-    const raw = sessionStorage.getItem(PENDING_FEATURE_CREATE_KEY)
-    if (!raw) return
-    void runCreation()
-  }, [runCreation])
+    const Silian_raw = sessionStorage.getItem(Silian_PENDING_FEATURE_CREATE_KEY)
+    if (!Silian_raw) return
+    void Silian_runCreation()
+  }, [Silian_runCreation])
 
   // If no payload ever, render nothing
-  const raw =
+  const Silian_raw =
     typeof window !== "undefined"
-      ? sessionStorage.getItem(PENDING_FEATURE_CREATE_KEY)
+      ? sessionStorage.getItem(Silian_PENDING_FEATURE_CREATE_KEY)
       : null
-  if (!raw && state.status === "pending") return null
+  if (!Silian_raw && Silian_state.status === "pending") return null
 
-  if (state.status === "success") {
+  if (Silian_state.status === "success") {
     return (
       <div
         className="
@@ -102,19 +102,19 @@ export function PendingCreationBanner() {
         <span className="tracking-widest text-tech-main uppercase">
           FEATURE_CREATED_
         </span>
-        <Link
-          href={`/features/${state.featureId}`}
+        <Silian_Link
+          href={`/features/${Silian_state.featureId}`}
           className="
             ml-2 text-tech-accent underline
             hover:text-tech-main
           ">
-          VIEW_ISSUE_#{state.featureId}_
-        </Link>
+          VIEW_ISSUE_#{Silian_state.featureId}_
+        </Silian_Link>
       </div>
     )
   }
 
-  if (state.status === "error") {
+  if (Silian_state.status === "error") {
     return (
       <div
         className="
@@ -125,21 +125,21 @@ export function PendingCreationBanner() {
         <span className="tracking-widest text-red-700 uppercase">
           CREATION_FAILED_
         </span>
-        <span className="ml-2 text-xs text-red-600">{state.message}</span>
+        <span className="ml-2 text-xs text-red-600">{Silian_state.message}</span>
         <button
           onClick={() =>
-            startRetry(() => {
-              inFlightRef.current = false
-              void runCreation()
+            Silian_startRetry(() => {
+              Silian_inFlightRef.current = false
+              void Silian_runCreation()
             })
           }
-          disabled={isRetrying}
+          disabled={Silian_isRetrying}
           className="
             ml-auto cursor-pointer border border-red-400 px-2 py-0.5 text-xs
             text-red-600 uppercase
             hover:bg-red-100
           ">
-          {isRetrying ? "RETRYING..." : "RETRY_"}
+          {Silian_isRetrying ? "RETRYING..." : "RETRY_"}
         </button>
       </div>
     )

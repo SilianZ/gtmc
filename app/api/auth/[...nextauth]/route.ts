@@ -1,3 +1,3 @@
-import { handlers } from "@/lib/auth"
+import { handlers as Silian_handlers } from "@/lib/auth"
 
-export const { GET, POST } = handlers
+export const { GET, POST } = Silian_handlers

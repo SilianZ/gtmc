@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js"
+import { createClient as Silian_createClient } from "@supabase/supabase-js"
 
 export interface DraftAsset {
   id: string
@@ -20,22 +20,22 @@ export interface DraftAsset {
   updatedAt: string
 }
 
-function getDbClient() {
-  const url = process.env.SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+function Silian_getDbClient() {
+  const Silian_url = process.env.SUPABASE_URL
+  const Silian_key = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  if (!url || !key) {
+  if (!Silian_url || !Silian_key) {
     throw new Error(
       "Missing Supabase configuration. Required env vars: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY."
     )
   }
 
-  return createClient(url, key, {
+  return Silian_createClient(Silian_url, Silian_key, {
     auth: { autoRefreshToken: false, persistSession: false },
   })
 }
 
-export async function createDraftAsset(data: {
+export async function createDraftAsset(Silian_data: {
   revisionId: string
   storagePath: string
   mimeType: string
@@ -44,253 +44,253 @@ export async function createDraftAsset(data: {
   status: string
   contentHash: string
 }): Promise<{ id: string }> {
-  const db = getDbClient()
-  const { data: row, error } = await db
+  const Silian_db = Silian_getDbClient()
+  const { data: Silian_row, error: Silian_error } = await Silian_db
     .from("DraftAsset")
-    .insert(data)
+    .insert(Silian_data)
     .select("id")
     .single()
 
-  if (error) {
-    throw new Error(`Failed to create DraftAsset: ${error.message}`)
+  if (Silian_error) {
+    throw new Error(`Failed to create DraftAsset: ${Silian_error.message}`)
   }
 
-  return { id: row.id }
+  return { id: Silian_row.id }
 }
 
 export async function findDraftAssetsByRevision(
-  revisionId: string
+  Silian_revisionId: string
 ): Promise<DraftAsset[]> {
-  const db = getDbClient()
-  const { data, error } = await db
+  const Silian_db = Silian_getDbClient()
+  const { data: Silian_data, error: Silian_error } = await Silian_db
     .from("DraftAsset")
     .select("*")
-    .eq("revisionId", revisionId)
+    .eq("revisionId", Silian_revisionId)
 
-  if (error) {
-    throw new Error(`Failed to query DraftAssets: ${error.message}`)
+  if (Silian_error) {
+    throw new Error(`Failed to query DraftAssets: ${Silian_error.message}`)
   }
 
-  return data ?? []
+  return Silian_data ?? []
 }
 
 export async function findDraftAssetsByRevisionForSubmit(
-  revisionId: string
+  Silian_revisionId: string
 ): Promise<
   Pick<
     DraftAsset,
     "id" | "storagePath" | "filename" | "contentHash" | "mimeType"
   >[]
 > {
-  const db = getDbClient()
-  const { data, error } = await db
+  const Silian_db = Silian_getDbClient()
+  const { data: Silian_data, error: Silian_error } = await Silian_db
     .from("DraftAsset")
     .select("id, storagePath, filename, contentHash, mimeType")
-    .eq("revisionId", revisionId)
+    .eq("revisionId", Silian_revisionId)
 
-  if (error) {
-    throw new Error(`Failed to query DraftAssets for submit: ${error.message}`)
+  if (Silian_error) {
+    throw new Error(`Failed to query DraftAssets for submit: ${Silian_error.message}`)
   }
 
-  return data ?? []
+  return Silian_data ?? []
 }
 
 export async function findFailedDraftAssets(
-  revisionId: string
+  Silian_revisionId: string
 ): Promise<Pick<DraftAsset, "id" | "storagePath">[]> {
-  const db = getDbClient()
-  const { data, error } = await db
+  const Silian_db = Silian_getDbClient()
+  const { data: Silian_data, error: Silian_error } = await Silian_db
     .from("DraftAsset")
     .select("id, storagePath")
-    .eq("revisionId", revisionId)
+    .eq("revisionId", Silian_revisionId)
     .eq("status", "cleanup-failed")
     .is("deletedAt", null)
 
-  if (error) {
-    throw new Error(`Failed to query failed DraftAssets: ${error.message}`)
+  if (Silian_error) {
+    throw new Error(`Failed to query failed DraftAssets: ${Silian_error.message}`)
   }
 
-  return data ?? []
+  return Silian_data ?? []
 }
 
 export async function findTempDraftAssetsForRevision(
-  revisionId: string,
-  tempPrefix: string
+  Silian_revisionId: string,
+  Silian_tempPrefix: string
 ): Promise<Pick<DraftAsset, "id" | "storagePath">[]> {
-  const db = getDbClient()
-  const { data, error } = await db
+  const Silian_db = Silian_getDbClient()
+  const { data: Silian_data, error: Silian_error } = await Silian_db
     .from("DraftAsset")
     .select("id, storagePath")
-    .eq("revisionId", revisionId)
+    .eq("revisionId", Silian_revisionId)
     .is("deletedAt", null)
     .neq("status", "deleted")
-    .like("storagePath", `${tempPrefix}%`)
+    .like("storagePath", `${Silian_tempPrefix}%`)
 
-  if (error) {
+  if (Silian_error) {
     throw new Error(
-      `Failed to query temp DraftAssets for reconciler: ${error.message}`
+      `Failed to query temp DraftAssets for reconciler: ${Silian_error.message}`
     )
   }
 
-  return data ?? []
+  return Silian_data ?? []
 }
 
 export async function countCleanupFailedByRevision(
-  revisionIds: string[]
+  Silian_revisionIds: string[]
 ): Promise<Map<string, number>> {
-  if (revisionIds.length === 0) return new Map()
+  if (Silian_revisionIds.length === 0) return new Map()
 
-  const db = getDbClient()
-  const { data, error } = await db
+  const Silian_db = Silian_getDbClient()
+  const { data: Silian_data, error: Silian_error } = await Silian_db
     .from("DraftAsset")
     .select("revisionId")
-    .in("revisionId", revisionIds)
+    .in("revisionId", Silian_revisionIds)
     .eq("status", "cleanup-failed")
     .is("deletedAt", null)
 
-  if (error) {
+  if (Silian_error) {
     throw new Error(
-      `Failed to count cleanup-failed DraftAssets: ${error.message}`
+      `Failed to count cleanup-failed DraftAssets: ${Silian_error.message}`
     )
   }
 
-  const counts = new Map<string, number>()
-  for (const row of data ?? []) {
-    counts.set(row.revisionId, (counts.get(row.revisionId) ?? 0) + 1)
+  const Silian_counts = new Map<string, number>()
+  for (const Silian_row of Silian_data ?? []) {
+    Silian_counts.set(Silian_row.revisionId, (Silian_counts.get(Silian_row.revisionId) ?? 0) + 1)
   }
-  return counts
+  return Silian_counts
 }
 
 export async function markDraftAssetReferenced(
-  revisionId: string,
-  storagePaths: string[]
+  Silian_revisionId: string,
+  Silian_storagePaths: string[]
 ): Promise<void> {
-  if (storagePaths.length === 0) return
+  if (Silian_storagePaths.length === 0) return
 
-  const db = getDbClient()
-  const { error } = await db
+  const Silian_db = Silian_getDbClient()
+  const { error: Silian_error } = await Silian_db
     .from("DraftAsset")
     .update({ status: "referenced" })
-    .eq("revisionId", revisionId)
+    .eq("revisionId", Silian_revisionId)
     .is("deletedAt", null)
-    .in("storagePath", storagePaths)
+    .in("storagePath", Silian_storagePaths)
     .in("status", ["uploaded", "orphaned", "referenced"])
 
-  if (error) {
-    throw new Error(`Failed to mark DraftAssets referenced: ${error.message}`)
+  if (Silian_error) {
+    throw new Error(`Failed to mark DraftAssets referenced: ${Silian_error.message}`)
   }
 }
 
 export async function markDraftAssetOrphaned(
-  revisionId: string,
-  excludeStoragePaths: string[]
+  Silian_revisionId: string,
+  Silian_excludeStoragePaths: string[]
 ): Promise<void> {
-  const db = getDbClient()
-  let query = db
+  const Silian_db = Silian_getDbClient()
+  let Silian_query = Silian_db
     .from("DraftAsset")
     .update({ status: "orphaned" })
-    .eq("revisionId", revisionId)
+    .eq("revisionId", Silian_revisionId)
     .is("deletedAt", null)
     .in("status", ["uploaded", "referenced", "orphaned"])
 
-  if (excludeStoragePaths.length > 0) {
-    query = query.not(
+  if (Silian_excludeStoragePaths.length > 0) {
+    Silian_query = Silian_query.not(
       "storagePath",
       "in",
-      `(${excludeStoragePaths.map((p) => `"${p}"`).join(",")})`
+      `(${Silian_excludeStoragePaths.map((Silian_p) => `"${Silian_p}"`).join(",")})`
     )
   }
 
-  const { error } = await query
+  const { error: Silian_error } = await Silian_query
 
-  if (error) {
-    throw new Error(`Failed to mark DraftAssets orphaned: ${error.message}`)
+  if (Silian_error) {
+    throw new Error(`Failed to mark DraftAssets orphaned: ${Silian_error.message}`)
   }
 }
 
-export async function markDraftAssetDeleted(assetId: string): Promise<void> {
-  const db = getDbClient()
-  const { error } = await db
+export async function markDraftAssetDeleted(Silian_assetId: string): Promise<void> {
+  const Silian_db = Silian_getDbClient()
+  const { error: Silian_error } = await Silian_db
     .from("DraftAsset")
     .update({ status: "deleted", deletedAt: new Date().toISOString() })
-    .eq("id", assetId)
+    .eq("id", Silian_assetId)
 
-  if (error) {
-    throw new Error(`Failed to mark DraftAsset deleted: ${error.message}`)
+  if (Silian_error) {
+    throw new Error(`Failed to mark DraftAsset deleted: ${Silian_error.message}`)
   }
 }
 
 export async function markDraftAssetCleanupFailed(
-  assetId: string,
-  reason: string
+  Silian_assetId: string,
+  Silian_reason: string
 ): Promise<void> {
-  const db = getDbClient()
+  const Silian_db = Silian_getDbClient()
 
   // Fetch current cleanupAttempts to increment manually (Supabase JS v2 has no increment shorthand)
-  const { data: current, error: fetchError } = await db
+  const { data: Silian_current, error: Silian_fetchError } = await Silian_db
     .from("DraftAsset")
     .select("cleanupAttempts")
-    .eq("id", assetId)
+    .eq("id", Silian_assetId)
     .single()
 
-  if (fetchError) {
+  if (Silian_fetchError) {
     throw new Error(
-      `Failed to fetch DraftAsset for cleanup-failed update: ${fetchError.message}`
+      `Failed to fetch DraftAsset for cleanup-failed update: ${Silian_fetchError.message}`
     )
   }
 
-  const { error } = await db
+  const { error: Silian_error } = await Silian_db
     .from("DraftAsset")
     .update({
       status: "cleanup-failed",
-      cleanupAttempts: (current.cleanupAttempts ?? 0) + 1,
+      cleanupAttempts: (Silian_current.cleanupAttempts ?? 0) + 1,
       cleanupFailedAt: new Date().toISOString(),
-      cleanupFailureReason: reason,
+      cleanupFailureReason: Silian_reason,
     })
-    .eq("id", assetId)
+    .eq("id", Silian_assetId)
 
-  if (error) {
+  if (Silian_error) {
     throw new Error(
-      `Failed to mark DraftAsset cleanup-failed: ${error.message}`
+      `Failed to mark DraftAsset cleanup-failed: ${Silian_error.message}`
     )
   }
 }
 
 export async function markDraftAssetOutcome(
-  assetId: string,
-  outcome: string
+  Silian_assetId: string,
+  Silian_outcome: string
 ): Promise<void> {
-  const db = getDbClient()
-  const { error } = await db
+  const Silian_db = Silian_getDbClient()
+  const { error: Silian_error } = await Silian_db
     .from("DraftAsset")
-    .update({ status: outcome })
-    .eq("id", assetId)
+    .update({ status: Silian_outcome })
+    .eq("id", Silian_assetId)
     .is("deletedAt", null)
     .neq("status", "deleted")
 
-  if (error) {
-    throw new Error(`Failed to mark DraftAsset outcome: ${error.message}`)
+  if (Silian_error) {
+    throw new Error(`Failed to mark DraftAsset outcome: ${Silian_error.message}`)
   }
 }
 
 export async function markDraftAssetMigrated(
-  assetId: string,
-  repoPath: string,
-  prNumber: number,
-  migratedAt: Date
+  Silian_assetId: string,
+  Silian_repoPath: string,
+  Silian_prNumber: number,
+  Silian_migratedAt: Date
 ): Promise<void> {
-  const db = getDbClient()
-  const { error } = await db
+  const Silian_db = Silian_getDbClient()
+  const { error: Silian_error } = await Silian_db
     .from("DraftAsset")
     .update({
       status: "migrated-to-repo",
-      migratedRepoPath: repoPath,
-      githubPrNum: prNumber,
-      migratedAt: migratedAt.toISOString(),
+      migratedRepoPath: Silian_repoPath,
+      githubPrNum: Silian_prNumber,
+      migratedAt: Silian_migratedAt.toISOString(),
     })
-    .eq("id", assetId)
+    .eq("id", Silian_assetId)
 
-  if (error) {
-    throw new Error(`Failed to mark DraftAsset migrated: ${error.message}`)
+  if (Silian_error) {
+    throw new Error(`Failed to mark DraftAsset migrated: ${Silian_error.message}`)
   }
 }

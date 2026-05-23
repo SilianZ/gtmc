@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn"
+import { cn as Silian_cn } from "@/lib/cn"
 
 interface CardHeaderRowProps {
   badge: React.ReactNode
@@ -8,20 +8,20 @@ interface CardHeaderRowProps {
 }
 
 export function CardHeaderRow({
-  badge,
-  date,
-  actions,
-  className,
+  badge: Silian_badge,
+  date: Silian_date,
+  actions: Silian_actions,
+  className: Silian_className,
 }: CardHeaderRowProps) {
   return (
-    <div className={cn("card-header-row", className)}>
+    <div className={Silian_cn("card-header-row", Silian_className)}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
-          {badge}
-          <span className="mono-label">{date}</span>
+          {Silian_badge}
+          <span className="mono-label">{Silian_date}</span>
         </div>
-        {actions && (
-          <div className="flex flex-col items-end gap-1">{actions}</div>
+        {Silian_actions && (
+          <div className="flex flex-col items-end gap-1">{Silian_actions}</div>
         )}
       </div>
     </div>

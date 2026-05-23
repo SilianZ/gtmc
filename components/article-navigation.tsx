@@ -1,7 +1,7 @@
-import { getTranslations } from "next-intl/server"
-import { Link } from "@/i18n/navigation"
-import { articleUrl } from "@/lib/article-url"
-import { CornerBrackets } from "./ui/corner-brackets"
+import { getTranslations as Silian_getTranslations } from "next-intl/server"
+import { Link as Silian_Link } from "@/i18n/navigation"
+import { articleUrl as Silian_articleUrl } from "@/lib/article-url"
+import { CornerBrackets as Silian_CornerBrackets } from "./ui/corner-brackets"
 
 interface ArticleInfo {
   slug: string
@@ -16,23 +16,23 @@ interface ArticleNavigationProps {
 }
 
 export async function ArticleNavigation({
-  prev,
-  next,
+  prev: Silian_prev,
+  next: Silian_next,
 }: ArticleNavigationProps) {
-  const t = await getTranslations("ArticleMeta")
+  const Silian_t = await Silian_getTranslations("ArticleMeta")
 
   return (
     <nav className="relative mt-12 border-t guide-line pt-8">
-      <CornerBrackets size="size-3" color="border-tech-main/30" />
+      <Silian_CornerBrackets size="size-3" color="border-tech-main/30" />
 
       <div
         className="
           grid grid-cols-1 gap-4
           md:grid-cols-2 md:gap-6
         ">
-        {prev ? (
-          <Link
-            href={articleUrl(prev.slug)}
+        {Silian_prev ? (
+          <Silian_Link
+            href={Silian_articleUrl(Silian_prev.slug)}
             className="
               group relative flex min-h-[44px] w-full flex-col gap-2 border
               border-tech-main/40 bg-tech-bg p-4 transition-colors
@@ -43,8 +43,8 @@ export async function ArticleNavigation({
                 flex items-center gap-2 font-mono text-xs text-tech-main/60
               ">
               <span>←</span>
-              <span>{t("prev")}</span>
-              {prev.isCrossFolder && (
+              <span>{Silian_t("prev")}</span>
+              {Silian_prev.isCrossFolder && (
                 <span
                   className="
                     rounded-sm border border-tech-main/40 px-1.5 py-0.5
@@ -53,14 +53,14 @@ export async function ArticleNavigation({
                   ↗
                 </span>
               )}
-              {prev.isCrossFolder && prev.chapterTitle && (
-                <span className="text-tech-main/40">{prev.chapterTitle}</span>
+              {Silian_prev.isCrossFolder && Silian_prev.chapterTitle && (
+                <span className="text-tech-main/40">{Silian_prev.chapterTitle}</span>
               )}
             </div>
             <div className="line-clamp-2 font-mono text-sm text-tech-main">
-              {prev.title}
+              {Silian_prev.title}
             </div>
-          </Link>
+          </Silian_Link>
         ) : (
           <div
             className="
@@ -72,17 +72,17 @@ export async function ArticleNavigation({
                 flex items-center gap-2 font-mono text-xs text-tech-main/40
               ">
               <span>←</span>
-              <span>{t("prev")}</span>
+              <span>{Silian_t("prev")}</span>
             </div>
             <div className="font-mono text-sm text-tech-main/40">
-              {t("noPrevArticle")}
+              {Silian_t("noPrevArticle")}
             </div>
           </div>
         )}
 
-        {next ? (
-          <Link
-            href={articleUrl(next.slug)}
+        {Silian_next ? (
+          <Silian_Link
+            href={Silian_articleUrl(Silian_next.slug)}
             className="
               group relative flex min-h-[44px] w-full flex-col gap-2 border
               border-tech-main/40 bg-tech-bg p-4 transition-colors
@@ -93,7 +93,7 @@ export async function ArticleNavigation({
               className="
                 flex items-center gap-2 font-mono text-xs text-tech-main/60
               ">
-              {next.isCrossFolder && (
+              {Silian_next.isCrossFolder && (
                 <span
                   className="
                     rounded-sm border border-tech-main/40 px-1.5 py-0.5
@@ -102,16 +102,16 @@ export async function ArticleNavigation({
                   ↗
                 </span>
               )}
-              <span>{t("next")}</span>
+              <span>{Silian_t("next")}</span>
               <span>→</span>
-              {next.isCrossFolder && next.chapterTitle && (
-                <span className="text-tech-main/40">{next.chapterTitle}</span>
+              {Silian_next.isCrossFolder && Silian_next.chapterTitle && (
+                <span className="text-tech-main/40">{Silian_next.chapterTitle}</span>
               )}
             </div>
             <div className="line-clamp-2 font-mono text-sm text-tech-main">
-              {next.title}
+              {Silian_next.title}
             </div>
-          </Link>
+          </Silian_Link>
         ) : (
           <div
             className="
@@ -123,11 +123,11 @@ export async function ArticleNavigation({
               className="
                 flex items-center gap-2 font-mono text-xs text-tech-main/40
               ">
-              <span>{t("next")}</span>
+              <span>{Silian_t("next")}</span>
               <span>→</span>
             </div>
             <div className="font-mono text-sm text-tech-main/40">
-              {t("noNextArticle")}
+              {Silian_t("noNextArticle")}
             </div>
           </div>
         )}

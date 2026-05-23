@@ -1,42 +1,42 @@
 "use client"
 
-import * as React from "react"
-import { diffLines } from "diff"
+import * as Silian_React from "react"
+import { diffLines as Silian_diffLines } from "diff"
 import type { ReactCodeMirrorRef } from "@uiw/react-codemirror"
-import { useRouter } from "@/i18n/navigation"
-import { useTranslations } from "next-intl"
+import { useRouter as Silian_useRouter } from "@/i18n/navigation"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 
-import { saveDraftAction, submitForReviewAction } from "@/actions/article"
-import { DraftFileSourceDialog } from "@/components/editor/draft-file-source-dialog"
-import { DraftFileList } from "@/components/editor/draft-file-list"
-import { EditorBadge } from "@/components/editor/editor-badge"
-import { EditorFileUploadInput } from "@/components/editor/editor-file-upload-input"
-import { LazyMarkdownPreview } from "@/components/editor/lazy-markdown-preview"
+import { saveDraftAction as Silian_saveDraftAction, submitForReviewAction as Silian_submitForReviewAction } from "@/actions/article"
+import { DraftFileSourceDialog as Silian_DraftFileSourceDialog } from "@/components/editor/draft-file-source-dialog"
+import { DraftFileList as Silian_DraftFileList } from "@/components/editor/draft-file-list"
+import { EditorBadge as Silian_EditorBadge } from "@/components/editor/editor-badge"
+import { EditorFileUploadInput as Silian_EditorFileUploadInput } from "@/components/editor/editor-file-upload-input"
+import { LazyMarkdownPreview as Silian_LazyMarkdownPreview } from "@/components/editor/lazy-markdown-preview"
 import {
-  EditorTabStrip,
+  EditorTabStrip as Silian_EditorTabStrip,
   type TabType,
 } from "@/components/editor/editor-tab-strip"
-import { EditorTextarea } from "@/components/editor/editor-textarea"
+import { EditorTextarea as Silian_EditorTextarea } from "@/components/editor/editor-textarea"
 import {
-  createDraftFile,
-  getActiveDraftFile,
-  getDuplicateDraftFilePaths,
-  normalizeDraftFileCollection,
-  normalizeDraftFilePath,
-  normalizeDraftFolderPath,
-  serializeDraftFilesPayload,
+  createDraftFile as Silian_createDraftFile,
+  getActiveDraftFile as Silian_getActiveDraftFile,
+  getDuplicateDraftFilePaths as Silian_getDuplicateDraftFilePaths,
+  normalizeDraftFileCollection as Silian_normalizeDraftFileCollection,
+  normalizeDraftFilePath as Silian_normalizeDraftFilePath,
+  normalizeDraftFolderPath as Silian_normalizeDraftFolderPath,
+  serializeDraftFilesPayload as Silian_serializeDraftFilesPayload,
   type DraftFileCollection,
 } from "@/lib/draft-files"
-import { EditorToolbar } from "@/components/editor/editor-toolbar"
+import { EditorToolbar as Silian_EditorToolbar } from "@/components/editor/editor-toolbar"
 import {
-  OperationProgress,
+  OperationProgress as Silian_OperationProgress,
   type OperationProgressStage,
   type OperationProgressState,
 } from "@/components/ui/operation-progress"
-import { TechButton } from "../ui/tech-button"
-import { InputBox } from "../ui/input-box"
-import { useBadge } from "@/hooks/use-badge"
-import { useEditorUpload } from "@/hooks/use-editor-upload"
+import { TechButton as Silian_TechButton } from "../ui/tech-button"
+import { InputBox as Silian_InputBox } from "../ui/input-box"
+import { useBadge as Silian_useBadge } from "@/hooks/use-badge"
+import { useEditorUpload as Silian_useEditorUpload } from "@/hooks/use-editor-upload"
 import type { SourceMode } from "@/components/editor/draft-file-source-dialog"
 
 interface DraftEditorProps {
@@ -56,7 +56,7 @@ interface DraftEditorProps {
   }
 }
 
-const MAX_DRAFT_HISTORY_ENTRIES = 100
+const Silian_MAX_DRAFT_HISTORY_ENTRIES = 100
 
 interface DraftContentHistory {
   undoStack: string[]
@@ -81,1009 +81,1009 @@ interface DraftDiffRow {
   value: string
 }
 
-export function DraftEditor({ initialData }: DraftEditorProps) {
-  const router = useRouter()
-  const t = useTranslations("Editor")
-  const progressT = useTranslations("OperationProgress")
-  const initialStatus = initialData?.status || "DRAFT"
-  const initialDraftCollection = React.useMemo(
+export function DraftEditor({ initialData: Silian_initialData }: DraftEditorProps) {
+  const Silian_router = Silian_useRouter()
+  const Silian_t = Silian_useTranslations("Editor")
+  const Silian_progressT = Silian_useTranslations("OperationProgress")
+  const Silian_initialStatus = Silian_initialData?.status || "DRAFT"
+  const Silian_initialDraftCollection = Silian_React.useMemo(
     () =>
-      normalizeDraftFileCollection({
-        activeFileId: initialData?.activeFileId,
-        folders: initialData?.folders,
+      Silian_normalizeDraftFileCollection({
+        activeFileId: Silian_initialData?.activeFileId,
+        folders: Silian_initialData?.folders,
         files:
-          initialData?.files && initialData.files.length > 0
-            ? initialData.files
-            : [createDraftFile()],
+          Silian_initialData?.files && Silian_initialData.files.length > 0
+            ? Silian_initialData.files
+            : [Silian_createDraftFile()],
       }),
-    [initialData?.activeFileId, initialData?.files, initialData?.folders]
+    [Silian_initialData?.activeFileId, Silian_initialData?.files, Silian_initialData?.folders]
   )
 
-  const [draftStatus, setDraftStatus] = React.useState(initialStatus)
-  const [title, setTitle] = React.useState(initialData?.title || "")
-  const [draftCollection, setDraftCollection] = React.useState(
-    initialDraftCollection
+  const [Silian_draftStatus, Silian_setDraftStatus] = Silian_React.useState(Silian_initialStatus)
+  const [Silian_title, Silian_setTitle] = Silian_React.useState(Silian_initialData?.title || "")
+  const [Silian_draftCollection, Silian_setDraftCollection] = Silian_React.useState(
+    Silian_initialDraftCollection
   )
-  const [lastSavedDraftCollection, setLastSavedDraftCollection] =
-    React.useState(initialDraftCollection)
-  const [lastSavedTitle, setLastSavedTitle] = React.useState(
-    initialData?.title || ""
+  const [Silian_lastSavedDraftCollection, Silian_setLastSavedDraftCollection] =
+    Silian_React.useState(Silian_initialDraftCollection)
+  const [Silian_lastSavedTitle, Silian_setLastSavedTitle] = Silian_React.useState(
+    Silian_initialData?.title || ""
   )
-  const [revisionId, setRevisionId] = React.useState<string | undefined>(
-    initialData?.id
+  const [Silian_revisionId, Silian_setRevisionId] = Silian_React.useState<string | undefined>(
+    Silian_initialData?.id
   )
-  const [fileDialogIntent, setFileDialogIntent] =
-    React.useState<DraftFileDialogIntent | null>(null)
-  const [isSaving, setIsSaving] = React.useState(false)
-  const [isSubmittingReview, setIsSubmittingReview] = React.useState(false)
-  const [saveProgressState, setSaveProgressState] =
-    React.useState<OperationProgressState>("idle")
-  const [submitProgressState, setSubmitProgressState] =
-    React.useState<OperationProgressState>("idle")
-  const [activeTab, setActiveTab] = React.useState<TabType>("write")
-  const [lineWrap, setLineWrap] = React.useState(false)
-  const [activeInfoTab, setActiveInfoTab] = React.useState<"changes" | "guide">(
+  const [Silian_fileDialogIntent, Silian_setFileDialogIntent] =
+    Silian_React.useState<DraftFileDialogIntent | null>(null)
+  const [Silian_isSaving, Silian_setIsSaving] = Silian_React.useState(false)
+  const [Silian_isSubmittingReview, Silian_setIsSubmittingReview] = Silian_React.useState(false)
+  const [Silian_saveProgressState, Silian_setSaveProgressState] =
+    Silian_React.useState<OperationProgressState>("idle")
+  const [Silian_submitProgressState, Silian_setSubmitProgressState] =
+    Silian_React.useState<OperationProgressState>("idle")
+  const [Silian_activeTab, Silian_setActiveTab] = Silian_React.useState<TabType>("write")
+  const [Silian_lineWrap, Silian_setLineWrap] = Silian_React.useState(false)
+  const [Silian_activeInfoTab, Silian_setActiveInfoTab] = Silian_React.useState<"changes" | "guide">(
     "changes"
   )
-  const [activeGuideId, setActiveGuideId] = React.useState(
-    initialData?.contributingGuides?.[0]?.id || ""
+  const [Silian_activeGuideId, Silian_setActiveGuideId] = Silian_React.useState(
+    Silian_initialData?.contributingGuides?.[0]?.id || ""
   )
-  const [repoSnapshots, setRepoSnapshots] = React.useState<
+  const [Silian_repoSnapshots, Silian_setRepoSnapshots] = Silian_React.useState<
     Record<string, RepoFileSnapshot>
   >({})
-  const [insertDialogIntent, setInsertDialogIntent] = React.useState(false)
+  const [Silian_insertDialogIntent, Silian_setInsertDialogIntent] = Silian_React.useState(false)
 
-  const textareaRef = React.useRef<ReactCodeMirrorRef | null>(null)
-  const fileInputRef = React.useRef<HTMLInputElement>(null)
-  const autoSaveTimeoutRef = React.useRef<number | null>(null)
-  const saveProgressResetRef = React.useRef<number | null>(null)
-  const submitProgressResetRef = React.useRef<number | null>(null)
-  const contentHistoryRef = React.useRef<Record<string, DraftContentHistory>>(
+  const Silian_textareaRef = Silian_React.useRef<ReactCodeMirrorRef | null>(null)
+  const Silian_fileInputRef = Silian_React.useRef<HTMLInputElement>(null)
+  const Silian_autoSaveTimeoutRef = Silian_React.useRef<number | null>(null)
+  const Silian_saveProgressResetRef = Silian_React.useRef<number | null>(null)
+  const Silian_submitProgressResetRef = Silian_React.useRef<number | null>(null)
+  const Silian_contentHistoryRef = Silian_React.useRef<Record<string, DraftContentHistory>>(
     {}
   )
-  const { badge, showBadge, clearBadge } = useBadge()
+  const { badge: Silian_badge, showBadge: Silian_showBadge, clearBadge: Silian_clearBadge } = Silian_useBadge()
 
-  const saveProgressStages = React.useMemo<OperationProgressStage[]>(
+  const Silian_saveProgressStages = Silian_React.useMemo<OperationProgressStage[]>(
     () => [
       {
         id: "normalize",
-        label: progressT("saveDraftStageNormalize"),
+        label: Silian_progressT("saveDraftStageNormalize"),
         durationMs: 260,
       },
       {
         id: "serialize",
-        label: progressT("saveDraftStageSerialize"),
+        label: Silian_progressT("saveDraftStageSerialize"),
         durationMs: 300,
       },
       {
         id: "persist",
-        label: progressT("saveDraftStagePersist"),
+        label: Silian_progressT("saveDraftStagePersist"),
         durationMs: 940,
       },
       {
         id: "assets",
-        label: progressT("saveDraftStageAssets"),
+        label: Silian_progressT("saveDraftStageAssets"),
         durationMs: 540,
       },
       {
         id: "refresh",
-        label: progressT("saveDraftStageRefresh"),
+        label: Silian_progressT("saveDraftStageRefresh"),
         durationMs: 280,
       },
     ],
-    [progressT]
+    [Silian_progressT]
   )
 
-  const submitProgressStages = React.useMemo<OperationProgressStage[]>(
+  const Silian_submitProgressStages = Silian_React.useMemo<OperationProgressStage[]>(
     () => [
       {
         id: "preflight",
-        label: progressT("submitStagePreflight"),
+        label: Silian_progressT("submitStagePreflight"),
         durationMs: 260,
       },
       {
         id: "assets",
-        label: progressT("submitStageAssets"),
+        label: Silian_progressT("submitStageAssets"),
         durationMs: 580,
       },
       {
         id: "migrate",
-        label: progressT("submitStageMigrate"),
+        label: Silian_progressT("submitStageMigrate"),
         durationMs: 760,
       },
       {
         id: "open-pr",
-        label: progressT("submitStagePr"),
+        label: Silian_progressT("submitStagePr"),
         durationMs: 920,
       },
       {
         id: "refresh",
-        label: progressT("submitStageRefresh"),
+        label: Silian_progressT("submitStageRefresh"),
         durationMs: 300,
       },
     ],
-    [progressT]
+    [Silian_progressT]
   )
 
-  React.useEffect(() => {
+  Silian_React.useEffect(() => {
     return () => {
-      if (autoSaveTimeoutRef.current !== null) {
-        window.clearTimeout(autoSaveTimeoutRef.current)
+      if (Silian_autoSaveTimeoutRef.current !== null) {
+        window.clearTimeout(Silian_autoSaveTimeoutRef.current)
       }
 
-      if (saveProgressResetRef.current !== null) {
-        window.clearTimeout(saveProgressResetRef.current)
+      if (Silian_saveProgressResetRef.current !== null) {
+        window.clearTimeout(Silian_saveProgressResetRef.current)
       }
 
-      if (submitProgressResetRef.current !== null) {
-        window.clearTimeout(submitProgressResetRef.current)
+      if (Silian_submitProgressResetRef.current !== null) {
+        window.clearTimeout(Silian_submitProgressResetRef.current)
       }
     }
   }, [])
 
-  const updateSaveProgressState = (
-    nextState: Exclude<OperationProgressState, "idle">
+  const Silian_updateSaveProgressState = (
+    Silian_nextState: Exclude<OperationProgressState, "idle">
   ) => {
-    if (saveProgressResetRef.current !== null) {
-      window.clearTimeout(saveProgressResetRef.current)
-      saveProgressResetRef.current = null
+    if (Silian_saveProgressResetRef.current !== null) {
+      window.clearTimeout(Silian_saveProgressResetRef.current)
+      Silian_saveProgressResetRef.current = null
     }
 
-    setSaveProgressState(nextState)
+    Silian_setSaveProgressState(Silian_nextState)
 
-    if (nextState === "running") {
+    if (Silian_nextState === "running") {
       return
     }
 
-    saveProgressResetRef.current = window.setTimeout(
+    Silian_saveProgressResetRef.current = window.setTimeout(
       () => {
-        setSaveProgressState("idle")
+        Silian_setSaveProgressState("idle")
       },
-      nextState === "success" ? 1400 : 3200
+      Silian_nextState === "success" ? 1400 : 3200
     )
   }
 
-  const updateSubmitProgressState = (
-    nextState: Exclude<OperationProgressState, "idle">
+  const Silian_updateSubmitProgressState = (
+    Silian_nextState: Exclude<OperationProgressState, "idle">
   ) => {
-    if (submitProgressResetRef.current !== null) {
-      window.clearTimeout(submitProgressResetRef.current)
-      submitProgressResetRef.current = null
+    if (Silian_submitProgressResetRef.current !== null) {
+      window.clearTimeout(Silian_submitProgressResetRef.current)
+      Silian_submitProgressResetRef.current = null
     }
 
-    setSubmitProgressState(nextState)
+    Silian_setSubmitProgressState(Silian_nextState)
 
-    if (nextState === "running") {
+    if (Silian_nextState === "running") {
       return
     }
 
-    submitProgressResetRef.current = window.setTimeout(
+    Silian_submitProgressResetRef.current = window.setTimeout(
       () => {
-        setSubmitProgressState("idle")
+        Silian_setSubmitProgressState("idle")
       },
-      nextState === "success" ? 1400 : 3200
+      Silian_nextState === "success" ? 1400 : 3200
     )
   }
 
-  const githubPrUrl = initialData?.githubPrUrl
-  const isSyncConflict = draftStatus === "SYNC_CONFLICT"
-  const isReadOnly =
-    draftStatus === "IN_REVIEW" || draftStatus === "SYNC_CONFLICT"
-  const activeFile = getActiveDraftFile(draftCollection)
-  const activeFileContent =
-    isSyncConflict && activeFile.conflictContent !== undefined
-      ? activeFile.conflictContent || ""
-      : activeFile.content
-  const duplicateFilePaths = getDuplicateDraftFilePaths(draftCollection.files)
-  const hasMissingFilePath = draftCollection.files.some(
-    (file) => !file.filePath
+  const Silian_githubPrUrl = Silian_initialData?.githubPrUrl
+  const Silian_isSyncConflict = Silian_draftStatus === "SYNC_CONFLICT"
+  const Silian_isReadOnly =
+    Silian_draftStatus === "IN_REVIEW" || Silian_draftStatus === "SYNC_CONFLICT"
+  const Silian_activeFile = Silian_getActiveDraftFile(Silian_draftCollection)
+  const Silian_activeFileContent =
+    Silian_isSyncConflict && Silian_activeFile.conflictContent !== undefined
+      ? Silian_activeFile.conflictContent || ""
+      : Silian_activeFile.content
+  const Silian_duplicateFilePaths = Silian_getDuplicateDraftFilePaths(Silian_draftCollection.files)
+  const Silian_hasMissingFilePath = Silian_draftCollection.files.some(
+    (Silian_file) => !Silian_file.filePath
   )
-  const activeFileHasDuplicatePath = duplicateFilePaths.some(
-    (filePath) =>
-      normalizeDraftFilePath(filePath) ===
-      normalizeDraftFilePath(activeFile.filePath)
+  const Silian_activeFileHasDuplicatePath = Silian_duplicateFilePaths.some(
+    (Silian_filePath) =>
+      Silian_normalizeDraftFilePath(Silian_filePath) ===
+      Silian_normalizeDraftFilePath(Silian_activeFile.filePath)
   )
-  const activeFileIndex =
-    draftCollection.files.findIndex((file) => file.id === activeFile.id) + 1
-  const contributingGuides = initialData?.contributingGuides || []
-  const unsavedFileIds = React.useMemo(() => {
-    const savedFilesById = new Map(
-      lastSavedDraftCollection.files.map((file) => [file.id, file])
+  const Silian_activeFileIndex =
+    Silian_draftCollection.files.findIndex((Silian_file) => Silian_file.id === Silian_activeFile.id) + 1
+  const Silian_contributingGuides = Silian_initialData?.contributingGuides || []
+  const Silian_unsavedFileIds = Silian_React.useMemo(() => {
+    const Silian_savedFilesById = new Map(
+      Silian_lastSavedDraftCollection.files.map((Silian_file) => [Silian_file.id, Silian_file])
     )
-    const nextUnsavedFileIds = new Set<string>()
+    const Silian_nextUnsavedFileIds = new Set<string>()
 
-    for (const file of draftCollection.files) {
-      const savedFile = savedFilesById.get(file.id)
+    for (const Silian_file of Silian_draftCollection.files) {
+      const Silian_savedFile = Silian_savedFilesById.get(Silian_file.id)
 
       if (
-        !savedFile ||
-        savedFile.content !== file.content ||
-        normalizeDraftFilePath(savedFile.filePath) !==
-          normalizeDraftFilePath(file.filePath)
+        !Silian_savedFile ||
+        Silian_savedFile.content !== Silian_file.content ||
+        Silian_normalizeDraftFilePath(Silian_savedFile.filePath) !==
+          Silian_normalizeDraftFilePath(Silian_file.filePath)
       ) {
-        nextUnsavedFileIds.add(file.id)
+        Silian_nextUnsavedFileIds.add(Silian_file.id)
       }
     }
 
-    return nextUnsavedFileIds
-  }, [draftCollection.files, lastSavedDraftCollection.files])
-  const hasUnsavedChanges =
-    title !== lastSavedTitle ||
-    draftCollection.files.length !== lastSavedDraftCollection.files.length ||
-    (draftCollection.folders || []).join("|") !==
-      (lastSavedDraftCollection.folders || []).join("|") ||
-    unsavedFileIds.size > 0
+    return Silian_nextUnsavedFileIds
+  }, [Silian_draftCollection.files, Silian_lastSavedDraftCollection.files])
+  const Silian_hasUnsavedChanges =
+    Silian_title !== Silian_lastSavedTitle ||
+    Silian_draftCollection.files.length !== Silian_lastSavedDraftCollection.files.length ||
+    (Silian_draftCollection.folders || []).join("|") !==
+      (Silian_lastSavedDraftCollection.folders || []).join("|") ||
+    Silian_unsavedFileIds.size > 0
 
-  const updateDraftCollection = (
-    updater: (current: DraftFileCollection) => DraftFileCollection
+  const Silian_updateDraftCollection = (
+    Silian_updater: (current: DraftFileCollection) => DraftFileCollection
   ) => {
-    setDraftCollection((current) =>
-      normalizeDraftFileCollection(updater(current))
+    Silian_setDraftCollection((Silian_current) =>
+      Silian_normalizeDraftFileCollection(Silian_updater(Silian_current))
     )
   }
 
-  const getDraftContentHistory = React.useCallback((fileId: string) => {
-    const existingHistory = contentHistoryRef.current[fileId]
+  const Silian_getDraftContentHistory = Silian_React.useCallback((Silian_fileId: string) => {
+    const Silian_existingHistory = Silian_contentHistoryRef.current[Silian_fileId]
 
-    if (existingHistory) {
-      return existingHistory
+    if (Silian_existingHistory) {
+      return Silian_existingHistory
     }
 
-    const nextHistory: DraftContentHistory = {
+    const Silian_nextHistory: DraftContentHistory = {
       undoStack: [],
       redoStack: [],
     }
-    contentHistoryRef.current[fileId] = nextHistory
-    return nextHistory
+    Silian_contentHistoryRef.current[Silian_fileId] = Silian_nextHistory
+    return Silian_nextHistory
   }, [])
 
-  const pushHistoryEntry = React.useCallback(
-    (stack: string[], value: string) => {
-      if (stack[stack.length - 1] === value) {
+  const Silian_pushHistoryEntry = Silian_React.useCallback(
+    (Silian_stack: string[], Silian_value: string) => {
+      if (Silian_stack[Silian_stack.length - 1] === Silian_value) {
         return
       }
 
-      stack.push(value)
+      Silian_stack.push(Silian_value)
 
-      if (stack.length > MAX_DRAFT_HISTORY_ENTRIES) {
-        stack.splice(0, stack.length - MAX_DRAFT_HISTORY_ENTRIES)
+      if (Silian_stack.length > Silian_MAX_DRAFT_HISTORY_ENTRIES) {
+        Silian_stack.splice(0, Silian_stack.length - Silian_MAX_DRAFT_HISTORY_ENTRIES)
       }
     },
     []
   )
 
-  const updateFileById = (
-    fileId: string,
-    updates: {
+  const Silian_updateFileById = (
+    Silian_fileId: string,
+    Silian_updates: {
       content?: string
       filePath?: string
       conflictContent?: string | null
     }
   ) => {
-    updateDraftCollection((current) => ({
-      ...current,
-      files: current.files.map((file) =>
-        file.id === fileId
+    Silian_updateDraftCollection((Silian_current) => ({
+      ...Silian_current,
+      files: Silian_current.files.map((Silian_file) =>
+        Silian_file.id === Silian_fileId
           ? {
-              ...file,
-              ...(updates.content !== undefined
-                ? { content: updates.content }
+              ...Silian_file,
+              ...(Silian_updates.content !== undefined
+                ? { content: Silian_updates.content }
                 : {}),
-              ...(updates.filePath !== undefined
-                ? { filePath: normalizeDraftFilePath(updates.filePath) }
+              ...(Silian_updates.filePath !== undefined
+                ? { filePath: Silian_normalizeDraftFilePath(Silian_updates.filePath) }
                 : {}),
-              ...(updates.conflictContent !== undefined
-                ? { conflictContent: updates.conflictContent }
+              ...(Silian_updates.conflictContent !== undefined
+                ? { conflictContent: Silian_updates.conflictContent }
                 : {}),
             }
-          : file
+          : Silian_file
       ),
     }))
   }
 
-  const updateFileContent = React.useCallback(
+  const Silian_updateFileContent = Silian_React.useCallback(
     (
-      fileId: string,
-      nextContent: string,
-      mode: "record" | "undo" | "redo" = "record"
+      Silian_fileId: string,
+      Silian_nextContent: string,
+      Silian_mode: "record" | "undo" | "redo" = "record"
     ) => {
-      updateDraftCollection((current) => {
-        const targetFile = current.files.find((file) => file.id === fileId)
+      Silian_updateDraftCollection((Silian_current) => {
+        const Silian_targetFile = Silian_current.files.find((Silian_file) => Silian_file.id === Silian_fileId)
 
-        if (!targetFile || targetFile.content === nextContent) {
-          return current
+        if (!Silian_targetFile || Silian_targetFile.content === Silian_nextContent) {
+          return Silian_current
         }
 
-        const history = getDraftContentHistory(fileId)
+        const Silian_history = Silian_getDraftContentHistory(Silian_fileId)
 
-        if (mode === "record") {
-          pushHistoryEntry(history.undoStack, targetFile.content)
-          history.redoStack = []
-        } else if (mode === "undo") {
-          pushHistoryEntry(history.redoStack, targetFile.content)
+        if (Silian_mode === "record") {
+          Silian_pushHistoryEntry(Silian_history.undoStack, Silian_targetFile.content)
+          Silian_history.redoStack = []
+        } else if (Silian_mode === "undo") {
+          Silian_pushHistoryEntry(Silian_history.redoStack, Silian_targetFile.content)
         } else {
-          pushHistoryEntry(history.undoStack, targetFile.content)
+          Silian_pushHistoryEntry(Silian_history.undoStack, Silian_targetFile.content)
         }
 
         return {
-          ...current,
-          files: current.files.map((file) =>
-            file.id === fileId ? { ...file, content: nextContent } : file
+          ...Silian_current,
+          files: Silian_current.files.map((Silian_file) =>
+            Silian_file.id === Silian_fileId ? { ...Silian_file, content: Silian_nextContent } : Silian_file
           ),
         }
       })
     },
-    [getDraftContentHistory, pushHistoryEntry]
+    [Silian_getDraftContentHistory, Silian_pushHistoryEntry]
   )
 
-  const updateActiveFile = (updates: {
+  const Silian_updateActiveFile = (Silian_updates: {
     content?: string
     filePath?: string
   }) => {
-    if (updates.content !== undefined) {
-      updateFileContent(draftCollection.activeFileId, updates.content)
+    if (Silian_updates.content !== undefined) {
+      Silian_updateFileContent(Silian_draftCollection.activeFileId, Silian_updates.content)
     }
 
-    if (updates.filePath !== undefined) {
-      updateFileById(draftCollection.activeFileId, {
-        filePath: updates.filePath,
+    if (Silian_updates.filePath !== undefined) {
+      Silian_updateFileById(Silian_draftCollection.activeFileId, {
+        filePath: Silian_updates.filePath,
       })
     }
   }
 
-  const persistDraft = React.useCallback(async () => {
-    const normalizedDraftCollection =
-      normalizeDraftFileCollection(draftCollection)
-    const primaryFile = getActiveDraftFile(normalizedDraftCollection)
-    const formData = new FormData()
-    formData.append("title", title)
-    formData.append("activeFileId", normalizedDraftCollection.activeFileId)
-    formData.append("content", primaryFile.content)
-    formData.append(
+  const Silian_persistDraft = Silian_React.useCallback(async () => {
+    const Silian_normalizedDraftCollection =
+      Silian_normalizeDraftFileCollection(Silian_draftCollection)
+    const Silian_primaryFile = Silian_getActiveDraftFile(Silian_normalizedDraftCollection)
+    const Silian_formData = new FormData()
+    Silian_formData.append("title", Silian_title)
+    Silian_formData.append("activeFileId", Silian_normalizedDraftCollection.activeFileId)
+    Silian_formData.append("content", Silian_primaryFile.content)
+    Silian_formData.append(
       "draftFiles",
-      serializeDraftFilesPayload(normalizedDraftCollection)
+      Silian_serializeDraftFilesPayload(Silian_normalizedDraftCollection)
     )
-    formData.append("filePath", primaryFile.filePath)
-    if (revisionId) {
-      formData.append("revisionId", revisionId)
+    Silian_formData.append("filePath", Silian_primaryFile.filePath)
+    if (Silian_revisionId) {
+      Silian_formData.append("revisionId", Silian_revisionId)
     }
 
-    const result = await saveDraftAction(formData)
+    const Silian_result = await Silian_saveDraftAction(Silian_formData)
 
-    if (!result.success || !result.revisionId) {
+    if (!Silian_result.success || !Silian_result.revisionId) {
       throw new Error("Failed to save draft")
     }
 
-    setDraftCollection(normalizedDraftCollection)
-    setLastSavedDraftCollection(normalizedDraftCollection)
-    setLastSavedTitle(title)
-    setRevisionId(result.revisionId)
+    Silian_setDraftCollection(Silian_normalizedDraftCollection)
+    Silian_setLastSavedDraftCollection(Silian_normalizedDraftCollection)
+    Silian_setLastSavedTitle(Silian_title)
+    Silian_setRevisionId(Silian_result.revisionId)
 
     return {
-      normalizedDraftCollection,
-      revisionId: result.revisionId,
+      normalizedDraftCollection: Silian_normalizedDraftCollection,
+      revisionId: Silian_result.revisionId,
     }
-  }, [draftCollection, revisionId, title])
+  }, [Silian_draftCollection, Silian_revisionId, Silian_title])
 
-  const saveDraftWithFeedback = React.useCallback(
-    async (mode: "manual" | "auto" = "manual") => {
-      if (isSaving || !title.trim()) {
+  const Silian_saveDraftWithFeedback = Silian_React.useCallback(
+    async (Silian_mode: "manual" | "auto" = "manual") => {
+      if (Silian_isSaving || !Silian_title.trim()) {
         return
       }
 
-      if (autoSaveTimeoutRef.current !== null) {
-        window.clearTimeout(autoSaveTimeoutRef.current)
-        autoSaveTimeoutRef.current = null
+      if (Silian_autoSaveTimeoutRef.current !== null) {
+        window.clearTimeout(Silian_autoSaveTimeoutRef.current)
+        Silian_autoSaveTimeoutRef.current = null
       }
 
-      setIsSaving(true)
+      Silian_setIsSaving(true)
 
-      if (mode === "manual") {
-        updateSaveProgressState("running")
+      if (Silian_mode === "manual") {
+        Silian_updateSaveProgressState("running")
       }
 
       try {
-        await persistDraft()
+        await Silian_persistDraft()
 
-        if (mode === "manual") {
-          updateSaveProgressState("success")
-          showBadge("DRAFT_SAVED_", "info", 3000)
+        if (Silian_mode === "manual") {
+          Silian_updateSaveProgressState("success")
+          Silian_showBadge("DRAFT_SAVED_", "info", 3000)
         } else {
-          showBadge("AUTOSAVED_", "info", 1800)
+          Silian_showBadge("AUTOSAVED_", "info", 1800)
         }
-      } catch (error) {
-        console.error(error)
+      } catch (Silian_error) {
+        console.error(Silian_error)
 
-        if (mode === "manual") {
-          updateSaveProgressState("error")
-          showBadge("SAVE_FAILED_", "error")
+        if (Silian_mode === "manual") {
+          Silian_updateSaveProgressState("error")
+          Silian_showBadge("SAVE_FAILED_", "error")
         } else {
-          showBadge("AUTOSAVE_FAILED_", "error")
+          Silian_showBadge("AUTOSAVE_FAILED_", "error")
         }
       } finally {
-        setIsSaving(false)
+        Silian_setIsSaving(false)
       }
     },
-    [isSaving, persistDraft, showBadge, title]
+    [Silian_isSaving, Silian_persistDraft, Silian_showBadge, Silian_title]
   )
 
-  const handleUndoDraftEdit = React.useCallback(() => {
-    if (isReadOnly) {
+  const Silian_handleUndoDraftEdit = Silian_React.useCallback(() => {
+    if (Silian_isReadOnly) {
       return
     }
 
-    const history = contentHistoryRef.current[draftCollection.activeFileId]
-    const previousContent = history?.undoStack.pop()
+    const Silian_history = Silian_contentHistoryRef.current[Silian_draftCollection.activeFileId]
+    const Silian_previousContent = Silian_history?.undoStack.pop()
 
-    if (previousContent === undefined) {
+    if (Silian_previousContent === undefined) {
       return
     }
 
-    updateFileContent(draftCollection.activeFileId, previousContent, "undo")
-  }, [draftCollection.activeFileId, isReadOnly, updateFileContent])
+    Silian_updateFileContent(Silian_draftCollection.activeFileId, Silian_previousContent, "undo")
+  }, [Silian_draftCollection.activeFileId, Silian_isReadOnly, Silian_updateFileContent])
 
-  const handleRedoDraftEdit = React.useCallback(() => {
-    if (isReadOnly) {
+  const Silian_handleRedoDraftEdit = Silian_React.useCallback(() => {
+    if (Silian_isReadOnly) {
       return
     }
 
-    const history = contentHistoryRef.current[draftCollection.activeFileId]
-    const nextContent = history?.redoStack.pop()
+    const Silian_history = Silian_contentHistoryRef.current[Silian_draftCollection.activeFileId]
+    const Silian_nextContent = Silian_history?.redoStack.pop()
 
-    if (nextContent === undefined) {
+    if (Silian_nextContent === undefined) {
       return
     }
 
-    updateFileContent(draftCollection.activeFileId, nextContent, "redo")
-  }, [draftCollection.activeFileId, isReadOnly, updateFileContent])
+    Silian_updateFileContent(Silian_draftCollection.activeFileId, Silian_nextContent, "redo")
+  }, [Silian_draftCollection.activeFileId, Silian_isReadOnly, Silian_updateFileContent])
 
-  const insertTextAtCursor = (text: string) => {
-    if (!textareaRef.current) return
-    const view = textareaRef.current.view
-    if (!view) return
+  const Silian_insertTextAtCursor = (Silian_text: string) => {
+    if (!Silian_textareaRef.current) return
+    const Silian_view = Silian_textareaRef.current.view
+    if (!Silian_view) return
 
-    const selection = view.state.selection.main
+    const Silian_selection = Silian_view.state.selection.main
 
-    view.dispatch({
+    Silian_view.dispatch({
       changes: {
-        from: selection.from,
-        to: selection.to,
-        insert: text,
+        from: Silian_selection.from,
+        to: Silian_selection.to,
+        insert: Silian_text,
       },
       selection: {
-        anchor: selection.from + text.length,
-        head: selection.from + text.length,
+        anchor: Silian_selection.from + Silian_text.length,
+        head: Silian_selection.from + Silian_text.length,
       },
     })
 
-    view.focus()
+    Silian_view.focus()
   }
 
-  const insertSyntax = (prefix: string, suffix: string = "") => {
-    if (isReadOnly || !textareaRef.current) return
-    const view = textareaRef.current.view
-    if (!view) return
+  const Silian_insertSyntax = (Silian_prefix: string, Silian_suffix: string = "") => {
+    if (Silian_isReadOnly || !Silian_textareaRef.current) return
+    const Silian_view = Silian_textareaRef.current.view
+    if (!Silian_view) return
 
-    const selection = view.state.selection.main
-    const selectedText = view.state.sliceDoc(selection.from, selection.to)
-    const newText = prefix + selectedText + suffix
+    const Silian_selection = Silian_view.state.selection.main
+    const Silian_selectedText = Silian_view.state.sliceDoc(Silian_selection.from, Silian_selection.to)
+    const Silian_newText = Silian_prefix + Silian_selectedText + Silian_suffix
 
-    view.dispatch({
+    Silian_view.dispatch({
       changes: {
-        from: selection.from,
-        to: selection.to,
-        insert: newText,
+        from: Silian_selection.from,
+        to: Silian_selection.to,
+        insert: Silian_newText,
       },
       selection: {
-        anchor: selection.from + prefix.length,
-        head: selection.from + prefix.length + selectedText.length,
+        anchor: Silian_selection.from + Silian_prefix.length,
+        head: Silian_selection.from + Silian_prefix.length + Silian_selectedText.length,
       },
     })
 
-    view.focus()
+    Silian_view.focus()
   }
 
-  const draftUploadAdapter = React.useCallback(
-    async (file: File) => {
-      if (!revisionId) {
+  const Silian_draftUploadAdapter = Silian_React.useCallback(
+    async (Silian_file: File) => {
+      if (!Silian_revisionId) {
         throw new Error("Save draft first before uploading files.")
       }
 
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("revisionId", revisionId)
+      const Silian_formData = new FormData()
+      Silian_formData.append("file", Silian_file)
+      Silian_formData.append("revisionId", Silian_revisionId)
 
-      const res = await fetch("/api/upload/draft", {
+      const Silian_res = await fetch("/api/upload/draft", {
         method: "POST",
-        body: formData,
+        body: Silian_formData,
       })
 
-      if (res.status === 413) {
-        throw new Error(t("errorFileTooLarge"))
+      if (Silian_res.status === 413) {
+        throw new Error(Silian_t("errorFileTooLarge"))
       }
 
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || t("errorUploadFailed"))
+      const Silian_data = await Silian_res.json()
+      if (!Silian_res.ok) throw new Error(Silian_data.error || Silian_t("errorUploadFailed"))
 
       return {
-        url: data.url,
-        filename: data.filename,
-        mimeType: data.mimeType,
-        fileSize: data.fileSize,
+        url: Silian_data.url,
+        filename: Silian_data.filename,
+        mimeType: Silian_data.mimeType,
+        fileSize: Silian_data.fileSize,
       }
     },
-    [revisionId, t]
+    [Silian_revisionId, Silian_t]
   )
 
-  const { uploadFile, isUploading, isCompressing } = useEditorUpload({
-    adapter: draftUploadAdapter,
-    onInsertContent: (text: string) => {
-      if (text === "") {
-        updateActiveFile({
-          content: activeFileContent.replace(
+  const { uploadFile: Silian_uploadFile, isUploading: Silian_isUploading, isCompressing: Silian_isCompressing } = Silian_useEditorUpload({
+    adapter: Silian_draftUploadAdapter,
+    onInsertContent: (Silian_text: string) => {
+      if (Silian_text === "") {
+        Silian_updateActiveFile({
+          content: Silian_activeFileContent.replace(
             /<!-- UPLOAD_PENDING_[a-f0-9-]+ -->\n?/g,
             ""
           ),
         })
-      } else if (text.startsWith("<!--")) {
-        insertTextAtCursor(text)
+      } else if (Silian_text.startsWith("<!--")) {
+        Silian_insertTextAtCursor(Silian_text)
       } else {
-        updateActiveFile({
-          content: activeFileContent.replace(
+        Silian_updateActiveFile({
+          content: Silian_activeFileContent.replace(
             /<!-- UPLOAD_PENDING_[a-f0-9-]+ -->/,
-            text
+            Silian_text
           ),
         })
       }
     },
-    onShowBadge: (message: string, type: "info" | "error" | "progress") => {
-      showBadge(message, type)
+    onShowBadge: (Silian_message: string, Silian_type: "info" | "error" | "progress") => {
+      Silian_showBadge(Silian_message, Silian_type)
     },
-    onClearBadge: clearBadge,
+    onClearBadge: Silian_clearBadge,
   })
 
-  React.useEffect(() => {
-    if (isReadOnly || !title.trim() || !hasUnsavedChanges) {
-      if (autoSaveTimeoutRef.current !== null) {
-        window.clearTimeout(autoSaveTimeoutRef.current)
-        autoSaveTimeoutRef.current = null
+  Silian_React.useEffect(() => {
+    if (Silian_isReadOnly || !Silian_title.trim() || !Silian_hasUnsavedChanges) {
+      if (Silian_autoSaveTimeoutRef.current !== null) {
+        window.clearTimeout(Silian_autoSaveTimeoutRef.current)
+        Silian_autoSaveTimeoutRef.current = null
       }
       return
     }
 
-    if (isSaving || isSubmittingReview || isUploading) {
+    if (Silian_isSaving || Silian_isSubmittingReview || Silian_isUploading) {
       return
     }
 
-    if (autoSaveTimeoutRef.current !== null) {
-      window.clearTimeout(autoSaveTimeoutRef.current)
+    if (Silian_autoSaveTimeoutRef.current !== null) {
+      window.clearTimeout(Silian_autoSaveTimeoutRef.current)
     }
 
-    autoSaveTimeoutRef.current = window.setTimeout(() => {
-      autoSaveTimeoutRef.current = null
-      void saveDraftWithFeedback("auto")
+    Silian_autoSaveTimeoutRef.current = window.setTimeout(() => {
+      Silian_autoSaveTimeoutRef.current = null
+      void Silian_saveDraftWithFeedback("auto")
     }, 1500)
 
     return () => {
-      if (autoSaveTimeoutRef.current !== null) {
-        window.clearTimeout(autoSaveTimeoutRef.current)
-        autoSaveTimeoutRef.current = null
+      if (Silian_autoSaveTimeoutRef.current !== null) {
+        window.clearTimeout(Silian_autoSaveTimeoutRef.current)
+        Silian_autoSaveTimeoutRef.current = null
       }
     }
   }, [
-    draftCollection,
-    hasUnsavedChanges,
-    isReadOnly,
-    isSaving,
-    isSubmittingReview,
-    isUploading,
-    saveDraftWithFeedback,
-    title,
+    Silian_draftCollection,
+    Silian_hasUnsavedChanges,
+    Silian_isReadOnly,
+    Silian_isSaving,
+    Silian_isSubmittingReview,
+    Silian_isUploading,
+    Silian_saveDraftWithFeedback,
+    Silian_title,
   ])
 
-  React.useEffect(() => {
-    if (isReadOnly) {
+  Silian_React.useEffect(() => {
+    if (Silian_isReadOnly) {
       return
     }
 
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const Silian_handleKeyDown = (Silian_event: KeyboardEvent) => {
       if (
-        !(event.ctrlKey || event.metaKey) ||
-        event.key.toLowerCase() !== "s"
+        !(Silian_event.ctrlKey || Silian_event.metaKey) ||
+        Silian_event.key.toLowerCase() !== "s"
       ) {
         return
       }
 
-      event.preventDefault()
+      Silian_event.preventDefault()
 
-      if (isSubmittingReview || isUploading || !title.trim()) {
+      if (Silian_isSubmittingReview || Silian_isUploading || !Silian_title.trim()) {
         return
       }
 
-      void saveDraftWithFeedback("manual")
+      void Silian_saveDraftWithFeedback("manual")
     }
 
-    window.addEventListener("keydown", handleKeyDown)
+    window.addEventListener("keydown", Silian_handleKeyDown)
 
-    return () => window.removeEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", Silian_handleKeyDown)
   }, [
-    isReadOnly,
-    isSubmittingReview,
-    isUploading,
-    saveDraftWithFeedback,
-    title,
+    Silian_isReadOnly,
+    Silian_isSubmittingReview,
+    Silian_isUploading,
+    Silian_saveDraftWithFeedback,
+    Silian_title,
   ])
 
-  const handleUploadWithAutoSave = async (file: File) => {
-    if (!revisionId) {
-      showBadge(t("badgeSavingBeforeUpload"), "progress")
-      setIsSaving(true)
-      updateSaveProgressState("running")
+  const Silian_handleUploadWithAutoSave = async (Silian_file: File) => {
+    if (!Silian_revisionId) {
+      Silian_showBadge(Silian_t("badgeSavingBeforeUpload"), "progress")
+      Silian_setIsSaving(true)
+      Silian_updateSaveProgressState("running")
       try {
-        const result = await persistDraft()
-        if (result.revisionId) {
-          updateSaveProgressState("success")
-          clearBadge()
+        const Silian_result = await Silian_persistDraft()
+        if (Silian_result.revisionId) {
+          Silian_updateSaveProgressState("success")
+          Silian_clearBadge()
         } else {
-          updateSaveProgressState("error")
-          showBadge(t("badgeSaveFailedUpload"), "error")
+          Silian_updateSaveProgressState("error")
+          Silian_showBadge(Silian_t("badgeSaveFailedUpload"), "error")
           return
         }
       } catch {
-        updateSaveProgressState("error")
-        showBadge(t("badgeSaveFailedUpload"), "error")
+        Silian_updateSaveProgressState("error")
+        Silian_showBadge(Silian_t("badgeSaveFailedUpload"), "error")
         return
       } finally {
-        setIsSaving(false)
+        Silian_setIsSaving(false)
       }
     }
-    uploadFile(file)
+    Silian_uploadFile(Silian_file)
   }
 
-  const handlePaste = (e: React.ClipboardEvent) => {
-    if (isReadOnly || isUploading) return
-    const items = e.clipboardData.items
-    for (const item of Array.from(items)) {
-      if (item.type.indexOf("image") !== -1) {
-        e.preventDefault()
-        const file = item.getAsFile()
-        if (file) {
-          handleUploadWithAutoSave(file)
+  const Silian_handlePaste = (Silian_e: Silian_React.ClipboardEvent) => {
+    if (Silian_isReadOnly || Silian_isUploading) return
+    const Silian_items = Silian_e.clipboardData.items
+    for (const Silian_item of Array.from(Silian_items)) {
+      if (Silian_item.type.indexOf("image") !== -1) {
+        Silian_e.preventDefault()
+        const Silian_file = Silian_item.getAsFile()
+        if (Silian_file) {
+          Silian_handleUploadWithAutoSave(Silian_file)
         }
         break
       }
     }
   }
 
-  const handleDrop = (e: React.DragEvent) => {
-    if (isReadOnly || isUploading) return
-    e.preventDefault()
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0]
-      handleUploadWithAutoSave(file)
+  const Silian_handleDrop = (Silian_e: Silian_React.DragEvent) => {
+    if (Silian_isReadOnly || Silian_isUploading) return
+    Silian_e.preventDefault()
+    if (Silian_e.dataTransfer.files && Silian_e.dataTransfer.files.length > 0) {
+      const Silian_file = Silian_e.dataTransfer.files[0]
+      Silian_handleUploadWithAutoSave(Silian_file)
     }
   }
 
-  const handleSaveDraft = async (e: React.FormEvent) => {
-    e.preventDefault()
-    await saveDraftWithFeedback("manual")
+  const Silian_handleSaveDraft = async (Silian_e: Silian_React.FormEvent) => {
+    Silian_e.preventDefault()
+    await Silian_saveDraftWithFeedback("manual")
   }
 
-  const handleSubmitReview = async () => {
-    if (hasMissingFilePath) {
-      showBadge(t("badgeAllFilesNeedPath"), "error", 4000)
+  const Silian_handleSubmitReview = async () => {
+    if (Silian_hasMissingFilePath) {
+      Silian_showBadge(Silian_t("badgeAllFilesNeedPath"), "error", 4000)
       return
     }
 
-    if (duplicateFilePaths.length > 0) {
-      showBadge(
-        t("duplicatePathsError", { paths: duplicateFilePaths.join(", ") }),
+    if (Silian_duplicateFilePaths.length > 0) {
+      Silian_showBadge(
+        Silian_t("duplicatePathsError", { paths: Silian_duplicateFilePaths.join(", ") }),
         "error",
         4000
       )
       return
     }
 
-    setIsSubmittingReview(true)
-    updateSubmitProgressState("running")
+    Silian_setIsSubmittingReview(true)
+    Silian_updateSubmitProgressState("running")
     try {
-      const persistedDraft = await persistDraft()
-      const result = await submitForReviewAction(persistedDraft.revisionId)
-      setDraftStatus(result.status)
-      updateSubmitProgressState("success")
-      showBadge(
-        result.status === "SYNC_CONFLICT"
-          ? t("badgeSyncConflict")
-          : t("badgePrOpened"),
+      const Silian_persistedDraft = await Silian_persistDraft()
+      const Silian_result = await Silian_submitForReviewAction(Silian_persistedDraft.revisionId)
+      Silian_setDraftStatus(Silian_result.status)
+      Silian_updateSubmitProgressState("success")
+      Silian_showBadge(
+        Silian_result.status === "SYNC_CONFLICT"
+          ? Silian_t("badgeSyncConflict")
+          : Silian_t("badgePrOpened"),
         "info",
         4000
       )
-      router.push(`/draft/${persistedDraft.revisionId}`)
-      router.refresh()
-    } catch (error) {
-      console.error(error)
-      updateSubmitProgressState("error")
-      showBadge(t("badgeSubmitFailed"), "error")
+      Silian_router.push(`/draft/${Silian_persistedDraft.revisionId}`)
+      Silian_router.refresh()
+    } catch (Silian_error) {
+      console.error(Silian_error)
+      Silian_updateSubmitProgressState("error")
+      Silian_showBadge(Silian_t("badgeSubmitFailed"), "error")
     } finally {
-      setIsSubmittingReview(false)
+      Silian_setIsSubmittingReview(false)
     }
   }
 
-  const openFileDialog = React.useCallback(
-    (kind: DraftFileDialogIntent["kind"], initialMode: SourceMode) => {
-      if (isReadOnly) {
+  const Silian_openFileDialog = Silian_React.useCallback(
+    (Silian_kind: DraftFileDialogIntent["kind"], Silian_initialMode: SourceMode) => {
+      if (Silian_isReadOnly) {
         return
       }
 
-      setFileDialogIntent({ kind, initialMode })
+      Silian_setFileDialogIntent({ kind: Silian_kind, initialMode: Silian_initialMode })
     },
-    [isReadOnly]
+    [Silian_isReadOnly]
   )
 
-  const handleAddFile = () => {
-    openFileDialog("add", "repo")
+  const Silian_handleAddFile = () => {
+    Silian_openFileDialog("add", "repo")
   }
 
-  const handleRemoveFile = (fileId: string) => {
-    if (isReadOnly || draftCollection.files.length <= 1) {
+  const Silian_handleRemoveFile = (Silian_fileId: string) => {
+    if (Silian_isReadOnly || Silian_draftCollection.files.length <= 1) {
       return
     }
 
-    updateDraftCollection((current) => {
-      const currentIndex = current.files.findIndex((file) => file.id === fileId)
-      const remainingFiles = current.files.filter((file) => file.id !== fileId)
-      const nextActiveFile =
-        current.activeFileId === fileId
-          ? remainingFiles[Math.max(0, currentIndex - 1)]?.id ||
-            remainingFiles[0]?.id
-          : current.activeFileId
+    Silian_updateDraftCollection((Silian_current) => {
+      const Silian_currentIndex = Silian_current.files.findIndex((Silian_file) => Silian_file.id === Silian_fileId)
+      const Silian_remainingFiles = Silian_current.files.filter((Silian_file) => Silian_file.id !== Silian_fileId)
+      const Silian_nextActiveFile =
+        Silian_current.activeFileId === Silian_fileId
+          ? Silian_remainingFiles[Math.max(0, Silian_currentIndex - 1)]?.id ||
+            Silian_remainingFiles[0]?.id
+          : Silian_current.activeFileId
 
       return {
-        activeFileId: nextActiveFile,
-        folders: current.folders || [],
-        files: remainingFiles,
+        activeFileId: Silian_nextActiveFile,
+        folders: Silian_current.folders || [],
+        files: Silian_remainingFiles,
       }
     })
   }
 
-  const handleApplyDraftFileSource = ({
-    content,
-    filePath,
+  const Silian_handleApplyDraftFileSource = ({
+    content: Silian_content,
+    filePath: Silian_filePath,
   }: {
     content: string
     filePath: string
   }) => {
-    const normalizedPath = normalizeDraftFilePath(filePath)
-    const hasDuplicate = draftCollection.files.some(
-      (file) =>
-        normalizeDraftFilePath(file.filePath) === normalizedPath &&
-        (fileDialogIntent?.kind !== "replace" || file.id !== activeFile.id)
+    const Silian_normalizedPath = Silian_normalizeDraftFilePath(Silian_filePath)
+    const Silian_hasDuplicate = Silian_draftCollection.files.some(
+      (Silian_file) =>
+        Silian_normalizeDraftFilePath(Silian_file.filePath) === Silian_normalizedPath &&
+        (Silian_fileDialogIntent?.kind !== "replace" || Silian_file.id !== Silian_activeFile.id)
     )
 
-    if (hasDuplicate) {
-      showBadge(t("badgeFileAlreadyExists"), "error", 3000)
+    if (Silian_hasDuplicate) {
+      Silian_showBadge(Silian_t("badgeFileAlreadyExists"), "error", 3000)
       return false
     }
 
-    if (fileDialogIntent?.kind === "replace") {
-      updateDraftCollection((current) => ({
-        ...current,
-        files: current.files.map((file) =>
-          file.id === current.activeFileId
+    if (Silian_fileDialogIntent?.kind === "replace") {
+      Silian_updateDraftCollection((Silian_current) => ({
+        ...Silian_current,
+        files: Silian_current.files.map((Silian_file) =>
+          Silian_file.id === Silian_current.activeFileId
             ? {
-                ...file,
-                content,
-                filePath: normalizedPath,
+                ...Silian_file,
+                content: Silian_content,
+                filePath: Silian_normalizedPath,
               }
-            : file
+            : Silian_file
         ),
       }))
-      setActiveTab("write")
-      setFileDialogIntent(null)
+      Silian_setActiveTab("write")
+      Silian_setFileDialogIntent(null)
       return true
     }
 
-    const nextFile = createDraftFile({
-      content,
-      filePath: normalizedPath,
+    const Silian_nextFile = Silian_createDraftFile({
+      content: Silian_content,
+      filePath: Silian_normalizedPath,
     })
 
-    updateDraftCollection((current) => ({
-      activeFileId: nextFile.id,
-      folders: current.folders || [],
-      files: [...current.files, nextFile],
+    Silian_updateDraftCollection((Silian_current) => ({
+      activeFileId: Silian_nextFile.id,
+      folders: Silian_current.folders || [],
+      files: [...Silian_current.files, Silian_nextFile],
     }))
-    setActiveTab("write")
-    setFileDialogIntent(null)
+    Silian_setActiveTab("write")
+    Silian_setFileDialogIntent(null)
     return true
   }
 
-  React.useEffect(() => {
-    const pendingFiles = draftCollection.files.filter((file) => {
-      const normalizedPath = normalizeDraftFilePath(file.filePath)
-      if (!normalizedPath) {
+  Silian_React.useEffect(() => {
+    const Silian_pendingFiles = Silian_draftCollection.files.filter((Silian_file) => {
+      const Silian_normalizedPath = Silian_normalizeDraftFilePath(Silian_file.filePath)
+      if (!Silian_normalizedPath) {
         return false
       }
 
-      const snapshot = repoSnapshots[file.id]
-      return !snapshot || snapshot.filePath !== normalizedPath
+      const Silian_snapshot = Silian_repoSnapshots[Silian_file.id]
+      return !Silian_snapshot || Silian_snapshot.filePath !== Silian_normalizedPath
     })
 
-    for (const file of pendingFiles) {
-      const normalizedPath = normalizeDraftFilePath(file.filePath)
-      if (!normalizedPath) {
+    for (const Silian_file of Silian_pendingFiles) {
+      const Silian_normalizedPath = Silian_normalizeDraftFilePath(Silian_file.filePath)
+      if (!Silian_normalizedPath) {
         continue
       }
 
-      setRepoSnapshots((current) => ({
-        ...current,
-        [file.id]: {
+      Silian_setRepoSnapshots((Silian_current) => ({
+        ...Silian_current,
+        [Silian_file.id]: {
           content: null,
-          filePath: normalizedPath,
+          filePath: Silian_normalizedPath,
           status: "loading",
         },
       }))
 
       void fetch(
-        `/api/draft/repo-file?path=${encodeURIComponent(normalizedPath)}`,
+        `/api/draft/repo-file?path=${encodeURIComponent(Silian_normalizedPath)}`,
         {
           cache: "no-store",
         }
       )
-        .then(async (response) => {
-          if (response.status === 404) {
-            setRepoSnapshots((current) => ({
-              ...current,
-              [file.id]: {
+        .then(async (Silian_response) => {
+          if (Silian_response.status === 404) {
+            Silian_setRepoSnapshots((Silian_current) => ({
+              ...Silian_current,
+              [Silian_file.id]: {
                 content: null,
-                filePath: normalizedPath,
+                filePath: Silian_normalizedPath,
                 status: "missing",
               },
             }))
             return
           }
 
-          const data = (await response.json()) as {
+          const Silian_data = (await Silian_response.json()) as {
             content?: string
             error?: string
           }
 
-          if (!response.ok || typeof data.content !== "string") {
-            throw new Error(data.error || "Failed to load repository file")
+          if (!Silian_response.ok || typeof Silian_data.content !== "string") {
+            throw new Error(Silian_data.error || "Failed to load repository file")
           }
 
-          setRepoSnapshots((current) => ({
-            ...current,
-            [file.id]: {
-              content: data.content ?? "",
-              filePath: normalizedPath,
+          Silian_setRepoSnapshots((Silian_current) => ({
+            ...Silian_current,
+            [Silian_file.id]: {
+              content: Silian_data.content ?? "",
+              filePath: Silian_normalizedPath,
               status: "loaded",
             },
           }))
         })
         .catch(() => {
-          setRepoSnapshots((current) => ({
-            ...current,
-            [file.id]: {
+          Silian_setRepoSnapshots((Silian_current) => ({
+            ...Silian_current,
+            [Silian_file.id]: {
               content: null,
-              filePath: normalizedPath,
+              filePath: Silian_normalizedPath,
               status: "error",
             },
           }))
         })
     }
-  }, [draftCollection.files, repoSnapshots])
+  }, [Silian_draftCollection.files, Silian_repoSnapshots])
 
-  const changeEntries = React.useMemo(
+  const Silian_changeEntries = Silian_React.useMemo(
     () =>
-      draftCollection.files
-        .map((file) => {
-          const normalizedPath = normalizeDraftFilePath(file.filePath)
-          const snapshot = repoSnapshots[file.id]
+      Silian_draftCollection.files
+        .map((Silian_file) => {
+          const Silian_normalizedPath = Silian_normalizeDraftFilePath(Silian_file.filePath)
+          const Silian_snapshot = Silian_repoSnapshots[Silian_file.id]
 
-          if (!normalizedPath) {
+          if (!Silian_normalizedPath) {
             return {
               changeType: "pending" as const,
-              file,
-              rows: buildDiffRows("", file.content),
+              file: Silian_file,
+              rows: Silian_buildDiffRows("", Silian_file.content),
             }
           }
 
-          if (!snapshot || snapshot.status === "loading") {
+          if (!Silian_snapshot || Silian_snapshot.status === "loading") {
             return {
               changeType: "pending" as const,
-              file,
-              rows: buildDiffRows("", file.content),
+              file: Silian_file,
+              rows: Silian_buildDiffRows("", Silian_file.content),
             }
           }
 
-          if (snapshot.status === "missing") {
+          if (Silian_snapshot.status === "missing") {
             return {
               changeType: "new" as const,
-              file,
-              rows: buildDiffRows("", file.content),
+              file: Silian_file,
+              rows: Silian_buildDiffRows("", Silian_file.content),
             }
           }
 
-          if (snapshot.status === "error" || snapshot.content === null) {
+          if (Silian_snapshot.status === "error" || Silian_snapshot.content === null) {
             return null
           }
 
-          if (snapshot.content === file.content) {
+          if (Silian_snapshot.content === Silian_file.content) {
             return null
           }
 
           return {
             changeType: "modified" as const,
-            file,
-            rows: buildDiffRows(snapshot.content, file.content),
+            file: Silian_file,
+            rows: Silian_buildDiffRows(Silian_snapshot.content, Silian_file.content),
           }
         })
         .filter(Boolean),
-    [draftCollection.files, repoSnapshots]
+    [Silian_draftCollection.files, Silian_repoSnapshots]
   )
 
-  const newFolderPaths = React.useMemo(
-    () => draftCollection.folders || [],
-    [draftCollection.folders]
+  const Silian_newFolderPaths = Silian_React.useMemo(
+    () => Silian_draftCollection.folders || [],
+    [Silian_draftCollection.folders]
   )
 
-  const handleInsertSelectedFile = ({
-    filePath,
+  const Silian_handleInsertSelectedFile = ({
+    filePath: Silian_filePath,
   }: {
     content: string
     filePath: string
   }) => {
-    const normalizedTargetPath = normalizeDraftFilePath(filePath)
+    const Silian_normalizedTargetPath = Silian_normalizeDraftFilePath(Silian_filePath)
 
-    if (!normalizedTargetPath) {
+    if (!Silian_normalizedTargetPath) {
       return false
     }
 
-    const linkLabel = normalizedTargetPath
+    const Silian_linkLabel = Silian_normalizedTargetPath
       .split("/")
       .filter(Boolean)
       .slice(-1)[0]
       ?.replace(/\.md$/i, "")
 
-    insertTextAtCursor(
-      `[${linkLabel || "linked-file"}](${normalizedTargetPath})`
+    Silian_insertTextAtCursor(
+      `[${Silian_linkLabel || "linked-file"}](${Silian_normalizedTargetPath})`
     )
-    setInsertDialogIntent(false)
+    Silian_setInsertDialogIntent(false)
     return true
   }
 
-  const handleCreateFolder = (folderPath: string) => {
-    const normalizedFolderPath = normalizeDraftFolderPath(folderPath)
+  const Silian_handleCreateFolder = (Silian_folderPath: string) => {
+    const Silian_normalizedFolderPath = Silian_normalizeDraftFolderPath(Silian_folderPath)
 
-    if (!normalizedFolderPath) {
-      showBadge("INVALID_FOLDER_NAME_", "error", 2800)
+    if (!Silian_normalizedFolderPath) {
+      Silian_showBadge("INVALID_FOLDER_NAME_", "error", 2800)
       return false
     }
 
-    updateDraftCollection((current) => ({
-      ...current,
-      folders: [...(current.folders || []), normalizedFolderPath],
+    Silian_updateDraftCollection((Silian_current) => ({
+      ...Silian_current,
+      folders: [...(Silian_current.folders || []), Silian_normalizedFolderPath],
     }))
-    showBadge("FOLDER_READY_", "info", 2000)
-    setFileDialogIntent(null)
+    Silian_showBadge("FOLDER_READY_", "info", 2000)
+    Silian_setFileDialogIntent(null)
     return true
   }
 
-  const saveDisabled = isSaving || !title.trim()
-  const activeFileHistory =
-    contentHistoryRef.current[draftCollection.activeFileId]
-  const submitDisabled =
-    isSubmittingReview ||
-    isSaving ||
-    isUploading ||
-    !title.trim() ||
-    hasMissingFilePath ||
-    duplicateFilePaths.length > 0
+  const Silian_saveDisabled = Silian_isSaving || !Silian_title.trim()
+  const Silian_activeFileHistory =
+    Silian_contentHistoryRef.current[Silian_draftCollection.activeFileId]
+  const Silian_submitDisabled =
+    Silian_isSubmittingReview ||
+    Silian_isSaving ||
+    Silian_isUploading ||
+    !Silian_title.trim() ||
+    Silian_hasMissingFilePath ||
+    Silian_duplicateFilePaths.length > 0
 
   return (
     <form
-      onSubmit={handleSaveDraft}
+      onSubmit={Silian_handleSaveDraft}
       className="
         group relative flex w-full flex-col space-y-6 border border-tech-main/60
         bg-[#fbfbfd] p-4 shadow-[inset_0_0_100px_rgba(96,112,143,0.03)]
@@ -1103,57 +1103,57 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
               htmlFor="draft-title"
               className="flex items-center gap-2 font-mono text-[10px] tracking-widest text-tech-main uppercase">
               <span className="inline-block size-2 bg-tech-main/40" />
-              {t("titleLabel")}
+              {Silian_t("titleLabel")}
             </label>
           </div>
-          <InputBox
+          <Silian_InputBox
             id="draft-title"
             required
-            placeholder={t("titlePlaceholder")}
+            placeholder={Silian_t("titlePlaceholder")}
             className={`
               border-tech-main/40 bg-white/50 py-3 font-mono text-lg backdrop-blur-sm
               transition-all duration-300 focus:border-tech-main focus:bg-white
               focus:ring-1 focus:ring-tech-main/20
               ${
-                isReadOnly
+                Silian_isReadOnly
                   ? `cursor-not-allowed bg-tech-main/5 opacity-70`
                   : `hover:bg-white/80`
               }
             `}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            readOnly={isReadOnly}
-            aria-busy={isSaving}
+            value={Silian_title}
+            onChange={(Silian_e) => Silian_setTitle(Silian_e.target.value)}
+            readOnly={Silian_isReadOnly}
+            aria-busy={Silian_isSaving}
           />
         </div>
       </div>
 
-      {githubPrUrl ? (
+      {Silian_githubPrUrl ? (
         <div
           className="
             flex items-center justify-between gap-3 border guide-line
             bg-tech-main/5 px-4 py-3 font-mono text-xs text-tech-main
           ">
-          <span>{t("prStreamActive")}</span>
+          <span>{Silian_t("prStreamActive")}</span>
           <a
-            href={githubPrUrl}
+            href={Silian_githubPrUrl}
             target="_blank"
             rel="noreferrer"
             className="underline underline-offset-4">
-            {t("openGithubPr")}
+            {Silian_t("openGithubPr")}
           </a>
         </div>
       ) : null}
 
-      {isSyncConflict ? (
+      {Silian_isSyncConflict ? (
         <div
           className="
             border-l-4 border-amber-500 bg-amber-500/10 p-4 text-amber-700
           ">
           <p className="font-bold tracking-widest uppercase">
-            {t("conflictTitle")}
+            {Silian_t("conflictTitle")}
           </p>
-          <p className="text-sm">{t("conflictMessage")}</p>
+          <p className="text-sm">{Silian_t("conflictMessage")}</p>
         </div>
       ) : null}
 
@@ -1162,19 +1162,19 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
           grid gap-4
           lg:grid-cols-[18rem_minmax(0,1fr)]
         ">
-        <DraftFileList
-          files={draftCollection.files}
-          activeFileId={draftCollection.activeFileId}
-          unsavedFileIds={unsavedFileIds}
-          onSelectFile={(fileId) =>
-            setDraftCollection((current) => ({
-              ...current,
-              activeFileId: fileId,
+        <Silian_DraftFileList
+          files={Silian_draftCollection.files}
+          activeFileId={Silian_draftCollection.activeFileId}
+          unsavedFileIds={Silian_unsavedFileIds}
+          onSelectFile={(Silian_fileId) =>
+            Silian_setDraftCollection((Silian_current) => ({
+              ...Silian_current,
+              activeFileId: Silian_fileId,
             }))
           }
-          onAddFile={handleAddFile}
-          onRemoveFile={handleRemoveFile}
-          isReadOnly={isReadOnly}
+          onAddFile={Silian_handleAddFile}
+          onRemoveFile={Silian_handleRemoveFile}
+          isReadOnly={Silian_isReadOnly}
         />
 
         <div className="space-y-4">
@@ -1188,89 +1188,89 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
                 sm:flex-row sm:items-end sm:justify-between
               ">
               <div>
-                <p className="section-label">{t("activeFileLabel")}</p>
+                <p className="section-label">{Silian_t("activeFileLabel")}</p>
                 <p
                   className="
                     font-mono text-xs tracking-widest text-tech-main/70
                     uppercase
                   ">
-                  {`${t("slotLabel")}_${activeFileIndex}/${draftCollection.files.length}`}
+                  {`${Silian_t("slotLabel")}_${Silian_activeFileIndex}/${Silian_draftCollection.files.length}`}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                <TechButton
+                <Silian_TechButton
                   type="button"
                   variant="secondary"
                   size="sm"
-                  disabled={isReadOnly}
-                  onClick={() => openFileDialog("replace", "repo")}>
-                  {t("chooseExistingFile")}
-                </TechButton>
-                <TechButton
+                  disabled={Silian_isReadOnly}
+                  onClick={() => Silian_openFileDialog("replace", "repo")}>
+                  {Silian_t("chooseExistingFile")}
+                </Silian_TechButton>
+                <Silian_TechButton
                   type="button"
                   variant="secondary"
                   size="sm"
-                  disabled={isReadOnly}
-                  onClick={() => openFileDialog("replace", "new")}>
-                  {t("createTargetFile")}
-                </TechButton>
-                <TechButton
+                  disabled={Silian_isReadOnly}
+                  onClick={() => Silian_openFileDialog("replace", "new")}>
+                  {Silian_t("createTargetFile")}
+                </Silian_TechButton>
+                <Silian_TechButton
                   type="button"
                   variant="secondary"
                   size="sm"
-                  disabled={isReadOnly}
-                  onClick={() => openFileDialog("replace", "upload")}>
-                  {t("importTargetFile")}
-                </TechButton>
-                <TechButton
+                  disabled={Silian_isReadOnly}
+                  onClick={() => Silian_openFileDialog("replace", "upload")}>
+                  {Silian_t("importTargetFile")}
+                </Silian_TechButton>
+                <Silian_TechButton
                   type="button"
                   variant="secondary"
                   size="sm"
-                  disabled={isReadOnly}
-                  onClick={() => openFileDialog("add", "folder")}>
+                  disabled={Silian_isReadOnly}
+                  onClick={() => Silian_openFileDialog("add", "folder")}>
                   NEW FOLDER
-                </TechButton>
-                <TechButton
+                </Silian_TechButton>
+                <Silian_TechButton
                   type="button"
                   variant="secondary"
                   size="sm"
-                  disabled={isReadOnly}
-                  onClick={() => setInsertDialogIntent(true)}>
+                  disabled={Silian_isReadOnly}
+                  onClick={() => Silian_setInsertDialogIntent(true)}>
                   INSERT FILE LINK
-                </TechButton>
+                </Silian_TechButton>
               </div>
             </div>
 
             <div className="space-y-3 border guide-line bg-tech-main/5 p-4">
               <div>
                 <p className="font-mono text-[0.6875rem] tracking-widest text-tech-main/45 uppercase">
-                  {t("targetFileLabel")}
+                  {Silian_t("targetFileLabel")}
                 </p>
                 <p className="mt-1 font-mono text-sm tracking-widest break-all text-tech-main uppercase">
-                  {activeFile.filePath || t("targetFileUnset")}
+                  {Silian_activeFile.filePath || Silian_t("targetFileUnset")}
                 </p>
               </div>
               <p className="font-mono text-xs/relaxed text-tech-main/65">
-                {t("targetFileDescription")}
+                {Silian_t("targetFileDescription")}
               </p>
             </div>
 
-            {activeFileHasDuplicatePath ? (
+            {Silian_activeFileHasDuplicatePath ? (
               <p className="mt-3 font-mono text-xs text-red-500">
-                {t("duplicatePathError")}
+                {Silian_t("duplicatePathError")}
               </p>
             ) : null}
 
-            {!activeFile.filePath && !isReadOnly ? (
+            {!Silian_activeFile.filePath && !Silian_isReadOnly ? (
               <p className="mt-3 font-mono text-xs text-amber-700">
-                {t("filePathBlankHint")}
+                {Silian_t("filePathBlankHint")}
               </p>
             ) : null}
 
-            {duplicateFilePaths.length > 0 ? (
+            {Silian_duplicateFilePaths.length > 0 ? (
               <p className="mt-2 font-mono text-xs text-red-500">
-                {t("duplicatePathsError", {
-                  paths: duplicateFilePaths.join(", "),
+                {Silian_t("duplicatePathsError", {
+                  paths: Silian_duplicateFilePaths.join(", "),
                 })}
               </p>
             ) : null}
@@ -1281,30 +1281,30 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
               relative editor-grow flex min-h-125 grow flex-col border
               border-tech-main/40 bg-white/80 backdrop-blur-sm
             ">
-            <EditorTabStrip
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
+            <Silian_EditorTabStrip
+              activeTab={Silian_activeTab}
+              onTabChange={Silian_setActiveTab}
               writeId="draft-editor-write-panel"
               previewId="draft-editor-preview-panel"
               rightSlot={
-                activeFile.filePath || `UNTITLED_FILE_${activeFileIndex}`
+                Silian_activeFile.filePath || `UNTITLED_FILE_${Silian_activeFileIndex}`
               }
             />
 
-            {activeTab === "write" && (
+            {Silian_activeTab === "write" && (
               <>
-                <EditorToolbar
-                  onInsert={insertSyntax}
-                  disabled={isReadOnly || isUploading}
-                  lineWrap={lineWrap}
-                  onWrapToggle={() => setLineWrap((v) => !v)}
+                <Silian_EditorToolbar
+                  onInsert={Silian_insertSyntax}
+                  disabled={Silian_isReadOnly || Silian_isUploading}
+                  lineWrap={Silian_lineWrap}
+                  onWrapToggle={() => Silian_setLineWrap((Silian_v) => !Silian_v)}
                   fileUploadSlot={
-                    !isReadOnly ? (
-                      <EditorFileUploadInput
-                        fileInputRef={fileInputRef}
-                        onFileSelect={handleUploadWithAutoSave}
-                        isUploading={isUploading}
-                        isCompressing={isCompressing}
+                    !Silian_isReadOnly ? (
+                      <Silian_EditorFileUploadInput
+                        fileInputRef={Silian_fileInputRef}
+                        onFileSelect={Silian_handleUploadWithAutoSave}
+                        isUploading={Silian_isUploading}
+                        isCompressing={Silian_isCompressing}
                       />
                     ) : undefined
                   }
@@ -1320,26 +1320,26 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
                     MACROS
                   </span>
 
-                  <TechButton
+                  <Silian_TechButton
                     type="button"
                     variant="ghost"
                     className="h-7 border border-transparent px-3 text-[10px] tracking-widest text-tech-main transition-all hover:guide-line hover:bg-white hover:text-tech-main hover:shadow-sm"
-                    disabled={isReadOnly}
+                    disabled={Silian_isReadOnly}
                     onClick={() =>
-                      insertTextAtCursor("\n## Section Title\n\n")
+                      Silian_insertTextAtCursor("\n## Section Title\n\n")
                     }>
                     <span className="flex items-center gap-1.5">
                       <span className="font-bold text-tech-main/40">#</span>{" "}
                       SECTION
                     </span>
-                  </TechButton>
-                  <TechButton
+                  </Silian_TechButton>
+                  <Silian_TechButton
                     type="button"
                     variant="ghost"
                     className="h-7 border border-transparent px-3 text-[10px] tracking-widest text-tech-main transition-all hover:guide-line hover:bg-white hover:text-tech-main hover:shadow-sm"
-                    disabled={isReadOnly}
+                    disabled={Silian_isReadOnly}
                     onClick={() =>
-                      insertTextAtCursor(
+                      Silian_insertTextAtCursor(
                         "\n> [!TIP]\n> Add contributor guidance here.\n\n"
                       )
                     }>
@@ -1347,14 +1347,14 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
                       <span className="font-bold text-tech-main/40">{">"}</span>{" "}
                       CALLOUT
                     </span>
-                  </TechButton>
-                  <TechButton
+                  </Silian_TechButton>
+                  <Silian_TechButton
                     type="button"
                     variant="ghost"
                     className="h-7 border border-transparent px-3 text-[10px] tracking-widest text-tech-main transition-all hover:guide-line hover:bg-white hover:text-tech-main hover:shadow-sm"
-                    disabled={isReadOnly}
+                    disabled={Silian_isReadOnly}
                     onClick={() =>
-                      insertTextAtCursor(
+                      Silian_insertTextAtCursor(
                         "\n| Parameter | Value | Notes |\n| --- | --- | --- |\n| Example | Value | Detail |\n\n"
                       )
                     }>
@@ -1362,18 +1362,18 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
                       <span className="font-bold text-tech-main/40">||</span>{" "}
                       TABLE
                     </span>
-                  </TechButton>
+                  </Silian_TechButton>
 
                   <div className="mx-2 h-4 w-px bg-tech-main/20" />
 
-                  <TechButton
+                  <Silian_TechButton
                     type="button"
                     variant="secondary"
                     className="group h-7 guide-line bg-white/50 px-3 text-[10px] font-bold tracking-widest text-tech-main-dark/80 transition-all hover:border-tech-main/50 hover:bg-white"
                     disabled={
-                      isReadOnly || !activeFileHistory?.undoStack.length
+                      Silian_isReadOnly || !Silian_activeFileHistory?.undoStack.length
                     }
-                    onClick={handleUndoDraftEdit}>
+                    onClick={Silian_handleUndoDraftEdit}>
                     <span className="flex items-center gap-1">
                       <svg
                         width="12"
@@ -1387,15 +1387,15 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
                       </svg>
                       UNDO
                     </span>
-                  </TechButton>
-                  <TechButton
+                  </Silian_TechButton>
+                  <Silian_TechButton
                     type="button"
                     variant="secondary"
                     className="group h-7 guide-line bg-white/50 px-3 text-[10px] font-bold tracking-widest text-tech-main-dark/80 transition-all hover:border-tech-main/50 hover:bg-white"
                     disabled={
-                      isReadOnly || !activeFileHistory?.redoStack.length
+                      Silian_isReadOnly || !Silian_activeFileHistory?.redoStack.length
                     }
-                    onClick={handleRedoDraftEdit}>
+                    onClick={Silian_handleRedoDraftEdit}>
                     <span className="flex items-center gap-1">
                       REDO
                       <svg
@@ -1410,39 +1410,39 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
                         <path d="M3 7v6h6M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3z" />
                       </svg>
                     </span>
-                  </TechButton>
+                  </Silian_TechButton>
                 </div>
               </>
             )}
 
-            <EditorBadge badge={badge} onDismiss={clearBadge} />
+            <Silian_EditorBadge badge={Silian_badge} onDismiss={Silian_clearBadge} />
 
             <section
               id="draft-editor-write-panel"
               role="tabpanel"
               className="editor-grow"
-              hidden={activeTab !== "write"}>
+              hidden={Silian_activeTab !== "write"}>
               <div className="editor-surface">
-                <EditorTextarea
-                  ref={textareaRef}
-                  value={activeFileContent}
-                  onChange={(value) => updateActiveFile({ content: value })}
-                  onUndo={handleUndoDraftEdit}
-                  onRedo={handleRedoDraftEdit}
-                  onPaste={handlePaste}
-                  onDrop={handleDrop}
-                  onDragOver={(e) => {
-                    if (!isReadOnly) e.preventDefault()
+                <Silian_EditorTextarea
+                  ref={Silian_textareaRef}
+                  value={Silian_activeFileContent}
+                  onChange={(Silian_value) => Silian_updateActiveFile({ content: Silian_value })}
+                  onUndo={Silian_handleUndoDraftEdit}
+                  onRedo={Silian_handleRedoDraftEdit}
+                  onPaste={Silian_handlePaste}
+                  onDrop={Silian_handleDrop}
+                  onDragOver={(Silian_e) => {
+                    if (!Silian_isReadOnly) Silian_e.preventDefault()
                   }}
-                  onDragEnter={(e) => {
-                    if (!isReadOnly) e.preventDefault()
+                  onDragEnter={(Silian_e) => {
+                    if (!Silian_isReadOnly) Silian_e.preventDefault()
                   }}
-                  isReadOnly={isReadOnly}
-                  isSaving={isSaving}
-                  placeholder={t("contentPlaceholder")}
-                  lineWrap={lineWrap}
-                  canUndo={Boolean(activeFileHistory?.undoStack.length)}
-                  canRedo={Boolean(activeFileHistory?.redoStack.length)}
+                  isReadOnly={Silian_isReadOnly}
+                  isSaving={Silian_isSaving}
+                  placeholder={Silian_t("contentPlaceholder")}
+                  lineWrap={Silian_lineWrap}
+                  canUndo={Boolean(Silian_activeFileHistory?.undoStack.length)}
+                  canRedo={Boolean(Silian_activeFileHistory?.redoStack.length)}
                   enableSyntaxHints
                 />
               </div>
@@ -1451,18 +1451,18 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
             <section
               id="draft-editor-preview-panel"
               role="tabpanel"
-              hidden={activeTab !== "preview"}
+              hidden={Silian_activeTab !== "preview"}
               className="editor-grow">
-              {activeFileContent.trim() ? (
+              {Silian_activeFileContent.trim() ? (
                 <div
                   className="
                     w-full max-w-none overflow-hidden p-6 wrap-break-word
                     selection:bg-tech-main/20 selection:text-slate-900
                     sm:p-8
                   ">
-                  <LazyMarkdownPreview
-                    content={activeFileContent}
-                    rawPath={activeFile.filePath || ""}
+                  <Silian_LazyMarkdownPreview
+                    content={Silian_activeFileContent}
+                    rawPath={Silian_activeFile.filePath || ""}
                   />
                 </div>
               ) : (
@@ -1482,9 +1482,9 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
           <div className="flex border-b guide-line">
             <button
               type="button"
-              onClick={() => setActiveInfoTab("changes")}
+              onClick={() => Silian_setActiveInfoTab("changes")}
               className={`flex-1 px-4 py-3 font-mono text-xs tracking-widest uppercase ${
-                activeInfoTab === "changes"
+                Silian_activeInfoTab === "changes"
                   ? "bg-tech-main text-white"
                   : "text-tech-main hover:bg-tech-main/5"
               }`}>
@@ -1492,9 +1492,9 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
             </button>
             <button
               type="button"
-              onClick={() => setActiveInfoTab("guide")}
+              onClick={() => Silian_setActiveInfoTab("guide")}
               className={`flex-1 border-l guide-line px-4 py-3 font-mono text-xs tracking-widest uppercase ${
-                activeInfoTab === "guide"
+                Silian_activeInfoTab === "guide"
                   ? "bg-tech-main text-white"
                   : "text-tech-main hover:bg-tech-main/5"
               }`}>
@@ -1502,36 +1502,36 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
             </button>
           </div>
 
-          {activeInfoTab === "changes" ? (
+          {Silian_activeInfoTab === "changes" ? (
             <div className="space-y-4 p-4">
               <div
                 className="
                   grid gap-3
                   sm:grid-cols-3
                 ">
-                <InfoStat
+                <Silian_InfoStat
                   label="MODIFIED FILES"
                   value={String(
-                    changeEntries.filter(
-                      (entry) => entry && entry.changeType === "modified"
+                    Silian_changeEntries.filter(
+                      (Silian_entry) => Silian_entry && Silian_entry.changeType === "modified"
                     ).length
                   )}
                 />
-                <InfoStat
+                <Silian_InfoStat
                   label="NEW FILES"
                   value={String(
-                    changeEntries.filter(
-                      (entry) => entry && entry.changeType === "new"
+                    Silian_changeEntries.filter(
+                      (Silian_entry) => Silian_entry && Silian_entry.changeType === "new"
                     ).length
                   )}
                 />
-                <InfoStat
+                <Silian_InfoStat
                   label="NEW FOLDERS"
-                  value={String((draftCollection.folders || []).length)}
+                  value={String((Silian_draftCollection.folders || []).length)}
                 />
               </div>
 
-              {changeEntries.length === 0 ? (
+              {Silian_changeEntries.length === 0 ? (
                 <p
                   className="
                     border guide-line bg-tech-main/5 p-4 font-mono text-xs
@@ -1541,25 +1541,25 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
                 </p>
               ) : (
                 <div className="space-y-4">
-                  {changeEntries.map((entry) =>
-                    entry ? (
-                      <ChangePreviewCard
-                        key={entry.file.id}
-                        filePath={entry.file.filePath || "PATH_NOT_SET"}
-                        changeType={entry.changeType}
-                        rows={entry.rows}
+                  {Silian_changeEntries.map((Silian_entry) =>
+                    Silian_entry ? (
+                      <Silian_ChangePreviewCard
+                        key={Silian_entry.file.id}
+                        filePath={Silian_entry.file.filePath || "PATH_NOT_SET"}
+                        changeType={Silian_entry.changeType}
+                        rows={Silian_entry.rows}
                       />
                     ) : null
                   )}
                 </div>
               )}
 
-              {newFolderPaths.length > 0 ? (
+              {Silian_newFolderPaths.length > 0 ? (
                 <div className="border guide-line bg-tech-main/5 p-4">
                   <p className="section-label">NEW FOLDERS</p>
                   <div className="space-y-1 font-mono text-xs text-emerald-700">
-                    {newFolderPaths.map((folderPath) => (
-                      <p key={folderPath}>+ {folderPath}</p>
+                    {Silian_newFolderPaths.map((Silian_folderPath) => (
+                      <p key={Silian_folderPath}>+ {Silian_folderPath}</p>
                     ))}
                   </div>
                 </div>
@@ -1567,32 +1567,32 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
             </div>
           ) : (
             <div className="p-4">
-              {contributingGuides.length === 0 ? (
+              {Silian_contributingGuides.length === 0 ? (
                 <p className="font-mono text-xs text-tech-main/60 uppercase">
                   NO_GUIDE_AVAILABLE_
                 </p>
               ) : (
                 <>
                   <div className="mb-4 flex flex-wrap gap-2">
-                    {contributingGuides.map((guide) => (
-                      <TechButton
-                        key={guide.id}
+                    {Silian_contributingGuides.map((Silian_guide) => (
+                      <Silian_TechButton
+                        key={Silian_guide.id}
                         type="button"
                         variant={
-                          activeGuideId === guide.id ? "primary" : "secondary"
+                          Silian_activeGuideId === Silian_guide.id ? "primary" : "secondary"
                         }
                         size="sm"
-                        onClick={() => setActiveGuideId(guide.id)}>
-                        {guide.title}
-                      </TechButton>
+                        onClick={() => Silian_setActiveGuideId(Silian_guide.id)}>
+                        {Silian_guide.title}
+                      </Silian_TechButton>
                     ))}
                   </div>
                   <div className="max-h-136 overflow-y-auto pr-2">
-                    <LazyMarkdownPreview
+                    <Silian_LazyMarkdownPreview
                       content={
-                        contributingGuides.find(
-                          (guide) => guide.id === activeGuideId
-                        )?.content || contributingGuides[0].content
+                        Silian_contributingGuides.find(
+                          (Silian_guide) => Silian_guide.id === Silian_activeGuideId
+                        )?.content || Silian_contributingGuides[0].content
                       }
                       rawPath="CONTRIBUTING.md"
                     />
@@ -1606,46 +1606,46 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
         <div className="border border-tech-main/35 bg-white/80 p-4 backdrop-blur-sm">
           <p className="section-label">WORKSPACE OVERVIEW</p>
           <div className="space-y-3 font-mono text-xs uppercase">
-            <InfoLine
+            <Silian_InfoLine
               label="OPEN FILES"
-              value={String(draftCollection.files.length)}
+              value={String(Silian_draftCollection.files.length)}
             />
-            <InfoLine
+            <Silian_InfoLine
               label="FOLDERS"
-              value={String((draftCollection.folders || []).length)}
+              value={String((Silian_draftCollection.folders || []).length)}
             />
-            <InfoLine
+            <Silian_InfoLine
               label="UNSAVED FILES"
-              value={String(unsavedFileIds.size)}
+              value={String(Silian_unsavedFileIds.size)}
             />
-            <InfoLine
+            <Silian_InfoLine
               label="ACTIVE FILE"
-              value={activeFile.filePath || "PATH_NOT_SET"}
+              value={Silian_activeFile.filePath || "PATH_NOT_SET"}
             />
-            <InfoLine
+            <Silian_InfoLine
               label="GITHUB BASE"
-              value={describeSnapshotStatus(repoSnapshots[activeFile.id])}
+              value={Silian_describeSnapshotStatus(Silian_repoSnapshots[Silian_activeFile.id])}
             />
           </div>
         </div>
       </section>
 
-      {!isReadOnly && (
+      {!Silian_isReadOnly && (
         <>
-          <OperationProgress
-            state={saveProgressState}
-            title={progressT("saveDraftTitle")}
-            stages={saveProgressStages}
-            successLabel={progressT("saveDraftSuccess")}
-            errorLabel={progressT("saveDraftError")}
+          <Silian_OperationProgress
+            state={Silian_saveProgressState}
+            title={Silian_progressT("saveDraftTitle")}
+            stages={Silian_saveProgressStages}
+            successLabel={Silian_progressT("saveDraftSuccess")}
+            errorLabel={Silian_progressT("saveDraftError")}
           />
 
-          <OperationProgress
-            state={submitProgressState}
-            title={progressT("submitTitle")}
-            stages={submitProgressStages}
-            successLabel={progressT("submitSuccess")}
-            errorLabel={progressT("submitError")}
+          <Silian_OperationProgress
+            state={Silian_submitProgressState}
+            title={Silian_progressT("submitTitle")}
+            stages={Silian_submitProgressStages}
+            successLabel={Silian_progressT("submitSuccess")}
+            errorLabel={Silian_progressT("submitError")}
           />
 
           <div
@@ -1655,45 +1655,45 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
             ">
             <div className="corner-tick" />
 
-            <TechButton
+            <Silian_TechButton
               type="submit"
               variant="primary"
-              disabled={saveDisabled}
-              aria-busy={isSaving}>
-              {isSaving
-                ? t("savingLabel")
-                : hasUnsavedChanges
-                  ? `${t("saveButton")}_*`
-                  : t("saveButton")}
-            </TechButton>
+              disabled={Silian_saveDisabled}
+              aria-busy={Silian_isSaving}>
+              {Silian_isSaving
+                ? Silian_t("savingLabel")
+                : Silian_hasUnsavedChanges
+                  ? `${Silian_t("saveButton")}_*`
+                  : Silian_t("saveButton")}
+            </Silian_TechButton>
 
-            <TechButton
+            <Silian_TechButton
               type="button"
               variant="ghost"
-              onClick={handleSubmitReview}
-              disabled={submitDisabled}
-              aria-busy={isSubmittingReview}>
-              {isSubmittingReview ? progressT("submitBusy") : t("openPr")}
-            </TechButton>
+              onClick={Silian_handleSubmitReview}
+              disabled={Silian_submitDisabled}
+              aria-busy={Silian_isSubmittingReview}>
+              {Silian_isSubmittingReview ? Silian_progressT("submitBusy") : Silian_t("openPr")}
+            </Silian_TechButton>
           </div>
 
           <section
-            aria-label={t("submissionLicenseAria")}
+            aria-label={Silian_t("submissionLicenseAria")}
             className="mt-4 border guide-line bg-tech-main/5 p-4 font-mono text-[0.6875rem] leading-relaxed text-tech-main/80">
             <div className="mb-3 border-b border-tech-main/15 pb-3">
-              <p className="section-label">{t("syntaxHintsTitle")}</p>
+              <p className="section-label">{Silian_t("syntaxHintsTitle")}</p>
               <p className="mt-2 text-tech-main/70">
-                {t("syntaxHintsDescription")}
+                {Silian_t("syntaxHintsDescription")}
               </p>
               <p className="mt-1 text-tech-main/55">
-                {t("syntaxHintsShortcut")}
+                {Silian_t("syntaxHintsShortcut")}
               </p>
             </div>
-            <p className="section-label">{t("submissionLicenseTitle")}</p>
+            <p className="section-label">{Silian_t("submissionLicenseTitle")}</p>
             <div className="mt-2 space-y-2">
-              <p>{t("submissionLicenseIntro")}</p>
+              <p>{Silian_t("submissionLicenseIntro")}</p>
               <p>
-                {t("submissionLicenseReusePrefix")}{" "}
+                {Silian_t("submissionLicenseReusePrefix")}{" "}
                 <a
                   href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
                   target="_blank"
@@ -1701,29 +1701,29 @@ export function DraftEditor({ initialData }: DraftEditorProps) {
                   className="underline decoration-tech-main/30 underline-offset-4 transition-colors hover:text-tech-main-dark hover:decoration-tech-main-dark">
                   CC BY-NC-SA 4.0
                 </a>
-                {t("submissionLicenseReuseSuffix")}
+                {Silian_t("submissionLicenseReuseSuffix")}
               </p>
-              <p>{t("submissionLicenseAttribution")}</p>
+              <p>{Silian_t("submissionLicenseAttribution")}</p>
             </div>
           </section>
         </>
       )}
 
-      <DraftFileSourceDialog
-        isOpen={fileDialogIntent !== null}
-        initialFolderPath={getParentFolderPath(activeFile.filePath)}
-        initialMode={fileDialogIntent?.initialMode}
-        onClose={() => setFileDialogIntent(null)}
-        onCreate={handleApplyDraftFileSource}
-        onCreateFolder={handleCreateFolder}
+      <Silian_DraftFileSourceDialog
+        isOpen={Silian_fileDialogIntent !== null}
+        initialFolderPath={Silian_getParentFolderPath(Silian_activeFile.filePath)}
+        initialMode={Silian_fileDialogIntent?.initialMode}
+        onClose={() => Silian_setFileDialogIntent(null)}
+        onCreate={Silian_handleApplyDraftFileSource}
+        onCreateFolder={Silian_handleCreateFolder}
       />
 
-      <DraftFileSourceDialog
-        isOpen={insertDialogIntent}
-        initialFolderPath={getParentFolderPath(activeFile.filePath)}
+      <Silian_DraftFileSourceDialog
+        isOpen={Silian_insertDialogIntent}
+        initialFolderPath={Silian_getParentFolderPath(Silian_activeFile.filePath)}
         initialMode="repo"
-        onClose={() => setInsertDialogIntent(false)}
-        onCreate={handleInsertSelectedFile}
+        onClose={() => Silian_setInsertDialogIntent(false)}
+        onCreate={Silian_handleInsertSelectedFile}
       />
     </form>
   )
@@ -1738,95 +1738,95 @@ interface UploadResponse {
   url?: string
 }
 
-function getParentFolderPath(filePath: string) {
-  const normalized = normalizeDraftFilePath(filePath)
-  const lastSlashIndex = normalized.lastIndexOf("/")
-  return lastSlashIndex >= 0 ? normalized.slice(0, lastSlashIndex) : ""
+function Silian_getParentFolderPath(Silian_filePath: string) {
+  const Silian_normalized = Silian_normalizeDraftFilePath(Silian_filePath)
+  const Silian_lastSlashIndex = Silian_normalized.lastIndexOf("/")
+  return Silian_lastSlashIndex >= 0 ? Silian_normalized.slice(0, Silian_lastSlashIndex) : ""
 }
 
-function buildDiffRows(previousContent: string, nextContent: string) {
-  const rows: DraftDiffRow[] = []
-  let oldLine = 1
-  let newLine = 1
+function Silian_buildDiffRows(Silian_previousContent: string, Silian_nextContent: string) {
+  const Silian_rows: DraftDiffRow[] = []
+  let Silian_oldLine = 1
+  let Silian_newLine = 1
 
-  for (const part of diffLines(previousContent, nextContent)) {
-    const values = part.value.replace(/\n$/, "").split("\n")
+  for (const Silian_part of Silian_diffLines(Silian_previousContent, Silian_nextContent)) {
+    const Silian_values = Silian_part.value.replace(/\n$/, "").split("\n")
 
-    if (!part.added && !part.removed && values.length > 6) {
-      for (const line of values.slice(0, 2)) {
-        rows.push({ newLine, oldLine, type: "context", value: line })
-        oldLine += 1
-        newLine += 1
+    if (!Silian_part.added && !Silian_part.removed && Silian_values.length > 6) {
+      for (const Silian_line of Silian_values.slice(0, 2)) {
+        Silian_rows.push({ newLine: Silian_newLine, oldLine: Silian_oldLine, type: "context", value: Silian_line })
+        Silian_oldLine += 1
+        Silian_newLine += 1
       }
 
-      rows.push({
+      Silian_rows.push({
         newLine: null,
         oldLine: null,
         type: "skipped",
-        value: `${values.length - 4} unchanged lines`,
+        value: `${Silian_values.length - 4} unchanged lines`,
       })
 
-      for (const line of values.slice(-2)) {
-        rows.push({ newLine, oldLine, type: "context", value: line })
-        oldLine += 1
-        newLine += 1
+      for (const Silian_line of Silian_values.slice(-2)) {
+        Silian_rows.push({ newLine: Silian_newLine, oldLine: Silian_oldLine, type: "context", value: Silian_line })
+        Silian_oldLine += 1
+        Silian_newLine += 1
       }
       continue
     }
 
-    for (const line of values) {
-      rows.push({
-        newLine: part.removed ? null : newLine,
-        oldLine: part.added ? null : oldLine,
-        type: part.added ? "add" : part.removed ? "remove" : "context",
-        value: line,
+    for (const Silian_line of Silian_values) {
+      Silian_rows.push({
+        newLine: Silian_part.removed ? null : Silian_newLine,
+        oldLine: Silian_part.added ? null : Silian_oldLine,
+        type: Silian_part.added ? "add" : Silian_part.removed ? "remove" : "context",
+        value: Silian_line,
       })
 
-      if (!part.added) {
-        oldLine += 1
+      if (!Silian_part.added) {
+        Silian_oldLine += 1
       }
 
-      if (!part.removed) {
-        newLine += 1
+      if (!Silian_part.removed) {
+        Silian_newLine += 1
       }
     }
   }
 
-  return rows
+  return Silian_rows
 }
 
-function describeSnapshotStatus(snapshot?: RepoFileSnapshot) {
-  if (!snapshot) return "CHECKING"
-  if (snapshot.status === "missing") return "NEW_FILE"
-  if (snapshot.status === "loading") return "LOADING"
-  if (snapshot.status === "error") return "UNKNOWN"
+function Silian_describeSnapshotStatus(Silian_snapshot?: RepoFileSnapshot) {
+  if (!Silian_snapshot) return "CHECKING"
+  if (Silian_snapshot.status === "missing") return "NEW_FILE"
+  if (Silian_snapshot.status === "loading") return "LOADING"
+  if (Silian_snapshot.status === "error") return "UNKNOWN"
   return "TRACKED"
 }
 
-function InfoStat({ label, value }: { label: string; value: string }) {
+function Silian_InfoStat({ label: Silian_label, value: Silian_value }: { label: string; value: string }) {
   return (
     <div className="border guide-line bg-tech-main/5 p-3">
       <p className="font-mono text-[0.6875rem] tracking-widest text-tech-main/55 uppercase">
-        {label}
+        {Silian_label}
       </p>
-      <p className="mt-2 font-mono text-lg text-tech-main uppercase">{value}</p>
+      <p className="mt-2 font-mono text-lg text-tech-main uppercase">{Silian_value}</p>
     </div>
   )
 }
 
-function InfoLine({ label, value }: { label: string; value: string }) {
+function Silian_InfoLine({ label: Silian_label, value: Silian_value }: { label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-3 border-b border-tech-main/10 pb-2">
-      <span className="text-tech-main/55">{label}</span>
-      <span className="text-right break-all text-tech-main">{value}</span>
+      <span className="text-tech-main/55">{Silian_label}</span>
+      <span className="text-right break-all text-tech-main">{Silian_value}</span>
     </div>
   )
 }
 
-function ChangePreviewCard({
-  filePath,
-  changeType,
-  rows,
+function Silian_ChangePreviewCard({
+  filePath: Silian_filePath,
+  changeType: Silian_changeType,
+  rows: Silian_rows,
 }: {
   filePath: string
   changeType: "modified" | "new" | "pending"
@@ -1836,43 +1836,43 @@ function ChangePreviewCard({
     <section className="border guide-line bg-white/70">
       <div className="flex items-center justify-between border-b guide-line bg-tech-main/5 px-4 py-3">
         <p className="font-mono text-xs tracking-widest break-all text-tech-main uppercase">
-          {filePath}
+          {Silian_filePath}
         </p>
         <span
           className={`
             border px-2 py-1 font-mono text-[0.625rem] tracking-widest uppercase
             ${
-              changeType === "new"
+              Silian_changeType === "new"
                 ? `border-emerald-500/30 text-emerald-700`
-                : changeType === "modified"
+                : Silian_changeType === "modified"
                   ? `border-amber-500/30 text-amber-700`
                   : `guide-line text-tech-main/55`
             }
           `}>
-          {changeType}
+          {Silian_changeType}
         </span>
       </div>
 
       <div className="max-h-72 overflow-auto bg-slate-950/95 font-mono text-[0.6875rem] text-slate-100">
-        {rows.map((row, index) => (
+        {Silian_rows.map((Silian_row, Silian_index) => (
           <div
-            key={`${filePath}-${index}`}
+            key={`${Silian_filePath}-${Silian_index}`}
             className={`
               grid grid-cols-[3rem_3rem_minmax(0,1fr)] px-2 py-1
               ${
-                row.type === "add"
+                Silian_row.type === "add"
                   ? `bg-emerald-500/10 text-emerald-200`
-                  : row.type === "remove"
+                  : Silian_row.type === "remove"
                     ? `bg-red-500/10 text-red-200`
-                    : row.type === "skipped"
+                    : Silian_row.type === "skipped"
                       ? `bg-slate-800/70 text-slate-400`
                       : `text-slate-300`
               }
             `}>
-            <span className="text-slate-500">{row.oldLine ?? ""}</span>
-            <span className="text-slate-500">{row.newLine ?? ""}</span>
+            <span className="text-slate-500">{Silian_row.oldLine ?? ""}</span>
+            <span className="text-slate-500">{Silian_row.newLine ?? ""}</span>
             <span className="break-all whitespace-pre-wrap">
-              {row.type === "skipped" ? `… ${row.value}` : row.value || " "}
+              {Silian_row.type === "skipped" ? `… ${Silian_row.value}` : Silian_row.value || " "}
             </span>
           </div>
         ))}

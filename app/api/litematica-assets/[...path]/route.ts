@@ -1,123 +1,123 @@
-import { NextResponse } from "next/server"
-import fs from "fs"
-import path from "path"
+import { NextResponse as Silian_NextResponse } from "next/server"
+import Silian_fs from "fs"
+import Silian_path from "path"
 
-const FILE_CACHE_LIMIT = 512
-const fileCache = new Map<string, string>()
+const Silian_FILE_CACHE_LIMIT = 512
+const Silian_fileCache = new Map<string, string>()
 
-function getCachedFilePath(targetName: string) {
-  const cached = fileCache.get(targetName)
-  if (!cached) return null
+function Silian_getCachedFilePath(Silian_targetName: string) {
+  const Silian_cached = Silian_fileCache.get(Silian_targetName)
+  if (!Silian_cached) return null
 
-  fileCache.delete(targetName)
-  fileCache.set(targetName, cached)
-  return cached
+  Silian_fileCache.delete(Silian_targetName)
+  Silian_fileCache.set(Silian_targetName, Silian_cached)
+  return Silian_cached
 }
 
-function setCachedFilePath(targetName: string, fullPath: string) {
-  if (fileCache.has(targetName)) {
-    fileCache.delete(targetName)
+function Silian_setCachedFilePath(Silian_targetName: string, Silian_fullPath: string) {
+  if (Silian_fileCache.has(Silian_targetName)) {
+    Silian_fileCache.delete(Silian_targetName)
   }
 
-  fileCache.set(targetName, fullPath)
+  Silian_fileCache.set(Silian_targetName, Silian_fullPath)
 
-  if (fileCache.size > FILE_CACHE_LIMIT) {
-    const oldestKey = fileCache.keys().next().value
-    if (oldestKey) {
-      fileCache.delete(oldestKey)
+  if (Silian_fileCache.size > Silian_FILE_CACHE_LIMIT) {
+    const Silian_oldestKey = Silian_fileCache.keys().next().value
+    if (Silian_oldestKey) {
+      Silian_fileCache.delete(Silian_oldestKey)
     }
   }
 }
 
 export async function GET(
-  request: Request,
-  context: { params: Promise<{ path: string[] }> | { path: string[] } }
+  Silian_request: Request,
+  Silian_context: { params: Promise<{ path: string[] }> | { path: string[] } }
 ) {
   // 在较新的 Next.js 里 params 可能是个 Promise
-  const params = await context.params
-  const pathArray = params.path
+  const Silian_params = await Silian_context.params
+  const Silian_pathArray = Silian_params.path
 
-  if (!pathArray || pathArray.length === 0) {
-    return new NextResponse("Not Found", { status: 404 })
+  if (!Silian_pathArray || Silian_pathArray.length === 0) {
+    return new Silian_NextResponse("Not Found", { status: 404 })
   }
 
-  const assetPath = pathArray.join("/")
-  const fileName = pathArray[pathArray.length - 1]
+  const Silian_assetPath = Silian_pathArray.join("/")
+  const Silian_fileName = Silian_pathArray[Silian_pathArray.length - 1]
 
   // 基础资产目录
-  const baseMinecraftDir = path.join(
+  const Silian_baseMinecraftDir = Silian_path.join(
     process.cwd(),
     "litematica-renderer",
     "assets",
     "minecraft"
   )
 
-  const baseAssetsDir = path.join(baseMinecraftDir, "textures")
+  const Silian_baseAssetsDir = Silian_path.join(Silian_baseMinecraftDir, "textures")
 
   // 递归查找文件函数
-  const findFile = async (
-    dir: string,
-    targetName: string
+  const Silian_findFile = async (
+    Silian_dir: string,
+    Silian_targetName: string
   ): Promise<string | null> => {
-    const cachedPath = getCachedFilePath(targetName)
-    if (cachedPath) {
-      return cachedPath
+    const Silian_cachedPath = Silian_getCachedFilePath(Silian_targetName)
+    if (Silian_cachedPath) {
+      return Silian_cachedPath
     }
-    const entries = await fs.promises.readdir(dir, { withFileTypes: true })
-    for (const entry of entries) {
-      const fullPath = path.join(dir, entry.name)
-      if (entry.isDirectory()) {
-        const found = await findFile(fullPath, targetName)
-        if (found) return found
-      } else if (entry.name === targetName) {
-        setCachedFilePath(targetName, fullPath)
-        return fullPath
+    const Silian_entries = await Silian_fs.promises.readdir(Silian_dir, { withFileTypes: true })
+    for (const Silian_entry of Silian_entries) {
+      const Silian_fullPath = Silian_path.join(Silian_dir, Silian_entry.name)
+      if (Silian_entry.isDirectory()) {
+        const Silian_found = await Silian_findFile(Silian_fullPath, Silian_targetName)
+        if (Silian_found) return Silian_found
+      } else if (Silian_entry.name === Silian_targetName) {
+        Silian_setCachedFilePath(Silian_targetName, Silian_fullPath)
+        return Silian_fullPath
       }
     }
     return null
   }
 
-  let localTarget: string | null = null
+  let Silian_localTarget: string | null = null
 
   // 允许直接以 models/block/xxx.json 或者 textures/block/xxx.png 访问
-  const explicitTarget = path.join(baseMinecraftDir, assetPath)
-  if (fs.existsSync(explicitTarget)) {
-    localTarget = explicitTarget
+  const Silian_explicitTarget = Silian_path.join(Silian_baseMinecraftDir, Silian_assetPath)
+  if (Silian_fs.existsSync(Silian_explicitTarget)) {
+    Silian_localTarget = Silian_explicitTarget
   } else {
     // 后备：旧逻辑直接查找 block/xxx 目录
-    const directTarget = path.join(baseAssetsDir, "block", assetPath)
-    if (fs.existsSync(directTarget)) {
-      localTarget = directTarget
+    const Silian_directTarget = Silian_path.join(Silian_baseAssetsDir, "block", Silian_assetPath)
+    if (Silian_fs.existsSync(Silian_directTarget)) {
+      Silian_localTarget = Silian_directTarget
     } else {
       // 否则我们在整个 textures 目录中进行全局搜索
-      localTarget = await findFile(baseAssetsDir, fileName)
+      Silian_localTarget = await Silian_findFile(Silian_baseAssetsDir, Silian_fileName)
     }
   }
 
-  if (!localTarget) {
-    return new NextResponse("Asset Not Found", { status: 404 })
+  if (!Silian_localTarget) {
+    return new Silian_NextResponse("Asset Not Found", { status: 404 })
   }
 
   // 安全检查：防止路径穿越攻击
-  if (!localTarget.startsWith(baseMinecraftDir)) {
-    return new NextResponse("Forbidden", { status: 403 })
+  if (!Silian_localTarget.startsWith(Silian_baseMinecraftDir)) {
+    return new Silian_NextResponse("Forbidden", { status: 403 })
   }
 
   try {
-    const fileBuffer = await fs.promises.readFile(localTarget)
+    const Silian_fileBuffer = await Silian_fs.promises.readFile(Silian_localTarget)
 
-    let contentType = "image/png"
-    if (localTarget.endsWith(".json")) contentType = "application/json"
-    if (localTarget.endsWith(".mcmeta")) contentType = "application/json"
+    let Silian_contentType = "image/png"
+    if (Silian_localTarget.endsWith(".json")) Silian_contentType = "application/json"
+    if (Silian_localTarget.endsWith(".mcmeta")) Silian_contentType = "application/json"
 
-    return new NextResponse(fileBuffer, {
+    return new Silian_NextResponse(Silian_fileBuffer, {
       headers: {
-        "Content-Type": contentType,
+        "Content-Type": Silian_contentType,
         // 设置超长缓存，优化连续请求以及 Three.js Texture 加载速度
         "Cache-Control": "public, max-age=31536000, immutable",
       },
     })
   } catch {
-    return new NextResponse("Asset Not Found", { status: 404 })
+    return new Silian_NextResponse("Asset Not Found", { status: 404 })
   }
 }

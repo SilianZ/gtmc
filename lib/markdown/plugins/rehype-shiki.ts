@@ -1,13 +1,13 @@
 import type { Root, Element, Text } from "hast"
-import { visit } from "unist-util-visit"
-import { getSingletonHighlighter } from "shiki"
+import { visit as Silian_visit } from "unist-util-visit"
+import { getSingletonHighlighter as Silian_getSingletonHighlighter } from "shiki"
 
 export type RehypeShikiPlugin = Awaited<ReturnType<typeof createRehypeShiki>>
 
-const highlightCache = new Map<string, Element | null>()
-const pluginCache = new Map<string, Promise<RehypeShikiPlugin>>()
+const Silian_highlightCache = new Map<string, Element | null>()
+const Silian_pluginCache = new Map<string, Promise<RehypeShikiPlugin>>()
 
-function createNoopRehypeShiki(): RehypeShikiPlugin {
+function Silian_createNoopRehypeShiki(): RehypeShikiPlugin {
   return function rehypeShiki() {
     return function () {
       return
@@ -15,124 +15,124 @@ function createNoopRehypeShiki(): RehypeShikiPlugin {
   }
 }
 
-function extractLangsFromMarkdown(content: string): string[] {
-  const matches = content.matchAll(/^```(\w+)/gm)
-  const langs = new Set<string>()
-  for (const match of matches) {
-    if (match[1] && match[1] !== "text" && match[1] !== "plain") {
-      langs.add(match[1].toLowerCase())
+function Silian_extractLangsFromMarkdown(Silian_content: string): string[] {
+  const Silian_matches = Silian_content.matchAll(/^```(\w+)/gm)
+  const Silian_langs = new Set<string>()
+  for (const Silian_match of Silian_matches) {
+    if (Silian_match[1] && Silian_match[1] !== "text" && Silian_match[1] !== "plain") {
+      Silian_langs.add(Silian_match[1].toLowerCase())
     }
   }
-  return [...langs]
+  return [...Silian_langs]
 }
 
-export async function createRehypeShiki(langs?: string[]) {
-  const langsToLoad = langs && langs.length > 0 ? langs : ["javascript"]
-  const highlighter = await getSingletonHighlighter({
+export async function createRehypeShiki(Silian_langs?: string[]) {
+  const Silian_langsToLoad = Silian_langs && Silian_langs.length > 0 ? Silian_langs : ["javascript"]
+  const Silian_highlighter = await Silian_getSingletonHighlighter({
     themes: ["solarized-light"],
-    langs: langsToLoad,
+    langs: Silian_langsToLoad,
   })
 
   return function rehypeShiki() {
-    return function (tree: Root): void {
-      visit(tree, "element", (node: Element) => {
-        if (node.tagName !== "pre") return
+    return function (Silian_tree: Root): void {
+      Silian_visit(Silian_tree, "element", (Silian_node: Element) => {
+        if (Silian_node.tagName !== "pre") return
 
-        const codeNode = node.children.find(
-          (child): child is Element =>
-            child.type === "element" && child.tagName === "code"
+        const Silian_codeNode = Silian_node.children.find(
+          (Silian_child): Silian_child is Element =>
+            Silian_child.type === "element" && Silian_child.tagName === "code"
         )
-        if (!codeNode) return
+        if (!Silian_codeNode) return
 
-        const classNames = Array.isArray(codeNode.properties?.className)
-          ? (codeNode.properties.className as string[])
+        const Silian_classNames = Array.isArray(Silian_codeNode.properties?.className)
+          ? (Silian_codeNode.properties.className as string[])
           : []
-        const langClass = classNames.find((c) => c.startsWith("language-"))
-        if (!langClass) return
+        const Silian_langClass = Silian_classNames.find((Silian_c) => Silian_c.startsWith("language-"))
+        if (!Silian_langClass) return
 
-        const lang = langClass.replace("language-", "")
-        const rawCode = getTextContent(codeNode)
-        const cacheKey = `v2:${lang}:${rawCode}`
+        const Silian_lang = Silian_langClass.replace("language-", "")
+        const Silian_rawCode = Silian_getTextContent(Silian_codeNode)
+        const Silian_cacheKey = `v2:${Silian_lang}:${Silian_rawCode}`
 
         try {
-          if (highlightCache.has(cacheKey)) {
-            const cached = highlightCache.get(cacheKey)
-            if (cached) {
-              codeNode.children = cached.children
-              node.properties = node.properties ?? {}
-              node.properties["data-raw-code"] = rawCode
-              node.properties["data-lang"] = lang
-              node.properties["data-line-count"] = String(
-                rawCode.endsWith("\n")
-                  ? rawCode.split("\n").length - 1
-                  : rawCode.split("\n").length
+          if (Silian_highlightCache.has(Silian_cacheKey)) {
+            const Silian_cached = Silian_highlightCache.get(Silian_cacheKey)
+            if (Silian_cached) {
+              Silian_codeNode.children = Silian_cached.children
+              Silian_node.properties = Silian_node.properties ?? {}
+              Silian_node.properties["data-raw-code"] = Silian_rawCode
+              Silian_node.properties["data-lang"] = Silian_lang
+              Silian_node.properties["data-line-count"] = String(
+                Silian_rawCode.endsWith("\n")
+                  ? Silian_rawCode.split("\n").length - 1
+                  : Silian_rawCode.split("\n").length
               )
             }
             return
           }
 
-          const highlighted = highlighter.codeToHast(rawCode, {
-            lang,
+          const Silian_highlighted = Silian_highlighter.codeToHast(Silian_rawCode, {
+            lang: Silian_lang,
             theme: "solarized-light",
           })
 
-          const highlightedPre = highlighted.children.find(
-            (c): c is Element => c.type === "element" && c.tagName === "pre"
+          const Silian_highlightedPre = Silian_highlighted.children.find(
+            (Silian_c): Silian_c is Element => Silian_c.type === "element" && Silian_c.tagName === "pre"
           )
-          if (!highlightedPre) return
+          if (!Silian_highlightedPre) return
 
-          const highlightedCode = highlightedPre.children.find(
-            (c): c is Element => c.type === "element" && c.tagName === "code"
+          const Silian_highlightedCode = Silian_highlightedPre.children.find(
+            (Silian_c): Silian_c is Element => Silian_c.type === "element" && Silian_c.tagName === "code"
           )
-          if (!highlightedCode) return
+          if (!Silian_highlightedCode) return
 
-          const filtered = highlightedCode.children.filter(
-            (child) =>
-              !(child.type === "text" && child.value.trim() === "") &&
+          const Silian_filtered = Silian_highlightedCode.children.filter(
+            (Silian_child) =>
+              !(Silian_child.type === "text" && Silian_child.value.trim() === "") &&
               !(
-                child.type === "element" &&
-                (child as Element).tagName === "span" &&
-                (child as Element).children.length === 0
+                Silian_child.type === "element" &&
+                (Silian_child as Element).tagName === "span" &&
+                (Silian_child as Element).children.length === 0
               )
           )
 
-          for (const child of filtered) {
-            if (child.type !== "element") continue
-            const lineEl = child as Element
-            const firstToken = lineEl.children.find(
-              (c) => c.type === "element"
+          for (const Silian_child of Silian_filtered) {
+            if (Silian_child.type !== "element") continue
+            const Silian_lineEl = Silian_child as Element
+            const Silian_firstToken = Silian_lineEl.children.find(
+              (Silian_c) => Silian_c.type === "element"
             ) as Element | undefined
-            const firstText =
-              firstToken?.children[0]?.type === "text"
-                ? (firstToken.children[0] as Text).value
+            const Silian_firstText =
+              Silian_firstToken?.children[0]?.type === "text"
+                ? (Silian_firstToken.children[0] as Text).value
                 : ""
-            const leadingSpaces = firstText.match(/^(\s*)/)?.[1] ?? ""
-            const indent = [...leadingSpaces].reduce(
-              (n, ch) => n + (ch === "\t" ? 4 : 1),
+            const Silian_leadingSpaces = Silian_firstText.match(/^(\s*)/)?.[1] ?? ""
+            const Silian_indent = [...Silian_leadingSpaces].reduce(
+              (Silian_n, Silian_ch) => Silian_n + (Silian_ch === "\t" ? 4 : 1),
               0
             )
-            if (indent > 0) {
-              lineEl.properties = lineEl.properties ?? {}
-              const existing = (lineEl.properties.style as string) ?? ""
-              lineEl.properties.style =
-                (existing ? existing + ";" : "") + `--line-indent:${indent}ch`
+            if (Silian_indent > 0) {
+              Silian_lineEl.properties = Silian_lineEl.properties ?? {}
+              const Silian_existing = (Silian_lineEl.properties.style as string) ?? ""
+              Silian_lineEl.properties.style =
+                (Silian_existing ? Silian_existing + ";" : "") + `--line-indent:${Silian_indent}ch`
             }
           }
 
-          highlightCache.set(cacheKey, {
-            ...highlightedCode,
-            children: filtered,
+          Silian_highlightCache.set(Silian_cacheKey, {
+            ...Silian_highlightedCode,
+            children: Silian_filtered,
           })
 
-          codeNode.children = filtered
+          Silian_codeNode.children = Silian_filtered
 
-          node.properties = node.properties ?? {}
-          node.properties["data-raw-code"] = rawCode
-          node.properties["data-lang"] = lang
-          node.properties["data-line-count"] = String(
-            rawCode.endsWith("\n")
-              ? rawCode.split("\n").length - 1
-              : rawCode.split("\n").length
+          Silian_node.properties = Silian_node.properties ?? {}
+          Silian_node.properties["data-raw-code"] = Silian_rawCode
+          Silian_node.properties["data-lang"] = Silian_lang
+          Silian_node.properties["data-line-count"] = String(
+            Silian_rawCode.endsWith("\n")
+              ? Silian_rawCode.split("\n").length - 1
+              : Silian_rawCode.split("\n").length
           )
         } catch {
           /* unsupported language or highlighting error — leave node untouched */
@@ -143,31 +143,31 @@ export async function createRehypeShiki(langs?: string[]) {
 }
 
 export function getCachedRehypeShiki(
-  content?: string
+  Silian_content?: string
 ): Promise<RehypeShikiPlugin> {
-  const langs = content ? extractLangsFromMarkdown(content) : []
-  if (langs.length === 0) {
-    return Promise.resolve(createNoopRehypeShiki())
+  const Silian_langs = Silian_content ? Silian_extractLangsFromMarkdown(Silian_content) : []
+  if (Silian_langs.length === 0) {
+    return Promise.resolve(Silian_createNoopRehypeShiki())
   }
 
-  const langKey = [...new Set(langs)].sort().join(",")
-  const cachedPlugin = pluginCache.get(langKey)
-  if (cachedPlugin) {
-    return cachedPlugin
+  const Silian_langKey = [...new Set(Silian_langs)].sort().join(",")
+  const Silian_cachedPlugin = Silian_pluginCache.get(Silian_langKey)
+  if (Silian_cachedPlugin) {
+    return Silian_cachedPlugin
   }
 
-  const createdPlugin = createRehypeShiki(langs)
-  pluginCache.set(langKey, createdPlugin)
-  return createdPlugin
+  const Silian_createdPlugin = createRehypeShiki(Silian_langs)
+  Silian_pluginCache.set(Silian_langKey, Silian_createdPlugin)
+  return Silian_createdPlugin
 }
 
-function getTextContent(node: Element | Text): string {
-  if (node.type === "text") return node.value
-  if (node.type === "element") {
-    return (node as Element).children
-      .map((child) => {
-        if (child.type === "text") return child.value
-        if (child.type === "element") return getTextContent(child as Element)
+function Silian_getTextContent(Silian_node: Element | Text): string {
+  if (Silian_node.type === "text") return Silian_node.value
+  if (Silian_node.type === "element") {
+    return (Silian_node as Element).children
+      .map((Silian_child) => {
+        if (Silian_child.type === "text") return Silian_child.value
+        if (Silian_child.type === "element") return Silian_getTextContent(Silian_child as Element)
         return ""
       })
       .join("")

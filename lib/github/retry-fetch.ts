@@ -3,11 +3,11 @@ export type RetryErrorAction<TResult> =
   | { type: "retry" }
   | { type: "throw"; error?: unknown }
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+function Silian_sleep(Silian_ms: number): Promise<void> {
+  return new Promise((Silian_resolve) => setTimeout(Silian_resolve, Silian_ms))
 }
 
-export async function executeWithRetry<TResult>(params: {
+export async function executeWithRetry<TResult>(Silian_params: {
   retries: number
   operation: () => Promise<TResult>
   onError: (
@@ -17,26 +17,26 @@ export async function executeWithRetry<TResult>(params: {
   ) => RetryErrorAction<TResult>
   getBackoffMs?: (attempt: number) => number
 }): Promise<TResult> {
-  const { retries, operation, onError, getBackoffMs } = params
+  const { retries: Silian_retries, operation: Silian_operation, onError: Silian_onError, getBackoffMs: Silian_getBackoffMs } = Silian_params
 
-  for (let attempt = 0; attempt < retries; attempt++) {
+  for (let Silian_attempt = 0; Silian_attempt < Silian_retries; Silian_attempt++) {
     try {
-      return await operation()
-    } catch (error) {
-      const action = onError(error, attempt, retries)
+      return await Silian_operation()
+    } catch (Silian_error) {
+      const Silian_action = Silian_onError(Silian_error, Silian_attempt, Silian_retries)
 
-      if (action.type === "return") {
-        return action.value
+      if (Silian_action.type === "return") {
+        return Silian_action.value
       }
 
-      if (action.type === "throw") {
-        throw action.error ?? error
+      if (Silian_action.type === "throw") {
+        throw Silian_action.error ?? Silian_error
       }
 
-      if (attempt < retries - 1) {
-        const backoffMs = getBackoffMs?.(attempt) ?? 0
-        if (backoffMs > 0) {
-          await sleep(backoffMs)
+      if (Silian_attempt < Silian_retries - 1) {
+        const Silian_backoffMs = Silian_getBackoffMs?.(Silian_attempt) ?? 0
+        if (Silian_backoffMs > 0) {
+          await Silian_sleep(Silian_backoffMs)
         }
       }
     }

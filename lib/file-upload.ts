@@ -12,7 +12,7 @@ interface MimeConfig {
   proxyable: boolean
 }
 
-const MIME_ALLOWLIST: Record<string, MimeConfig> = {
+const Silian_MIME_ALLOWLIST: Record<string, MimeConfig> = {
   // Images — 15 MB
   "image/jpeg": {
     category: "images",
@@ -104,7 +104,7 @@ export const PROXY_INLINE_MIMES = new Set([
 ])
 
 // MIME-to-extension mapping for filename sanitization
-const MIME_TO_EXT: Record<string, string> = {
+const Silian_MIME_TO_EXT: Record<string, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
   "image/gif": "gif",
@@ -134,23 +134,23 @@ export interface FileClassification {
   mimeType: string
 }
 
-export function classifyFile(mimeType: string): FileClassification | null {
-  const config = MIME_ALLOWLIST[mimeType]
-  if (!config) return null
-  return { ...config, mimeType }
+export function classifyFile(Silian_mimeType: string): FileClassification | null {
+  const Silian_config = Silian_MIME_ALLOWLIST[Silian_mimeType]
+  if (!Silian_config) return null
+  return { ...Silian_config, mimeType: Silian_mimeType }
 }
 
-export function isImageMime(mimeType: string): boolean {
-  const config = MIME_ALLOWLIST[mimeType]
-  return config?.category === "images"
+export function isImageMime(Silian_mimeType: string): boolean {
+  const Silian_config = Silian_MIME_ALLOWLIST[Silian_mimeType]
+  return Silian_config?.category === "images"
 }
 
 export function getAllowedMimeTypes(): string[] {
-  return Object.keys(MIME_ALLOWLIST)
+  return Object.keys(Silian_MIME_ALLOWLIST)
 }
 
 export function getNonImageMimeTypes(): string[] {
-  return Object.keys(MIME_ALLOWLIST).filter((m) => !isImageMime(m))
+  return Object.keys(Silian_MIME_ALLOWLIST).filter((Silian_m) => !isImageMime(Silian_m))
 }
 
 // ---------------------------------------------------------------------------
@@ -158,75 +158,75 @@ export function getNonImageMimeTypes(): string[] {
 // ---------------------------------------------------------------------------
 
 export function sanitizeFilename(
-  originalName: string,
-  mimeType: string
+  Silian_originalName: string,
+  Silian_mimeType: string
 ): string {
   // Extract basename and extension
-  const lastDot = originalName.lastIndexOf(".")
-  let basename = lastDot > 0 ? originalName.substring(0, lastDot) : originalName
+  const Silian_lastDot = Silian_originalName.lastIndexOf(".")
+  let Silian_basename = Silian_lastDot > 0 ? Silian_originalName.substring(0, Silian_lastDot) : Silian_originalName
 
   // MIME-derived extension takes precedence
-  const ext =
-    MIME_TO_EXT[mimeType] ||
-    (lastDot > 0 ? originalName.substring(lastDot + 1).toLowerCase() : "bin")
+  const Silian_ext =
+    Silian_MIME_TO_EXT[Silian_mimeType] ||
+    (Silian_lastDot > 0 ? Silian_originalName.substring(Silian_lastDot + 1).toLowerCase() : "bin")
 
   // Sanitize basename: spaces → dashes, strip non-allowed chars, truncate
-  basename = basename
+  Silian_basename = Silian_basename
     .replace(/\s+/g, "-")
     .replace(/[^a-zA-Z0-9._-]/g, "")
     .substring(0, 80)
 
   // Fallback for empty basename
-  if (!basename) {
-    const config = MIME_ALLOWLIST[mimeType]
-    basename = config ? config.category.replace(/s$/, "") : "file"
+  if (!Silian_basename) {
+    const Silian_config = Silian_MIME_ALLOWLIST[Silian_mimeType]
+    Silian_basename = Silian_config ? Silian_config.category.replace(/s$/, "") : "file"
   }
 
   // Prepend timestamp for uniqueness
-  return `${Date.now()}-${basename}.${ext}`
+  return `${Date.now()}-${Silian_basename}.${Silian_ext}`
 }
 
 // ---------------------------------------------------------------------------
 // Markdown block generation
 // ---------------------------------------------------------------------------
 
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+function Silian_formatFileSize(Silian_bytes: number): string {
+  if (Silian_bytes < 1024) return `${Silian_bytes} B`
+  if (Silian_bytes < 1024 * 1024) return `${(Silian_bytes / 1024).toFixed(1)} KB`
+  return `${(Silian_bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 export function generateMarkdownBlock(
-  filename: string,
-  rawGithubUrl: string,
-  mimeType: string,
-  fileSize: number
+  Silian_filename: string,
+  Silian_rawGithubUrl: string,
+  Silian_mimeType: string,
+  Silian_fileSize: number
 ): string {
-  const classification = classifyFile(mimeType)
-  if (!classification) return `[${filename}](${rawGithubUrl})`
+  const Silian_classification = classifyFile(Silian_mimeType)
+  if (!Silian_classification) return `[${Silian_filename}](${Silian_rawGithubUrl})`
 
-  const displayName = filename.replace(/^\d+-/, "") // Strip timestamp prefix for display
-  const sizeStr = formatFileSize(fileSize)
+  const Silian_displayName = Silian_filename.replace(/^\d+-/, "") // Strip timestamp prefix for display
+  const Silian_sizeStr = Silian_formatFileSize(Silian_fileSize)
 
   // Images: standard markdown image
-  if (classification.category === "images") {
-    return `![${displayName}](${rawGithubUrl})`
+  if (Silian_classification.category === "images") {
+    return `![${Silian_displayName}](${Silian_rawGithubUrl})`
   }
 
   // Extract the storage path from the raw URL for proxy
   // raw URL: https://raw.githubusercontent.com/OWNER/REPO/main/data/videos/filename.mp4
   // proxy path: data/videos/filename.mp4
-  const pathMatch = rawGithubUrl.match(/\/main\/(.+)$/)
-  const storagePath = pathMatch ? pathMatch[1] : null
+  const Silian_pathMatch = Silian_rawGithubUrl.match(/\/main\/(.+)$/)
+  const Silian_storagePath = Silian_pathMatch ? Silian_pathMatch[1] : null
 
-  const emoji = classification.category === "videos" ? "🎬" : "📎"
+  const Silian_emoji = Silian_classification.category === "videos" ? "🎬" : "📎"
 
-  if (classification.proxyable && storagePath) {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || ""
-    const proxyUrl = `${appUrl}/api/files/proxy?path=${encodeURIComponent(storagePath)}`
-    return `${emoji} **${displayName}** (${sizeStr})\n[\[▶ View / Download\]](${proxyUrl})`
+  if (Silian_classification.proxyable && Silian_storagePath) {
+    const Silian_appUrl = process.env.NEXT_PUBLIC_APP_URL || ""
+    const Silian_proxyUrl = `${Silian_appUrl}/api/files/proxy?path=${encodeURIComponent(Silian_storagePath)}`
+    return `${Silian_emoji} **${Silian_displayName}** (${Silian_sizeStr})\n[\[▶ View / Download\]](${Silian_proxyUrl})`
   }
 
   // Non-proxyable: direct download link
-  return `${emoji} **${displayName}** (${sizeStr})\n[\[↓ Download\]](${rawGithubUrl})`
+  return `${Silian_emoji} **${Silian_displayName}** (${Silian_sizeStr})\n[\[↓ Download\]](${Silian_rawGithubUrl})`
 }

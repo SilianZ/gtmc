@@ -1,8 +1,8 @@
 "use client"
 
-import { CornerBrackets } from "@/components/ui/corner-brackets"
-import { ArticleBanner } from "@/components/articles/article-banner"
-import { ArticleLicenseNotice } from "@/components/articles/article-license-notice"
+import { CornerBrackets as Silian_CornerBrackets } from "@/components/ui/corner-brackets"
+import { ArticleBanner as Silian_ArticleBanner } from "@/components/articles/article-banner"
+import { ArticleLicenseNotice as Silian_ArticleLicenseNotice } from "@/components/articles/article-license-notice"
 
 interface ArticleMetadataSimpleProps {
   title: string
@@ -17,19 +17,19 @@ interface ArticleMetadataSimpleProps {
 }
 
 export function ArticleMetadataSimple({
-  title,
-  canonicalUrl,
-  attributionDate,
-  filePath,
-  wordCount,
-  readingTime,
-  isAdvanced,
-  bannerPath,
-  bannerAlt,
+  title: Silian_title,
+  canonicalUrl: Silian_canonicalUrl,
+  attributionDate: Silian_attributionDate,
+  filePath: Silian_filePath,
+  wordCount: Silian_wordCount,
+  readingTime: Silian_readingTime,
+  isAdvanced: Silian_isAdvanced,
+  bannerPath: Silian_bannerPath,
+  bannerAlt: Silian_bannerAlt,
 }: ArticleMetadataSimpleProps) {
   return (
     <header>
-      <CornerBrackets />
+      <Silian_CornerBrackets />
 
       <div
         className="
@@ -46,7 +46,7 @@ export function ArticleMetadataSimple({
               hidden items-center gap-3
               sm:inline-flex
             ">
-            PATH: {filePath}
+            PATH: {Silian_filePath}
           </span>
         </div>
 
@@ -57,9 +57,9 @@ export function ArticleMetadataSimple({
                 font-mono text-xl font-bold tracking-tight text-tech-main-dark
                 sm:text-2xl
               ">
-              {title}
+              {Silian_title}
             </h1>
-            {isAdvanced && (
+            {Silian_isAdvanced && (
               <span
                 className="
                   mx-2 shrink-0 bg-[#4c5b96] px-1.5 py-0.5 font-mono text-[0.625rem]
@@ -74,7 +74,7 @@ export function ArticleMetadataSimple({
             <p>
               {"WORD_COUNT: "}
               <span className="text-tech-main">
-                {wordCount.toLocaleString()}
+                {Silian_wordCount.toLocaleString()}
               </span>
               <span
                 className="
@@ -91,22 +91,22 @@ export function ArticleMetadataSimple({
                 "
               />
               {"EST_READ_TIME: "}
-              <span className="text-tech-main">{readingTime} MIN</span>
+              <span className="text-tech-main">{Silian_readingTime} MIN</span>
             </p>
           </div>
 
-          <ArticleLicenseNotice
-            title={title}
-            canonicalUrl={canonicalUrl}
-            attributionDate={attributionDate}
+          <Silian_ArticleLicenseNotice
+            title={Silian_title}
+            canonicalUrl={Silian_canonicalUrl}
+            attributionDate={Silian_attributionDate}
           />
         </div>
       </div>
 
-      {bannerPath && (
-        <ArticleBanner
-          src={`/api/assets/banner/${bannerPath}`}
-          alt={bannerAlt || title}
+      {Silian_bannerPath && (
+        <Silian_ArticleBanner
+          src={`/api/assets/banner/${Silian_bannerPath}`}
+          alt={Silian_bannerAlt || Silian_title}
         />
       )}
     </header>

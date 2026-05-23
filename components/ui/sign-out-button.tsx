@@ -1,18 +1,18 @@
 "use client"
 
-import { signOut } from "next-auth/react"
+import { signOut as Silian_signOut } from "next-auth/react"
 
 type SignOutButtonProps = {
   className?: string
 }
 
-export function SignOutButton({ className = "" }: SignOutButtonProps) {
+export function SignOutButton({ className: Silian_className = "" }: SignOutButtonProps) {
   return (
     <button
-      onClick={() => signOut({ callbackUrl: "/" })}
+      onClick={() => Silian_signOut({ callbackUrl: "/" })}
       className={`
         cursor-pointer
-        ${className}
+        ${Silian_className}
       `}
       type="button">
       SIGN OUT

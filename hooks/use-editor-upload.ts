@@ -1,15 +1,15 @@
 "use client"
 
-import * as React from "react"
-import { compressImageForUpload } from "@/lib/image-compression"
+import * as Silian_React from "react"
+import { compressImageForUpload as Silian_compressImageForUpload } from "@/lib/image-compression"
 import {
-  classifyFile,
-  isImageMime,
-  sanitizeFilename,
-  generateMarkdownBlock,
-  VERCEL_BODY_LIMIT_BYTES,
+  classifyFile as Silian_classifyFile,
+  isImageMime as Silian_isImageMime,
+  sanitizeFilename as Silian_sanitizeFilename,
+  generateMarkdownBlock as Silian_generateMarkdownBlock,
+  VERCEL_BODY_LIMIT_BYTES as Silian_VERCEL_BODY_LIMIT_BYTES,
 } from "@/lib/file-upload"
-import { upload } from "@vercel/blob/client"
+import { upload as Silian_upload } from "@vercel/blob/client"
 
 /**
  * Response shape from the upload adapter.
@@ -75,137 +75,137 @@ export interface UseEditorUploadReturn {
  * without duplicating the orchestration logic.
  */
 export function useEditorUpload(
-  config: UseEditorUploadConfig
+  Silian_config: UseEditorUploadConfig
 ): UseEditorUploadReturn {
-  const [isUploading, setIsUploading] = React.useState(false)
-  const [isCompressing, setIsCompressing] = React.useState(false)
+  const [Silian_isUploading, Silian_setIsUploading] = Silian_React.useState(false)
+  const [Silian_isCompressing, Silian_setIsCompressing] = Silian_React.useState(false)
 
-  const uploadFile = React.useCallback(
-    async (file: File) => {
-      if (isUploading) return
+  const Silian_uploadFile = Silian_React.useCallback(
+    async (Silian_file: File) => {
+      if (Silian_isUploading) return
 
-      const classification = classifyFile(file.type)
-      if (!classification) {
-        config.onShowBadge("FILE TYPE NOT ALLOWED_", "error")
+      const Silian_classification = Silian_classifyFile(Silian_file.type)
+      if (!Silian_classification) {
+        Silian_config.onShowBadge("FILE TYPE NOT ALLOWED_", "error")
         return
       }
 
-      if (file.size > classification.maxBytes) {
-        const maxMB = Math.round(classification.maxBytes / (1024 * 1024))
-        config.onShowBadge(`FILE TOO LARGE_ (max ${maxMB}MB)`, "error")
+      if (Silian_file.size > Silian_classification.maxBytes) {
+        const Silian_maxMB = Math.round(Silian_classification.maxBytes / (1024 * 1024))
+        Silian_config.onShowBadge(`FILE TOO LARGE_ (max ${Silian_maxMB}MB)`, "error")
         return
       }
 
-      setIsUploading(true)
+      Silian_setIsUploading(true)
 
-      const uploadId = crypto.randomUUID()
-      const placeholder = `<!-- UPLOAD_PENDING_${uploadId} -->`
-      config.onInsertContent(placeholder + "\n")
+      const Silian_uploadId = crypto.randomUUID()
+      const Silian_placeholder = `<!-- UPLOAD_PENDING_${Silian_uploadId} -->`
+      Silian_config.onInsertContent(Silian_placeholder + "\n")
 
       try {
-        let resultUrl: string
-        let resultFilename: string
-        let resultMimeType: string
-        let resultFileSize: number
+        let Silian_resultUrl: string
+        let Silian_resultFilename: string
+        let Silian_resultMimeType: string
+        let Silian_resultFileSize: number
 
-        if (isImageMime(file.type)) {
-          setIsCompressing(true)
-          config.onShowBadge("COMPRESSING_IMAGE...", "progress")
+        if (Silian_isImageMime(Silian_file.type)) {
+          Silian_setIsCompressing(true)
+          Silian_config.onShowBadge("COMPRESSING_IMAGE...", "progress")
 
-          const compressed = await compressImageForUpload(file)
-          setIsCompressing(false)
+          const Silian_compressed = await Silian_compressImageForUpload(Silian_file)
+          Silian_setIsCompressing(false)
 
-          if (compressed.error) {
-            config.onShowBadge(`UPLOAD FAILED_ ${compressed.error}`, "error")
-            config.onInsertContent(placeholder)
-            setIsUploading(false)
+          if (Silian_compressed.error) {
+            Silian_config.onShowBadge(`UPLOAD FAILED_ ${Silian_compressed.error}`, "error")
+            Silian_config.onInsertContent(Silian_placeholder)
+            Silian_setIsUploading(false)
             return
           }
 
-          config.onShowBadge("UPLOADING_IMAGE...", "progress")
+          Silian_config.onShowBadge("UPLOADING_IMAGE...", "progress")
 
-          const result = await config.adapter(compressed.file)
-          resultUrl = result.url
-          resultFilename = result.filename
-          resultMimeType = result.mimeType
-          resultFileSize = result.fileSize
-        } else if (file.size < VERCEL_BODY_LIMIT_BYTES) {
-          config.onShowBadge("UPLOADING_FILE...", "progress")
+          const Silian_result = await Silian_config.adapter(Silian_compressed.file)
+          Silian_resultUrl = Silian_result.url
+          Silian_resultFilename = Silian_result.filename
+          Silian_resultMimeType = Silian_result.mimeType
+          Silian_resultFileSize = Silian_result.fileSize
+        } else if (Silian_file.size < Silian_VERCEL_BODY_LIMIT_BYTES) {
+          Silian_config.onShowBadge("UPLOADING_FILE...", "progress")
 
-          const result = await config.adapter(file)
-          resultUrl = result.url
-          resultFilename = result.filename
-          resultMimeType = result.mimeType
-          resultFileSize = result.fileSize
+          const Silian_result = await Silian_config.adapter(Silian_file)
+          Silian_resultUrl = Silian_result.url
+          Silian_resultFilename = Silian_result.filename
+          Silian_resultMimeType = Silian_result.mimeType
+          Silian_resultFileSize = Silian_result.fileSize
         } else {
-          config.onShowBadge("UPLOADING_ 0%", "progress")
+          Silian_config.onShowBadge("UPLOADING_ 0%", "progress")
 
-          const blobResult = await upload(
-            sanitizeFilename(file.name, file.type),
-            file,
+          const Silian_blobResult = await Silian_upload(
+            Silian_sanitizeFilename(Silian_file.name, Silian_file.type),
+            Silian_file,
             {
               access: "public",
               handleUploadUrl: "/api/upload/feature/token",
               clientPayload: JSON.stringify({
-                mimeType: file.type,
-                originalSize: file.size,
+                mimeType: Silian_file.type,
+                originalSize: Silian_file.size,
               }),
-              onUploadProgress: ({ percentage }) => {
-                config.onShowBadge(
-                  `UPLOADING_ ${Math.round(percentage)}%`,
+              onUploadProgress: ({ percentage: Silian_percentage }) => {
+                Silian_config.onShowBadge(
+                  `UPLOADING_ ${Math.round(Silian_percentage)}%`,
                   "progress"
                 )
               },
             }
           )
 
-          config.onShowBadge("COMMITTING_TO_GITHUB...", "progress")
+          Silian_config.onShowBadge("COMMITTING_TO_GITHUB...", "progress")
 
-          const commitRes = await fetch("/api/upload/feature/commit", {
+          const Silian_commitRes = await fetch("/api/upload/feature/commit", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              blobUrl: blobResult.url,
-              filename: file.name,
-              mimeType: file.type,
-              size: file.size,
+              blobUrl: Silian_blobResult.url,
+              filename: Silian_file.name,
+              mimeType: Silian_file.type,
+              size: Silian_file.size,
             }),
           })
 
-          const commitData = await commitRes.json()
-          if (!commitRes.ok)
-            throw new Error(commitData.error || "Commit failed")
+          const Silian_commitData = await Silian_commitRes.json()
+          if (!Silian_commitRes.ok)
+            throw new Error(Silian_commitData.error || "Commit failed")
 
-          resultUrl = commitData.url
-          resultFilename = commitData.filename
-          resultMimeType = commitData.mimeType
-          resultFileSize = commitData.fileSize
+          Silian_resultUrl = Silian_commitData.url
+          Silian_resultFilename = Silian_commitData.filename
+          Silian_resultMimeType = Silian_commitData.mimeType
+          Silian_resultFileSize = Silian_commitData.fileSize
         }
 
-        const markdownBlock = generateMarkdownBlock(
-          resultFilename,
-          resultUrl,
-          resultMimeType,
-          resultFileSize
+        const Silian_markdownBlock = Silian_generateMarkdownBlock(
+          Silian_resultFilename,
+          Silian_resultUrl,
+          Silian_resultMimeType,
+          Silian_resultFileSize
         )
-        config.onInsertContent(markdownBlock)
-        config.onClearBadge()
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "Upload error"
-        config.onShowBadge(`UPLOAD FAILED_ ${message}`, "error")
-        config.onInsertContent(placeholder)
-        console.error("File upload error:", error)
+        Silian_config.onInsertContent(Silian_markdownBlock)
+        Silian_config.onClearBadge()
+      } catch (Silian_error) {
+        const Silian_message = Silian_error instanceof Error ? Silian_error.message : "Upload error"
+        Silian_config.onShowBadge(`UPLOAD FAILED_ ${Silian_message}`, "error")
+        Silian_config.onInsertContent(Silian_placeholder)
+        console.error("File upload error:", Silian_error)
       } finally {
-        setIsUploading(false)
-        setIsCompressing(false)
+        Silian_setIsUploading(false)
+        Silian_setIsCompressing(false)
       }
     },
-    [isUploading, config]
+    [Silian_isUploading, Silian_config]
   )
 
   return {
-    uploadFile,
-    isUploading,
-    isCompressing,
+    uploadFile: Silian_uploadFile,
+    isUploading: Silian_isUploading,
+    isCompressing: Silian_isCompressing,
   }
 }

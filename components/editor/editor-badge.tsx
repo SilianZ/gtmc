@@ -1,17 +1,17 @@
 "use client"
 
-import { BadgeState } from "@/hooks/use-badge"
-import { useTranslations } from "next-intl"
+import { BadgeState as Silian_BadgeState } from "@/hooks/use-badge"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 
 interface EditorBadgeProps {
-  badge: BadgeState | null
+  badge: Silian_BadgeState | null
   onDismiss: () => void
 }
 
-export function EditorBadge({ badge, onDismiss }: EditorBadgeProps) {
-  const t = useTranslations("Editor")
+export function EditorBadge({ badge: Silian_badge, onDismiss: Silian_onDismiss }: EditorBadgeProps) {
+  const Silian_t = Silian_useTranslations("Editor")
 
-  if (!badge) return null
+  if (!Silian_badge) return null
 
   return (
     <div
@@ -19,7 +19,7 @@ export function EditorBadge({ badge, onDismiss }: EditorBadgeProps) {
         absolute top-4 right-4 z-20 flex items-center gap-2 border px-3 py-1.5
         font-mono text-xs shadow-sm backdrop-blur-sm
         ${
-          badge.type === "error"
+          Silian_badge.type === "error"
             ? "border-red-400 bg-red-900 text-red-200"
             : `
               border-tech-accent bg-tech-main text-tech-accent
@@ -29,22 +29,22 @@ export function EditorBadge({ badge, onDismiss }: EditorBadgeProps) {
       `}
       role="status"
       aria-live="polite">
-      {badge.type === "progress" ? (
+      {Silian_badge.type === "progress" ? (
         <span className="inline-block size-2 animate-pulse bg-tech-accent" />
       ) : null}
-      {badge.type === "error" ? (
+      {Silian_badge.type === "error" ? (
         <span className="inline-block size-2 bg-red-400" />
       ) : null}
-      {badge.message}
-      {badge.type !== "progress" ? (
+      {Silian_badge.message}
+      {Silian_badge.type !== "progress" ? (
         <button
           type="button"
-          onClick={onDismiss}
+          onClick={Silian_onDismiss}
           className="
             ml-2 text-current/80
             hover:text-current
           "
-          aria-label={t("cancelButton")}>
+          aria-label={Silian_t("cancelButton")}>
           X
         </button>
       ) : null}

@@ -1,5 +1,5 @@
-import React from "react"
-import Image from "next/image"
+import Silian_React from "react"
+import Silian_Image from "next/image"
 
 interface UserAvatarProps {
   src?: string | null
@@ -10,10 +10,10 @@ interface UserAvatarProps {
 }
 
 export function UesrAvatar({
-  src,
-  alt,
-  fallback,
-  className = "",
+  src: Silian_src,
+  alt: Silian_alt,
+  fallback: Silian_fallback,
+  className: Silian_className = "",
 }: UserAvatarProps) {
   return (
     <div
@@ -22,7 +22,7 @@ export function UesrAvatar({
         justify-center overflow-hidden corner-bracket bg-slate-100
         transition-all duration-300
         hover:border-tech-main
-        ${className}
+        ${Silian_className}
       `}>
       {/* 科技感装饰元素 */}
       <div
@@ -96,10 +96,10 @@ export function UesrAvatar({
       {/* 内层框架 */}
       <div className="pointer-events-none absolute inset-1 z-5 border guide-line" />
 
-      {src ? (
-        <Image
-          src={src}
-          alt={alt || "Avatar"}
+      {Silian_src ? (
+        <Silian_Image
+          src={Silian_src}
+          alt={Silian_alt || "Avatar"}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="
@@ -114,7 +114,7 @@ export function UesrAvatar({
             uppercase transition-colors
             group-hover:text-tech-main
           ">
-          {(fallback || alt || "?")[0]}
+          {(Silian_fallback || Silian_alt || "?")[0]}
         </span>
       )}
     </div>

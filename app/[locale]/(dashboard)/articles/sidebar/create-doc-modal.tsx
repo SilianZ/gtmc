@@ -1,18 +1,18 @@
 "use client"
 
-import { useState } from "react"
-import { createPortal } from "react-dom"
-import { useTranslations } from "next-intl"
-import { createDocument } from "@/actions/sidebar"
-import { getReauthLoginUrl, isReauthRequiredError } from "@/lib/admin-reauth"
+import { useState as Silian_useState } from "react"
+import { createPortal as Silian_createPortal } from "react-dom"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { createDocument as Silian_createDocument } from "@/actions/sidebar"
+import { getReauthLoginUrl as Silian_getReauthLoginUrl, isReauthRequiredError as Silian_isReauthRequiredError } from "@/lib/admin-reauth"
 import type { TreeNode } from "./tree-node"
 
 export function CreateDocModal({
-  open,
-  mounted,
-  availableFolders,
-  onClose,
-  onCreated,
+  open: Silian_open,
+  mounted: Silian_mounted,
+  availableFolders: Silian_availableFolders,
+  onClose: Silian_onClose,
+  onCreated: Silian_onCreated,
 }: {
   open: boolean
   mounted: boolean
@@ -20,41 +20,41 @@ export function CreateDocModal({
   onClose: () => void
   onCreated: () => void
 }) {
-  const t = useTranslations("Sidebar")
-  const [formData, setFormData] = useState({
+  const Silian_t = Silian_useTranslations("Sidebar")
+  const [Silian_formData, Silian_setFormData] = Silian_useState({
     title: "",
     slug: "",
     isFolder: false,
     parentId: "",
   })
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const Silian_handleCreate = async (Silian_e: React.FormEvent) => {
+    Silian_e.preventDefault()
     try {
-      await createDocument({
-        title: formData.title,
+      await Silian_createDocument({
+        title: Silian_formData.title,
         slug:
-          formData.slug || formData.title.toLowerCase().replace(/\s+/g, "-"),
-        isFolder: formData.isFolder,
-        parentId: formData.parentId || null,
+          Silian_formData.slug || Silian_formData.title.toLowerCase().replace(/\s+/g, "-"),
+        isFolder: Silian_formData.isFolder,
+        parentId: Silian_formData.parentId || null,
       })
-      onClose()
-      onCreated()
-    } catch (error) {
-      if (isReauthRequiredError(error)) {
-        window.location.href = getReauthLoginUrl(
+      Silian_onClose()
+      Silian_onCreated()
+    } catch (Silian_error) {
+      if (Silian_isReauthRequiredError(Silian_error)) {
+        window.location.href = Silian_getReauthLoginUrl(
           `${window.location.pathname}${window.location.search}`
         )
         return
       }
-      const message = error instanceof Error ? error.message : "Unknown error"
-      alert(message)
+      const Silian_message = Silian_error instanceof Error ? Silian_error.message : "Unknown error"
+      alert(Silian_message)
     }
   }
 
-  if (!mounted || !open) return null
+  if (!Silian_mounted || !Silian_open) return null
 
-  return createPortal(
+  return Silian_createPortal(
     <div
       className="
         fixed inset-0 z-9999 flex items-center justify-center bg-black/80 p-4
@@ -74,7 +74,7 @@ export function CreateDocModal({
           CREATE_SYS_OBJECT
         </h3>
 
-        <form onSubmit={handleCreate} className="space-y-4 font-mono">
+        <form onSubmit={Silian_handleCreate} className="space-y-4 font-mono">
           <div>
             <label
               htmlFor="modal-title"
@@ -82,17 +82,17 @@ export function CreateDocModal({
                 mb-1 block text-[0.6875rem] tracking-wider text-tech-main/80
                 uppercase
               ">
-              {t("createDocTitleLabel")}
+              {Silian_t("createDocTitleLabel")}
             </label>
             <input
               id="modal-title"
               type="text"
               required
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  title: e.target.value,
+              value={Silian_formData.title}
+              onChange={(Silian_e) =>
+                Silian_setFormData({
+                  ...Silian_formData,
+                  title: Silian_e.target.value,
                 })
               }
               className="
@@ -111,21 +111,21 @@ export function CreateDocModal({
                 mb-1 block text-[0.6875rem] tracking-wider text-tech-main/80
                 uppercase
               ">
-              {t("createDocSlugLabel")}
+              {Silian_t("createDocSlugLabel")}
             </label>
             <input
               id="modal-slug"
               type="text"
-              value={formData.slug}
-              onChange={(e) =>
-                setFormData({ ...formData, slug: e.target.value })
+              value={Silian_formData.slug}
+              onChange={(Silian_e) =>
+                Silian_setFormData({ ...Silian_formData, slug: Silian_e.target.value })
               }
               className="
                 w-full border border-tech-main/40 bg-tech-main/5 px-3 py-2
                 text-sm text-tech-main outline-none
                 focus:border-tech-main
               "
-              placeholder={t("createDocSlugPlaceholder")}
+              placeholder={Silian_t("createDocSlugPlaceholder")}
             />
           </div>
 
@@ -136,11 +136,11 @@ export function CreateDocModal({
             <input
               type="checkbox"
               id="isFolder"
-              checked={formData.isFolder}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  isFolder: e.target.checked,
+              checked={Silian_formData.isFolder}
+              onChange={(Silian_e) =>
+                Silian_setFormData({
+                  ...Silian_formData,
+                  isFolder: Silian_e.target.checked,
                 })
               }
               className="size-4 accent-tech-main"
@@ -148,7 +148,7 @@ export function CreateDocModal({
             <label
               htmlFor="isFolder"
               className="cursor-pointer text-sm text-tech-main/80 select-none">
-              {t("createDocAsDirectory")}
+              {Silian_t("createDocAsDirectory")}
             </label>
           </div>
 
@@ -159,25 +159,25 @@ export function CreateDocModal({
                 mb-1 block text-[0.6875rem] tracking-wider text-tech-main/80
                 uppercase
               ">
-              {t("createDocParentDirectory")}
+              {Silian_t("createDocParentDirectory")}
             </label>
             <select
               id="modal-parent"
-              value={formData.parentId}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  parentId: e.target.value,
+              value={Silian_formData.parentId}
+              onChange={(Silian_e) =>
+                Silian_setFormData({
+                  ...Silian_formData,
+                  parentId: Silian_e.target.value,
                 })
               }
               className="
                 w-full border border-tech-main/40 bg-tech-main/5 px-3 py-2
                 text-sm text-tech-main outline-none
               ">
-              <option value="">{t("createDocRootDirectory")}</option>
-              {availableFolders.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.title}
+              <option value="">{Silian_t("createDocRootDirectory")}</option>
+              {Silian_availableFolders.map((Silian_f) => (
+                <option key={Silian_f.id} value={Silian_f.id}>
+                  {Silian_f.title}
                 </option>
               ))}
             </select>
@@ -186,14 +186,14 @@ export function CreateDocModal({
           <div className="mt-6 flex justify-end gap-2 border-t guide-line pt-4">
             <button
               type="button"
-              onClick={onClose}
+              onClick={Silian_onClose}
               className="
                 cursor-pointer border border-tech-main/40 px-4 py-2 text-[0.6875rem]
                 font-bold tracking-widest text-tech-main uppercase
                 transition-colors
                 hover:bg-tech-main/10
               ">
-              {t("createDocAbortButton")}
+              {Silian_t("createDocAbortButton")}
             </button>
             <button
               type="submit"
@@ -204,7 +204,7 @@ export function CreateDocModal({
                 transition-opacity
                 hover:opacity-90
               ">
-              {t("createDocExecuteButton")}
+              {Silian_t("createDocExecuteButton")}
             </button>
           </div>
         </form>

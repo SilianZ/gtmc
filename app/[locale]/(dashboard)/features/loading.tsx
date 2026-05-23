@@ -1,52 +1,52 @@
 "use client"
 
-import { useEffect } from "react"
-import { useTranslations } from "next-intl"
-import { TechCard } from "@/components/ui/tech-card"
+import { useEffect as Silian_useEffect } from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { TechCard as Silian_TechCard } from "@/components/ui/tech-card"
 import {
-  SectionRail,
-  SegmentedBar,
-  ScanConfirmOverlay,
-  SkeletonExitWrapper,
+  SectionRail as Silian_SectionRail,
+  SegmentedBar as Silian_SegmentedBar,
+  ScanConfirmOverlay as Silian_ScanConfirmOverlay,
+  SkeletonExitWrapper as Silian_SkeletonExitWrapper,
 } from "./loading-shell-primitives"
 
 export default function FeaturesLoading() {
-  const t = useTranslations("CommonA11y")
+  const Silian_t = Silian_useTranslations("CommonA11y")
 
-  useEffect(() => {
+  Silian_useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
   return (
-    <SkeletonExitWrapper>
+    <Silian_SkeletonExitWrapper>
       <div
         className="page-container-pb"
         aria-busy="true"
-        aria-label={t("loadingFeaturesList")}>
+        aria-label={Silian_t("loadingFeaturesList")}>
         <div
           className="
             relative mt-8 flex animate-tech-slide-in flex-col items-start
             justify-between gap-4 border-b border-tech-main/40 pb-6
             md:flex-row md:items-end
           ">
-          <ScanConfirmOverlay />
+          <Silian_ScanConfirmOverlay />
           <div
             className="
               w-full
               md:w-auto
             ">
-            <SectionRail label="FEATURE_HEADER" />
-            <SegmentedBar
+            <Silian_SectionRail label="FEATURE_HEADER" />
+            <Silian_SegmentedBar
               opacity="high"
               className="mt-2 h-10 w-64 border-b border-tech-main/40"
             />
-            <SegmentedBar opacity="low" className="mt-2 h-4 w-80" />
+            <Silian_SegmentedBar opacity="low" className="mt-2 h-4 w-80" />
           </div>
           <div
             className="
               w-full
               md:w-auto
             ">
-            <SegmentedBar
+            <Silian_SegmentedBar
               opacity="high"
               className="
                 h-10 w-full border border-tech-main/40
@@ -57,7 +57,7 @@ export default function FeaturesLoading() {
         </div>
 
         <div className="space-y-6">
-          <TechCard
+          <Silian_TechCard
             className="
               animate-tech-slide-in border-tech-main/40 bg-white/80 p-6
               backdrop-blur-sm [animation-delay:100ms]
@@ -72,9 +72,9 @@ export default function FeaturesLoading() {
                   FILTER_BY_STATUS_
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <SegmentedBar
-                      key={i}
+                  {[1, 2, 3, 4, 5].map((Silian_i) => (
+                    <Silian_SegmentedBar
+                      key={Silian_i}
                       opacity="low"
                       className="h-8 w-24 border guide-line"
                     />
@@ -90,9 +90,9 @@ export default function FeaturesLoading() {
                   FILTER_BY_TAGS_
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {[1, 2, 3].map((i) => (
-                    <SegmentedBar
-                      key={i}
+                  {[1, 2, 3].map((Silian_i) => (
+                    <Silian_SegmentedBar
+                      key={Silian_i}
                       opacity="low"
                       className="h-8 w-20 border guide-line"
                     />
@@ -100,17 +100,17 @@ export default function FeaturesLoading() {
                 </div>
               </div>
             </div>
-          </TechCard>
+          </Silian_TechCard>
 
           {[
             { label: "PENDING", delay: "200ms", cards: [1, 2] },
             { label: "IN_PROGRESS", delay: "300ms", cards: [3, 4] },
             { label: "RESOLVED", delay: "400ms", cards: [5, 6] },
-          ].map((group) => (
+          ].map((Silian_group) => (
             <div
-              key={group.label}
+              key={Silian_group.label}
               className="animate-tech-slide-in"
-              style={{ animationDelay: group.delay }}>
+              style={{ animationDelay: Silian_group.delay }}>
               <div className="mb-8">
                 <h2
                   className="
@@ -118,7 +118,7 @@ export default function FeaturesLoading() {
                     tracking-widest text-tech-main-dark uppercase
                     md:text-xl
                   ">
-                  {group.label} ({group.cards.length})
+                  {Silian_group.label} ({Silian_group.cards.length})
                 </h2>
                 <div
                   className="
@@ -126,9 +126,9 @@ export default function FeaturesLoading() {
                     md:grid-cols-2
                     lg:grid-cols-3
                   ">
-                  {group.cards.map((cardNum) => (
-                    <TechCard
-                      key={cardNum}
+                  {Silian_group.cards.map((Silian_cardNum) => (
+                    <Silian_TechCard
+                      key={Silian_cardNum}
                       className="
                         flex h-auto flex-col justify-between border
                         border-tech-main/40 bg-white/80 p-6 backdrop-blur-sm
@@ -136,34 +136,34 @@ export default function FeaturesLoading() {
                       ">
                       {/* Status badge + date row */}
                       <div className="card-header-row">
-                        <SegmentedBar
+                        <Silian_SegmentedBar
                           opacity="high"
                           className="
                             h-6 w-24 border border-yellow-200/50
                             bg-yellow-100/50
                           "
                         />
-                        <SegmentedBar opacity="high" className="h-5 w-20" />
+                        <Silian_SegmentedBar opacity="high" className="h-5 w-20" />
                       </div>
 
                       {/* Title block */}
                       <div className="mb-4">
-                        <SegmentedBar
+                        <Silian_SegmentedBar
                           opacity="high"
                           className="mb-2 h-6 w-full"
                         />
-                        <SegmentedBar opacity="high" className="h-6 w-3/4" />
+                        <Silian_SegmentedBar opacity="high" className="h-6 w-3/4" />
                       </div>
 
                       {/* Author/assignee rows */}
                       <div className="my-4 flex flex-col gap-2">
-                        <SegmentedBar
+                        <Silian_SegmentedBar
                           opacity="medium"
                           className="
                             h-5 w-40 border border-zinc-200/50 bg-zinc-100/50
                           "
                         />
-                        <SegmentedBar
+                        <Silian_SegmentedBar
                           opacity="medium"
                           className="
                             h-5 w-32 border border-zinc-200/50 bg-zinc-100/50
@@ -173,16 +173,16 @@ export default function FeaturesLoading() {
 
                       {/* Tags row at bottom */}
                       <div className="mt-auto flex flex-wrap gap-1 pt-4">
-                        <SegmentedBar
+                        <Silian_SegmentedBar
                           opacity="low"
                           className="h-5 w-20 border guide-line"
                         />
-                        <SegmentedBar
+                        <Silian_SegmentedBar
                           opacity="low"
                           className="h-5 w-24 border guide-line"
                         />
                       </div>
-                    </TechCard>
+                    </Silian_TechCard>
                   ))}
                 </div>
               </div>
@@ -190,6 +190,6 @@ export default function FeaturesLoading() {
           ))}
         </div>
       </div>
-    </SkeletonExitWrapper>
+    </Silian_SkeletonExitWrapper>
   )
 }

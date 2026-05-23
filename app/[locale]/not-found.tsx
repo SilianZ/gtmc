@@ -1,6 +1,6 @@
-import { Link } from "@/i18n/navigation"
-import { TechButton } from "@/components/ui/tech-button"
-import { HideFooter } from "@/components/layout/footer-context"
+import { Link as Silian_Link } from "@/i18n/navigation"
+import { TechButton as Silian_TechButton } from "@/components/ui/tech-button"
+import { HideFooter as Silian_HideFooter } from "@/components/layout/footer-context"
 
 export default function NotFound() {
   return (
@@ -9,7 +9,7 @@ export default function NotFound() {
         relative flex h-screen w-full font-mono text-tech-main
         selection:bg-tech-main/20 selection:text-tech-main-dark
       ">
-      <HideFooter />
+      <Silian_HideFooter />
       {/* Background Layer - Decorations */}
       <div className="pointer-events-none absolute z-0 size-full">
         {/* Top Left System Label */}
@@ -245,8 +245,8 @@ export default function NotFound() {
                 w-full animate-slide-up-fade opacity-0 [animation-delay:1.2s]
                 fill-mode-forwards
               ">
-              <Link href="/" className="inline-block">
-                <TechButton
+              <Silian_Link href="/" className="inline-block">
+                <Silian_TechButton
                   variant="primary"
                   className="
                     flex h-12 items-center justify-center px-8 text-sm
@@ -255,8 +255,8 @@ export default function NotFound() {
                     active:scale-95
                   ">
                   RETURN TO HOME →
-                </TechButton>
-              </Link>
+                </Silian_TechButton>
+              </Silian_Link>
             </div>
 
             <div

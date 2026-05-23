@@ -1,14 +1,14 @@
 "use client"
 
-import * as React from "react"
-import { useMemo, useImperativeHandle } from "react"
-import { usePathname, useRouter } from "@/i18n/navigation"
-import { SidebarActions } from "./sidebar/actions"
-import { CreateDocModal } from "./sidebar/create-doc-modal"
-import { SidebarTree, type TreeNode } from "./sidebar/tree-node"
-import { useBlur } from "./sidebar/use-blur"
-import { useSidebarContext } from "./sidebar/sidebar-context"
-import { useScrollToActive } from "./sidebar/use-scroll-to-active"
+import * as Silian_React from "react"
+import { useMemo as Silian_useMemo, useImperativeHandle as Silian_useImperativeHandle } from "react"
+import { usePathname as Silian_usePathname, useRouter as Silian_useRouter } from "@/i18n/navigation"
+import { SidebarActions as Silian_SidebarActions } from "./sidebar/actions"
+import { CreateDocModal as Silian_CreateDocModal } from "./sidebar/create-doc-modal"
+import { SidebarTree as Silian_SidebarTree, type TreeNode } from "./sidebar/tree-node"
+import { useBlur as Silian_useBlur } from "./sidebar/use-blur"
+import { useSidebarContext as Silian_useSidebarContext } from "./sidebar/sidebar-context"
+import { useScrollToActive as Silian_useScrollToActive } from "./sidebar/use-scroll-to-active"
 
 export interface SidebarClientHandle {
   openCreateModal: () => void
@@ -24,143 +24,143 @@ interface SidebarClientProps {
   hideActions?: boolean
 }
 
-function flattenFolders(items: TreeNode[]): TreeNode[] {
-  let folders: TreeNode[] = []
-  items.forEach((item) => {
-    if (item.isFolder) {
-      folders.push(item)
-      if (item.children)
-        folders = [...folders, ...flattenFolders(item.children)]
+function Silian_flattenFolders(Silian_items: TreeNode[]): TreeNode[] {
+  let Silian_folders: TreeNode[] = []
+  Silian_items.forEach((Silian_item) => {
+    if (Silian_item.isFolder) {
+      Silian_folders.push(Silian_item)
+      if (Silian_item.children)
+        Silian_folders = [...Silian_folders, ...Silian_flattenFolders(Silian_item.children)]
     }
   })
-  return folders
+  return Silian_folders
 }
 
-export const SidebarClient = React.forwardRef<
+export const SidebarClient = Silian_React.forwardRef<
   SidebarClientHandle,
   SidebarClientProps
 >(function SidebarClient(
   {
-    tree: _tree,
-    onNavigate,
-    internalScroll = false,
-    scrollClass = "",
-    hideActions = false,
+    tree: Silian__tree,
+    onNavigate: Silian_onNavigate,
+    internalScroll: Silian_internalScroll = false,
+    scrollClass: Silian_scrollClass = "",
+    hideActions: Silian_hideActions = false,
   },
-  ref
+  Silian_ref
 ) {
-  void _tree
+  void Silian__tree
 
   return (
-    <SidebarClientInner
-      onNavigate={onNavigate}
-      internalScroll={internalScroll}
-      scrollClass={scrollClass}
-      hideActions={hideActions}
-      ref={ref}
+    <Silian_SidebarClientInner
+      onNavigate={Silian_onNavigate}
+      internalScroll={Silian_internalScroll}
+      scrollClass={Silian_scrollClass}
+      hideActions={Silian_hideActions}
+      ref={Silian_ref}
     />
   )
 })
 
-const SidebarClientInner = React.forwardRef<
+const Silian_SidebarClientInner = Silian_React.forwardRef<
   SidebarClientHandle,
   Omit<SidebarClientProps, "tree">
 >(function SidebarClientInner(
-  { onNavigate, internalScroll = false, scrollClass = "", hideActions = false },
-  ref
+  { onNavigate: Silian_onNavigate, internalScroll: Silian_internalScroll = false, scrollClass: Silian_scrollClass = "", hideActions: Silian_hideActions = false },
+  Silian_ref
 ) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const [isModalOpen, setIsModalOpen] = React.useState(false)
+  const Silian_router = Silian_useRouter()
+  const Silian_pathname = Silian_usePathname()
+  const [Silian_isModalOpen, Silian_setIsModalOpen] = Silian_React.useState(false)
 
   const {
-    tree,
-    expandedFolders,
-    setExpandedFolders,
-    expandedFoldersRef,
-    mounted,
-    toc,
-    highlightActive,
-    setHighlightActive,
-    scrollContainerRef,
-    collapseAll,
-    scrollToCurrent,
-    setScrollToCurrent,
-    activeItemRef,
-    folderGridRefs,
-  } = useSidebarContext()
+    tree: Silian_tree,
+    expandedFolders: Silian_expandedFolders,
+    setExpandedFolders: Silian_setExpandedFolders,
+    expandedFoldersRef: Silian_expandedFoldersRef,
+    mounted: Silian_mounted,
+    toc: Silian_toc,
+    highlightActive: Silian_highlightActive,
+    setHighlightActive: Silian_setHighlightActive,
+    scrollContainerRef: Silian_scrollContainerRef,
+    collapseAll: Silian_collapseAll,
+    scrollToCurrent: Silian_scrollToCurrent,
+    setScrollToCurrent: Silian_setScrollToCurrent,
+    activeItemRef: Silian_activeItemRef,
+    folderGridRefs: Silian_folderGridRefs,
+  } = Silian_useSidebarContext()
 
   const {
-    scrollToCurrent: scrollToCurrentFn,
-    highlightActive: highlightActiveFromScroll,
-  } = useScrollToActive({
-    tree,
-    pathname,
-    mounted,
-    expandedFolders,
-    expandedFoldersRef,
-    setExpandedFolders,
-    scrollContainerRef,
-    activeItemRef,
-    folderGridRefs,
+    scrollToCurrent: Silian_scrollToCurrentFn,
+    highlightActive: Silian_highlightActiveFromScroll,
+  } = Silian_useScrollToActive({
+    tree: Silian_tree,
+    pathname: Silian_pathname,
+    mounted: Silian_mounted,
+    expandedFolders: Silian_expandedFolders,
+    expandedFoldersRef: Silian_expandedFoldersRef,
+    setExpandedFolders: Silian_setExpandedFolders,
+    scrollContainerRef: Silian_scrollContainerRef,
+    activeItemRef: Silian_activeItemRef,
+    folderGridRefs: Silian_folderGridRefs,
   })
 
-  React.useEffect(() => {
-    setScrollToCurrent(scrollToCurrentFn)
-  }, [scrollToCurrentFn, setScrollToCurrent])
+  Silian_React.useEffect(() => {
+    Silian_setScrollToCurrent(Silian_scrollToCurrentFn)
+  }, [Silian_scrollToCurrentFn, Silian_setScrollToCurrent])
 
-  React.useEffect(() => {
-    setHighlightActive(highlightActiveFromScroll)
-  }, [highlightActiveFromScroll, setHighlightActive])
+  Silian_React.useEffect(() => {
+    Silian_setHighlightActive(Silian_highlightActiveFromScroll)
+  }, [Silian_highlightActiveFromScroll, Silian_setHighlightActive])
 
-  useBlur({
-    internalScroll,
-    scrollContainerRef,
-    pathname,
-    tree,
-    expandedFolders,
-    toc,
-    highlightActive,
+  Silian_useBlur({
+    internalScroll: Silian_internalScroll,
+    scrollContainerRef: Silian_scrollContainerRef,
+    pathname: Silian_pathname,
+    tree: Silian_tree,
+    expandedFolders: Silian_expandedFolders,
+    toc: Silian_toc,
+    highlightActive: Silian_highlightActive,
   })
 
-  useImperativeHandle(ref, () => ({
-    openCreateModal: () => setIsModalOpen(true),
-    collapseAll,
-    scrollToCurrent,
+  Silian_useImperativeHandle(Silian_ref, () => ({
+    openCreateModal: () => Silian_setIsModalOpen(true),
+    collapseAll: Silian_collapseAll,
+    scrollToCurrent: Silian_scrollToCurrent,
   }))
 
-  const availableFolders = useMemo(() => flattenFolders(tree), [tree])
+  const Silian_availableFolders = Silian_useMemo(() => Silian_flattenFolders(Silian_tree), [Silian_tree])
 
-  const treeContent =
-    tree.length === 0 ? (
+  const Silian_treeContent =
+    Silian_tree.length === 0 ? (
       <div className="mt-4 font-mono text-sm text-tech-main/40">
         SYS.DIR_TREE_EMPTY
       </div>
     ) : (
-      <SidebarTree onNavigate={onNavigate} items={tree} />
+      <Silian_SidebarTree onNavigate={Silian_onNavigate} items={Silian_tree} />
     )
 
   return (
     <>
-      {internalScroll ? (
+      {Silian_internalScroll ? (
         <div className="relative flex min-h-0 flex-1 flex-col">
-          {!hideActions && (
-            <SidebarActions
-              internalScroll={internalScroll}
-              onCollapseAll={(e) => {
-                e.preventDefault()
-                collapseAll()
+          {!Silian_hideActions && (
+            <Silian_SidebarActions
+              internalScroll={Silian_internalScroll}
+              onCollapseAll={(Silian_e) => {
+                Silian_e.preventDefault()
+                Silian_collapseAll()
               }}
-              onLocate={scrollToCurrent}
+              onLocate={Silian_scrollToCurrent}
             />
           )}
           <div
-            ref={scrollContainerRef}
+            ref={Silian_scrollContainerRef}
             className={`
               custom-left-scrollbar min-h-0 flex-1 overflow-y-auto pb-12
-              ${scrollClass}
+              ${Silian_scrollClass}
             `}>
-            {treeContent}
+            {Silian_treeContent}
           </div>
           <div
             className="
@@ -177,26 +177,26 @@ const SidebarClientInner = React.forwardRef<
         </div>
       ) : (
         <>
-          {!hideActions && (
-            <SidebarActions
-              internalScroll={internalScroll}
-              onCollapseAll={(e) => {
-                e.preventDefault()
-                collapseAll()
+          {!Silian_hideActions && (
+            <Silian_SidebarActions
+              internalScroll={Silian_internalScroll}
+              onCollapseAll={(Silian_e) => {
+                Silian_e.preventDefault()
+                Silian_collapseAll()
               }}
-              onLocate={scrollToCurrent}
+              onLocate={Silian_scrollToCurrent}
             />
           )}
-          {treeContent}
+          {Silian_treeContent}
         </>
       )}
 
-      <CreateDocModal
-        open={isModalOpen}
-        mounted={mounted}
-        availableFolders={availableFolders}
-        onClose={() => setIsModalOpen(false)}
-        onCreated={() => router.refresh()}
+      <Silian_CreateDocModal
+        open={Silian_isModalOpen}
+        mounted={Silian_mounted}
+        availableFolders={Silian_availableFolders}
+        onClose={() => Silian_setIsModalOpen(false)}
+        onCreated={() => Silian_router.refresh()}
       />
     </>
   )

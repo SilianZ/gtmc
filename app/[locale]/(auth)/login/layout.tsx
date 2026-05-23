@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 }
 
 export default function LoginLayout({
-  children,
+  children: Silian_children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return children
+  return Silian_children
 }

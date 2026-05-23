@@ -1,225 +1,225 @@
-import { NextRequest, NextResponse } from "next/server"
-import { del } from "@vercel/blob"
-import { auth } from "@/lib/auth"
-import { uploadFileToGithub, GithubFeaturesError } from "@/lib/github"
-import { classifyFile, isImageMime, sanitizeFilename } from "@/lib/file-upload"
+import { NextRequest as Silian_NextRequest, NextResponse as Silian_NextResponse } from "next/server"
+import { del as Silian_del } from "@vercel/blob"
+import { auth as Silian_auth } from "@/lib/auth"
+import { uploadFileToGithub as Silian_uploadFileToGithub, GithubFeaturesError as Silian_GithubFeaturesError } from "@/lib/github"
+import { classifyFile as Silian_classifyFile, isImageMime as Silian_isImageMime, sanitizeFilename as Silian_sanitizeFilename } from "@/lib/file-upload"
 
-const MAX_FILE_BYTES = 50 * 1024 * 1024
+const Silian_MAX_FILE_BYTES = 50 * 1024 * 1024
 
-export async function POST(req: NextRequest) {
-  const session = await auth()
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+export async function POST(Silian_req: Silian_NextRequest) {
+  const Silian_session = await Silian_auth()
+  if (!Silian_session?.user) {
+    return Silian_NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  let blobUrl: string | undefined
+  let Silian_blobUrl: string | undefined
 
   try {
-    const body = await req.json()
-    blobUrl = body.blobUrl
-    const filename = body.filename
+    const Silian_body = await Silian_req.json()
+    Silian_blobUrl = Silian_body.blobUrl
+    const Silian_filename = Silian_body.filename
 
-    if (!blobUrl || typeof blobUrl !== "string") {
-      return NextResponse.json({ error: "Missing blobUrl" }, { status: 400 })
+    if (!Silian_blobUrl || typeof Silian_blobUrl !== "string") {
+      return Silian_NextResponse.json({ error: "Missing blobUrl" }, { status: 400 })
     }
-    if (!filename || typeof filename !== "string") {
-      return NextResponse.json({ error: "Missing filename" }, { status: 400 })
+    if (!Silian_filename || typeof Silian_filename !== "string") {
+      return Silian_NextResponse.json({ error: "Missing filename" }, { status: 400 })
     }
 
-    const blobHostname = process.env.BLOB_STORE_HOSTNAME
-    const rawBlobPathPrefix = process.env.BLOB_STORE_PATH_PREFIX || "/"
-    if (!blobHostname) {
+    const Silian_blobHostname = process.env.BLOB_STORE_HOSTNAME
+    const Silian_rawBlobPathPrefix = process.env.BLOB_STORE_PATH_PREFIX || "/"
+    if (!Silian_blobHostname) {
       console.error("BLOB_STORE_HOSTNAME not configured")
-      return NextResponse.json(
+      return Silian_NextResponse.json(
         { error: "Server misconfigured" },
         { status: 500 }
       )
     }
     // Normalize the configured path prefix to always start with a single "/"
-    const blobPathPrefix = rawBlobPathPrefix.startsWith("/")
-      ? rawBlobPathPrefix
-      : `/${rawBlobPathPrefix}`
+    const Silian_blobPathPrefix = Silian_rawBlobPathPrefix.startsWith("/")
+      ? Silian_rawBlobPathPrefix
+      : `/${Silian_rawBlobPathPrefix}`
 
-    let parsedUrl: URL
+    let Silian_parsedUrl: URL
     try {
-      parsedUrl = new URL(blobUrl)
+      Silian_parsedUrl = new URL(Silian_blobUrl)
     } catch {
-      return NextResponse.json({ error: "Invalid blob URL" }, { status: 400 })
+      return Silian_NextResponse.json({ error: "Invalid blob URL" }, { status: 400 })
     }
 
     // Ensure the URL points to the expected HTTPS blob host only,
     // with no custom port or path traversal, and under an allowed path prefix.
-    const pathSegments = parsedUrl.pathname.split("/")
-    const hasPathTraversal = pathSegments.some((segment) => segment === "..")
+    const Silian_pathSegments = Silian_parsedUrl.pathname.split("/")
+    const Silian_hasPathTraversal = Silian_pathSegments.some((Silian_segment) => Silian_segment === "..")
 
     if (
-      parsedUrl.protocol !== "https:" ||
-      parsedUrl.hostname !== blobHostname ||
-      parsedUrl.port !== "" ||
-      hasPathTraversal
+      Silian_parsedUrl.protocol !== "https:" ||
+      Silian_parsedUrl.hostname !== Silian_blobHostname ||
+      Silian_parsedUrl.port !== "" ||
+      Silian_hasPathTraversal
     ) {
-      return NextResponse.json({ error: "Invalid blob URL" }, { status: 400 })
+      return Silian_NextResponse.json({ error: "Invalid blob URL" }, { status: 400 })
     }
 
     // Normalize the path to eliminate any implicit traversal (e.g. "/a/../b")
     // and ensure it stays within the allowed prefix.
-    const normalizedPath = new URL(parsedUrl.pathname, "https://blob.invalid")
+    const Silian_normalizedPath = new URL(Silian_parsedUrl.pathname, "https://blob.invalid")
       .pathname
-    if (!normalizedPath.startsWith(blobPathPrefix)) {
-      return NextResponse.json({ error: "Invalid blob URL" }, { status: 400 })
+    if (!Silian_normalizedPath.startsWith(Silian_blobPathPrefix)) {
+      return Silian_NextResponse.json({ error: "Invalid blob URL" }, { status: 400 })
     }
 
     // Derive the blob path relative to the configured prefix and validate it.
-    const relativePath = normalizedPath.slice(blobPathPrefix.length)
-    if (!relativePath || relativePath.startsWith("/")) {
-      return NextResponse.json({ error: "Invalid blob URL" }, { status: 400 })
+    const Silian_relativePath = Silian_normalizedPath.slice(Silian_blobPathPrefix.length)
+    if (!Silian_relativePath || Silian_relativePath.startsWith("/")) {
+      return Silian_NextResponse.json({ error: "Invalid blob URL" }, { status: 400 })
     }
 
-    const relativeSegments = relativePath.split("/")
-    const hasInvalidSegment = relativeSegments.some((segment) => {
+    const Silian_relativeSegments = Silian_relativePath.split("/")
+    const Silian_hasInvalidSegment = Silian_relativeSegments.some((Silian_segment) => {
       return (
-        !segment ||
-        segment === "." ||
-        segment === ".." ||
+        !Silian_segment ||
+        Silian_segment === "." ||
+        Silian_segment === ".." ||
         // Only allow safe path characters in each segment
-        !/^[A-Za-z0-9._-]+$/.test(segment)
+        !/^[A-Za-z0-9._-]+$/.test(Silian_segment)
       )
     })
-    if (hasInvalidSegment) {
-      return NextResponse.json({ error: "Invalid blob URL" }, { status: 400 })
+    if (Silian_hasInvalidSegment) {
+      return Silian_NextResponse.json({ error: "Invalid blob URL" }, { status: 400 })
     }
 
     // Rebuild a safe URL from validated components, dropping any user-controlled
     // query string to avoid influencing the blob backend via arbitrary parameters.
-    const safePath = blobPathPrefix + relativePath
-    const safeBlobUrlObj = new URL(safePath, `https://${blobHostname}`)
-    const safeBlobUrl = safeBlobUrlObj.toString()
+    const Silian_safePath = Silian_blobPathPrefix + Silian_relativePath
+    const Silian_safeBlobUrlObj = new URL(Silian_safePath, `https://${Silian_blobHostname}`)
+    const Silian_safeBlobUrl = Silian_safeBlobUrlObj.toString()
 
-    const blobResponse = await fetch(safeBlobUrl, { redirect: "error" })
-    if (!blobResponse.ok) {
-      return NextResponse.json(
+    const Silian_blobResponse = await fetch(Silian_safeBlobUrl, { redirect: "error" })
+    if (!Silian_blobResponse.ok) {
+      return Silian_NextResponse.json(
         { error: "Failed to fetch uploaded file" },
         { status: 502 }
       )
     }
 
-    const contentLength = blobResponse.headers.get("content-length")
-    if (contentLength && parseInt(contentLength, 10) > MAX_FILE_BYTES) {
-      return NextResponse.json({ error: "File too large" }, { status: 400 })
+    const Silian_contentLength = Silian_blobResponse.headers.get("content-length")
+    if (Silian_contentLength && parseInt(Silian_contentLength, 10) > Silian_MAX_FILE_BYTES) {
+      return Silian_NextResponse.json({ error: "File too large" }, { status: 400 })
     }
 
-    const reader = blobResponse.body?.getReader()
-    if (!reader) {
-      return NextResponse.json(
+    const Silian_reader = Silian_blobResponse.body?.getReader()
+    if (!Silian_reader) {
+      return Silian_NextResponse.json(
         { error: "Failed to read uploaded file" },
         { status: 502 }
       )
     }
 
-    const chunks: Uint8Array[] = []
-    let totalBytes = 0
+    const Silian_chunks: Uint8Array[] = []
+    let Silian_totalBytes = 0
 
     while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-      totalBytes += value.byteLength
-      if (totalBytes > MAX_FILE_BYTES) {
-        reader.cancel()
-        return NextResponse.json({ error: "File too large" }, { status: 400 })
+      const { done: Silian_done, value: Silian_value } = await Silian_reader.read()
+      if (Silian_done) break
+      Silian_totalBytes += Silian_value.byteLength
+      if (Silian_totalBytes > Silian_MAX_FILE_BYTES) {
+        Silian_reader.cancel()
+        return Silian_NextResponse.json({ error: "File too large" }, { status: 400 })
       }
-      chunks.push(value)
+      Silian_chunks.push(Silian_value)
     }
 
-    const arrayBuffer = new Uint8Array(totalBytes)
-    let offset = 0
-    for (const chunk of chunks) {
-      arrayBuffer.set(chunk, offset)
-      offset += chunk.byteLength
+    const Silian_arrayBuffer = new Uint8Array(Silian_totalBytes)
+    let Silian_offset = 0
+    for (const Silian_chunk of Silian_chunks) {
+      Silian_arrayBuffer.set(Silian_chunk, Silian_offset)
+      Silian_offset += Silian_chunk.byteLength
     }
 
-    const rawContentType = blobResponse.headers.get("content-type") || ""
-    const derivedMime = rawContentType.split(";")[0].trim().toLowerCase()
+    const Silian_rawContentType = Silian_blobResponse.headers.get("content-type") || ""
+    const Silian_derivedMime = Silian_rawContentType.split(";")[0].trim().toLowerCase()
 
-    if (!derivedMime) {
-      return NextResponse.json(
+    if (!Silian_derivedMime) {
+      return Silian_NextResponse.json(
         { error: "Unable to determine file type" },
         { status: 400 }
       )
     }
 
-    if (isImageMime(derivedMime)) {
-      return NextResponse.json(
+    if (Silian_isImageMime(Silian_derivedMime)) {
+      return Silian_NextResponse.json(
         { error: "Images must use direct upload" },
         { status: 400 }
       )
     }
 
-    const classification = classifyFile(derivedMime)
-    if (!classification) {
-      return NextResponse.json(
+    const Silian_classification = Silian_classifyFile(Silian_derivedMime)
+    if (!Silian_classification) {
+      return Silian_NextResponse.json(
         { error: "File type not allowed" },
         { status: 400 }
       )
     }
 
-    if (totalBytes > classification.maxBytes) {
-      const maxMB = Math.round(classification.maxBytes / (1024 * 1024))
-      return NextResponse.json(
-        { error: `File too large (max ${maxMB}MB).` },
+    if (Silian_totalBytes > Silian_classification.maxBytes) {
+      const Silian_maxMB = Math.round(Silian_classification.maxBytes / (1024 * 1024))
+      return Silian_NextResponse.json(
+        { error: `File too large (max ${Silian_maxMB}MB).` },
         { status: 400 }
       )
     }
 
-    const sanitized = sanitizeFilename(filename, derivedMime)
+    const Silian_sanitized = Silian_sanitizeFilename(Silian_filename, Silian_derivedMime)
 
-    const buffer = Buffer.from(arrayBuffer)
-    const url = await uploadFileToGithub(
-      buffer,
-      sanitized,
-      derivedMime,
-      classification.category
+    const Silian_buffer = Buffer.from(Silian_arrayBuffer)
+    const Silian_url = await Silian_uploadFileToGithub(
+      Silian_buffer,
+      Silian_sanitized,
+      Silian_derivedMime,
+      Silian_classification.category
     )
 
-    del(blobUrl).catch((err) => {
-      console.error("Failed to delete blob:", err)
+    Silian_del(Silian_blobUrl).catch((Silian_err) => {
+      console.error("Failed to delete blob:", Silian_err)
     })
 
-    return NextResponse.json({
+    return Silian_NextResponse.json({
       success: true,
-      url,
-      filename: sanitized,
-      mimeType: derivedMime,
-      fileSize: totalBytes,
-      category: classification.category,
-      proxyable: classification.proxyable,
+      url: Silian_url,
+      filename: Silian_sanitized,
+      mimeType: Silian_derivedMime,
+      fileSize: Silian_totalBytes,
+      category: Silian_classification.category,
+      proxyable: Silian_classification.proxyable,
     })
-  } catch (error) {
-    if (blobUrl) {
-      del(blobUrl).catch(() => {})
+  } catch (Silian_error) {
+    if (Silian_blobUrl) {
+      Silian_del(Silian_blobUrl).catch(() => {})
     }
 
-    if (error instanceof GithubFeaturesError) {
-      if (error.code === "CONFIG_MISSING") {
-        return NextResponse.json(
+    if (Silian_error instanceof Silian_GithubFeaturesError) {
+      if (Silian_error.code === "CONFIG_MISSING") {
+        return Silian_NextResponse.json(
           { error: "Upload not configured." },
           { status: 500 }
         )
       }
-      if (error.code === "AUTH_FAILED") {
-        return NextResponse.json(
+      if (Silian_error.code === "AUTH_FAILED") {
+        return Silian_NextResponse.json(
           { error: "Upload authorization failed." },
           { status: 403 }
         )
       }
-      if (error.code === "RATE_LIMITED") {
-        return NextResponse.json(
+      if (Silian_error.code === "RATE_LIMITED") {
+        return Silian_NextResponse.json(
           { error: "Rate limited. Try again shortly." },
           { status: 429 }
         )
       }
     }
 
-    console.error("Commit route error:", error)
-    return NextResponse.json({ error: "Upload failed." }, { status: 500 })
+    console.error("Commit route error:", Silian_error)
+    return Silian_NextResponse.json({ error: "Upload failed." }, { status: 500 })
   }
 }

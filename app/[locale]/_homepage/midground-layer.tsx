@@ -1,23 +1,23 @@
 "use client"
 
-import { motion, MotionValue } from "motion/react"
-import { DecorElement } from "./decor-element"
+import { motion as Silian_motion, MotionValue as Silian_MotionValue } from "motion/react"
+import { DecorElement as Silian_DecorElement } from "./decor-element"
 
 export function MidgroundLayer({
-  mgTransform,
-  smoothMouseX,
-  smoothMouseY,
-  blurMax,
+  mgTransform: Silian_mgTransform,
+  smoothMouseX: Silian_smoothMouseX,
+  smoothMouseY: Silian_smoothMouseY,
+  blurMax: Silian_blurMax,
 }: {
-  mgTransform: { x: MotionValue<number>; y: MotionValue<number> }
-  smoothMouseX: MotionValue<number>
-  smoothMouseY: MotionValue<number>
+  mgTransform: { x: Silian_MotionValue<number>; y: Silian_MotionValue<number> }
+  smoothMouseX: Silian_MotionValue<number>
+  smoothMouseY: Silian_MotionValue<number>
   blurMax: number
 }) {
   return (
-    <motion.div
+    <Silian_motion.div
       className="absolute inset-0 z-1 homepage-decor-midground"
-      style={{ x: mgTransform.x, y: mgTransform.y }}>
+      style={{ x: Silian_mgTransform.x, y: Silian_mgTransform.y }}>
       {/* 左上角系统序列号 */}
       <div
         className="
@@ -61,16 +61,16 @@ export function MidgroundLayer({
       </div>
 
       {/* Java 代码片段漂浮层 */}
-      <DecorElement
+      <Silian_DecorElement
         className="
           pointer-events-none absolute top-[18%] right-10 decor-desktop-only
           hidden opacity-40 mix-blend-multiply select-none
           lg:block
           xl:right-16
         "
-        smoothMouseX={smoothMouseX}
-        smoothMouseY={smoothMouseY}
-        blurMax={blurMax}>
+        smoothMouseX={Silian_smoothMouseX}
+        smoothMouseY={Silian_smoothMouseY}
+        blurMax={Silian_blurMax}>
         <div
           className="
              border-l-4 border-tech-main/40 bg-tech-main/5 py-2 pl-4 font-mono
@@ -90,18 +90,18 @@ export function MidgroundLayer({
   // BlockEntityTag
 }`}
         </div>
-      </DecorElement>
+      </Silian_DecorElement>
 
       {/* 堆栈跟踪装饰 */}
-      <DecorElement
+      <Silian_DecorElement
         className="
            pointer-events-none absolute bottom-8 left-8 decor-desktop-only hidden
            font-mono text-[0.625rem] text-red-500/40 mix-blend-multiply select-none
            lg:block
          "
-        smoothMouseX={smoothMouseX}
-        smoothMouseY={smoothMouseY}
-        blurMax={blurMax}>
+        smoothMouseX={Silian_smoothMouseX}
+        smoothMouseY={Silian_smoothMouseY}
+        blurMax={Silian_blurMax}>
         <span className="font-bold">
           at net.minecraft.world.level.block.piston.PistonBaseBlock.moveBlocks
         </span>
@@ -116,7 +116,7 @@ export function MidgroundLayer({
           Caused by: java.util.ConcurrentModificationException: Ticking block
           entity
         </span>
-      </DecorElement>
+      </Silian_DecorElement>
 
       {/* 贯穿全图的低调主辅助线 */}
       <div
@@ -144,15 +144,15 @@ export function MidgroundLayer({
           overflow-hidden border-r border-tech-main/10 opacity-30
           md:flex
         ">
-        {Array.from({ length: 50 }).map((_, i) => (
+        {Array.from({ length: 50 }).map((Silian__, Silian_i) => (
           <div
-            key={i}
+            key={Silian_i}
             className="
               relative h-8 w-full flex-none border-t border-tech-main/40
             "
           />
         ))}
       </div>
-    </motion.div>
+    </Silian_motion.div>
   )
 }

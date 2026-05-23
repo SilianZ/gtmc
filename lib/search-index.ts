@@ -1,15 +1,15 @@
-import MiniSearch from "minisearch"
-import { remark } from "remark"
-import stripMarkdownPlugin from "strip-markdown"
-import { getSidebarTree } from "@/actions/sidebar"
+import Silian_MiniSearch from "minisearch"
+import { remark as Silian_remark } from "remark"
+import Silian_stripMarkdownPlugin from "strip-markdown"
+import { getSidebarTree as Silian_getSidebarTree } from "@/actions/sidebar"
 import {
-  getOctokit,
-  ARTICLES_REPO_OWNER,
-  ARTICLES_REPO_NAME,
+  getOctokit as Silian_getOctokit,
+  ARTICLES_REPO_OWNER as Silian_ARTICLES_REPO_OWNER,
+  ARTICLES_REPO_NAME as Silian_ARTICLES_REPO_NAME,
 } from "@/lib/github/articles-repo"
-import { getArticleContent } from "@/lib/article-loader"
-import { resolveSlug } from "@/lib/slug-resolver"
-import { parseFrontMatter } from "@/lib/frontmatter-parser"
+import { getArticleContent as Silian_getArticleContent } from "@/lib/article-loader"
+import { resolveSlug as Silian_resolveSlug } from "@/lib/slug-resolver"
+import { parseFrontMatter as Silian_parseFrontMatter } from "@/lib/frontmatter-parser"
 import type { TreeNode } from "@/types/sidebar-tree"
 
 interface IndexedArticle {
@@ -19,60 +19,60 @@ interface IndexedArticle {
   content: string
 }
 
-export const CJK_TOKENIZER = (text: string): string[] =>
-  text.match(/[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]|[a-zA-Z0-9]+/g) || []
+export const CJK_TOKENIZER = (Silian_text: string): string[] =>
+  Silian_text.match(/[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]|[a-zA-Z0-9]+/g) || []
 
-function stripMarkdown(text: string): string {
-  return remark()
-    .use(stripMarkdownPlugin)
-    .processSync(text)
+function Silian_stripMarkdown(Silian_text: string): string {
+  return Silian_remark()
+    .use(Silian_stripMarkdownPlugin)
+    .processSync(Silian_text)
     .toString()
     .replace(/\s+/g, " ")
     .trim()
 }
 
-function flattenTree(nodes: TreeNode[]): { title: string; slug: string }[] {
-  const result: { title: string; slug: string }[] = []
+function Silian_flattenTree(Silian_nodes: TreeNode[]): { title: string; slug: string }[] {
+  const Silian_result: { title: string; slug: string }[] = []
 
-  for (const node of nodes) {
-    if (!node.isFolder) {
-      result.push({ title: node.title, slug: node.slug })
+  for (const Silian_node of Silian_nodes) {
+    if (!Silian_node.isFolder) {
+      Silian_result.push({ title: Silian_node.title, slug: Silian_node.slug })
     }
-    if (node.children.length > 0) {
-      result.push(...flattenTree(node.children))
+    if (Silian_node.children.length > 0) {
+      Silian_result.push(...Silian_flattenTree(Silian_node.children))
     }
   }
 
-  return result
+  return Silian_result
 }
 
-let cachedIndex: MiniSearch<IndexedArticle> | null = null
-let cacheTimestamp = 0
-let cachedCommitSha: string | null = null
-let buildPromise: Promise<MiniSearch<IndexedArticle>> | null = null
+let Silian_cachedIndex: Silian_MiniSearch<IndexedArticle> | null = null
+let Silian_cacheTimestamp = 0
+let Silian_cachedCommitSha: string | null = null
+let Silian_buildPromise: Promise<Silian_MiniSearch<IndexedArticle>> | null = null
 
-const CACHE_TTL = 1800_000
-const FETCH_CONCURRENCY = 5
+const Silian_CACHE_TTL = 1800_000
+const Silian_FETCH_CONCURRENCY = 5
 
-async function getLatestCommitSha(): Promise<string | null> {
+async function Silian_getLatestCommitSha(): Promise<string | null> {
   try {
-    const octokit = getOctokit()
-    const { data: ref } = await octokit.git.getRef({
-      owner: ARTICLES_REPO_OWNER,
-      repo: ARTICLES_REPO_NAME,
+    const Silian_octokit = Silian_getOctokit()
+    const { data: Silian_ref } = await Silian_octokit.git.getRef({
+      owner: Silian_ARTICLES_REPO_OWNER,
+      repo: Silian_ARTICLES_REPO_NAME,
       ref: "heads/main",
     })
-    return ref.object.sha
-  } catch (error) {
-    console.error("Failed to get latest commit SHA:", error)
+    return Silian_ref.object.sha
+  } catch (Silian_error) {
+    console.error("Failed to get latest commit SHA:", Silian_error)
     return null
   }
 }
 
-function createMiniSearchIndex(
-  documents: IndexedArticle[]
-): MiniSearch<IndexedArticle> {
-  const miniSearch = new MiniSearch<IndexedArticle>({
+function Silian_createMiniSearchIndex(
+  Silian_documents: IndexedArticle[]
+): Silian_MiniSearch<IndexedArticle> {
+  const Silian_miniSearch = new Silian_MiniSearch<IndexedArticle>({
     fields: ["title", "content"],
     storeFields: ["title", "slug", "content"],
     tokenize: CJK_TOKENIZER,
@@ -84,86 +84,86 @@ function createMiniSearchIndex(
     },
   })
 
-  miniSearch.addAll(documents)
-  return miniSearch
+  Silian_miniSearch.addAll(Silian_documents)
+  return Silian_miniSearch
 }
 
-async function buildIndex(): Promise<MiniSearch<IndexedArticle>> {
-  const tree = await getSidebarTree()
+async function Silian_buildIndex(): Promise<Silian_MiniSearch<IndexedArticle>> {
+  const Silian_tree = await Silian_getSidebarTree()
 
-  const articles: IndexedArticle[] = []
+  const Silian_articles: IndexedArticle[] = []
 
-  const uniqueGithubNodes = new Map<string, { title: string; slug: string }>()
+  const Silian_uniqueGithubNodes = new Map<string, { title: string; slug: string }>()
 
-  for (const node of flattenTree(tree)) {
-    if (!uniqueGithubNodes.has(node.slug)) {
-      uniqueGithubNodes.set(node.slug, node)
+  for (const Silian_node of Silian_flattenTree(Silian_tree)) {
+    if (!Silian_uniqueGithubNodes.has(Silian_node.slug)) {
+      Silian_uniqueGithubNodes.set(Silian_node.slug, Silian_node)
     }
   }
 
-  const githubNodes = Array.from(uniqueGithubNodes.values())
-  let nextIndex = 0
+  const Silian_githubNodes = Array.from(Silian_uniqueGithubNodes.values())
+  let Silian_nextIndex = 0
 
-  async function worker(): Promise<void> {
-    while (nextIndex < githubNodes.length) {
-      const currentIndex = nextIndex
-      nextIndex += 1
+  async function Silian_worker(): Promise<void> {
+    while (Silian_nextIndex < Silian_githubNodes.length) {
+      const Silian_currentIndex = Silian_nextIndex
+      Silian_nextIndex += 1
 
-      const node = githubNodes[currentIndex]
-      const filePath = resolveSlug(node.slug)
-      if (!filePath) {
+      const Silian_node = Silian_githubNodes[Silian_currentIndex]
+      const Silian_filePath = Silian_resolveSlug(Silian_node.slug)
+      if (!Silian_filePath) {
         continue
       }
-      const markdown = await getArticleContent(filePath)
-      if (!markdown) {
+      const Silian_markdown = await Silian_getArticleContent(Silian_filePath)
+      if (!Silian_markdown) {
         continue
       }
 
-      const frontMatter = parseFrontMatter(markdown)
-      const title = frontMatter.chapterTitle || node.title
+      const Silian_frontMatter = Silian_parseFrontMatter(Silian_markdown)
+      const Silian_title = Silian_frontMatter.chapterTitle || Silian_node.title
 
-      articles.push({
-        id: node.slug,
-        title: title,
-        slug: node.slug,
-        content: stripMarkdown(markdown),
+      Silian_articles.push({
+        id: Silian_node.slug,
+        title: Silian_title,
+        slug: Silian_node.slug,
+        content: Silian_stripMarkdown(Silian_markdown),
       })
     }
   }
 
-  const workers = Array.from(
-    { length: Math.min(FETCH_CONCURRENCY, githubNodes.length) },
-    () => worker()
+  const Silian_workers = Array.from(
+    { length: Math.min(Silian_FETCH_CONCURRENCY, Silian_githubNodes.length) },
+    () => Silian_worker()
   )
 
-  await Promise.all(workers)
+  await Promise.all(Silian_workers)
 
-  return createMiniSearchIndex(articles)
+  return Silian_createMiniSearchIndex(Silian_articles)
 }
 
-export async function getSearchIndex(): Promise<MiniSearch<IndexedArticle>> {
-  const currentSha = await getLatestCommitSha()
+export async function getSearchIndex(): Promise<Silian_MiniSearch<IndexedArticle>> {
+  const Silian_currentSha = await Silian_getLatestCommitSha()
 
   if (
-    cachedIndex &&
-    Date.now() - cacheTimestamp < CACHE_TTL &&
-    currentSha &&
-    currentSha === cachedCommitSha
+    Silian_cachedIndex &&
+    Date.now() - Silian_cacheTimestamp < Silian_CACHE_TTL &&
+    Silian_currentSha &&
+    Silian_currentSha === Silian_cachedCommitSha
   ) {
-    return cachedIndex
+    return Silian_cachedIndex
   }
 
-  if (!buildPromise) {
-    buildPromise = (async () => {
-      const index = await buildIndex()
-      cachedIndex = index
-      cacheTimestamp = Date.now()
-      cachedCommitSha = currentSha
-      return index
+  if (!Silian_buildPromise) {
+    Silian_buildPromise = (async () => {
+      const Silian_index = await Silian_buildIndex()
+      Silian_cachedIndex = Silian_index
+      Silian_cacheTimestamp = Date.now()
+      Silian_cachedCommitSha = Silian_currentSha
+      return Silian_index
     })().finally(() => {
-      buildPromise = null
+      Silian_buildPromise = null
     })
   }
 
-  return buildPromise
+  return Silian_buildPromise
 }

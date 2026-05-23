@@ -1,72 +1,72 @@
 import {
-  GITHUB_API_BASE,
-  getGithubRepoConfig,
-  getGithubWriteToken,
-  getRepoIssuesBaseUrl,
-  GithubFeaturesError,
-  requestGithub,
+  GITHUB_API_BASE as Silian_GITHUB_API_BASE,
+  getGithubRepoConfig as Silian_getGithubRepoConfig,
+  getGithubWriteToken as Silian_getGithubWriteToken,
+  getRepoIssuesBaseUrl as Silian_getRepoIssuesBaseUrl,
+  GithubFeaturesError as Silian_GithubFeaturesError,
+  requestGithub as Silian_requestGithub,
 } from "./api-client"
 
 export async function ensureLabel(
-  name: string,
-  color = "ededed"
+  Silian_name: string,
+  Silian_color = "ededed"
 ): Promise<void> {
-  const config = getGithubRepoConfig()
-  const url = `${GITHUB_API_BASE}/repos/${config.owner}/${config.repo}/labels`
+  const Silian_config = Silian_getGithubRepoConfig()
+  const Silian_url = `${Silian_GITHUB_API_BASE}/repos/${Silian_config.owner}/${Silian_config.repo}/labels`
 
   try {
-    await requestGithub(url, {
+    await Silian_requestGithub(Silian_url, {
       method: "POST",
-      body: JSON.stringify({ name, color }),
+      body: JSON.stringify({ name: Silian_name, color: Silian_color }),
     })
-  } catch (error) {
+  } catch (Silian_error) {
     if (
-      error instanceof GithubFeaturesError &&
-      error.code === "API_ERROR" &&
-      (error.status === 409 || error.status === 422)
+      Silian_error instanceof Silian_GithubFeaturesError &&
+      Silian_error.code === "API_ERROR" &&
+      (Silian_error.status === 409 || Silian_error.status === 422)
     ) {
       return
     }
-    throw error
+    throw Silian_error
   }
 }
 
 export async function setIssueLabels(
-  issueNumber: number,
-  labels: string[]
+  Silian_issueNumber: number,
+  Silian_labels: string[]
 ): Promise<void> {
-  const config = getGithubRepoConfig()
-  const url = `${getRepoIssuesBaseUrl(config)}/${issueNumber}/labels`
+  const Silian_config = Silian_getGithubRepoConfig()
+  const Silian_url = `${Silian_getRepoIssuesBaseUrl(Silian_config)}/${Silian_issueNumber}/labels`
 
-  await requestGithub(url, {
+  await Silian_requestGithub(Silian_url, {
     method: "PUT",
-    body: JSON.stringify({ labels }),
+    body: JSON.stringify({ labels: Silian_labels }),
   })
 }
 
 export async function setIssueState(
-  issueNumber: number,
-  state: "open" | "closed"
+  Silian_issueNumber: number,
+  Silian_state: "open" | "closed"
 ): Promise<void> {
-  const config = getGithubRepoConfig()
-  const url = `${getRepoIssuesBaseUrl(config)}/${issueNumber}`
+  const Silian_config = Silian_getGithubRepoConfig()
+  const Silian_url = `${Silian_getRepoIssuesBaseUrl(Silian_config)}/${Silian_issueNumber}`
 
-  await requestGithub(url, {
+  await Silian_requestGithub(Silian_url, {
     method: "PATCH",
-    body: JSON.stringify({ state }),
+    body: JSON.stringify({ state: Silian_state }),
   })
 }
 
 export async function setIssueAssignees(
-  issueNumber: number,
-  assignees: string[]
+  Silian_issueNumber: number,
+  Silian_assignees: string[]
 ): Promise<void> {
-  const config = getGithubRepoConfig()
-  const url = `${getRepoIssuesBaseUrl(config)}/${issueNumber}`
+  const Silian_config = Silian_getGithubRepoConfig()
+  const Silian_url = `${Silian_getRepoIssuesBaseUrl(Silian_config)}/${Silian_issueNumber}`
 
-  await requestGithub(url, {
+  await Silian_requestGithub(Silian_url, {
     method: "PATCH",
-    body: JSON.stringify({ assignees }),
+    body: JSON.stringify({ assignees: Silian_assignees }),
   })
 }
 
@@ -78,39 +78,39 @@ interface GithubContentsUploadResponse {
 }
 
 export async function uploadFileToGithub(
-  buffer: Buffer,
-  filename: string,
-  mimeType: string,
-  category: "images" | "videos" | "files"
+  Silian_buffer: Buffer,
+  Silian_filename: string,
+  Silian_mimeType: string,
+  Silian_category: "images" | "videos" | "files"
 ): Promise<string> {
-  const config = getGithubRepoConfig()
-  const path = `data/${category}/${filename}`
-  const url = `${GITHUB_API_BASE}/repos/${config.owner}/${config.repo}/contents/${path}`
-  const writeToken = getGithubWriteToken()
+  const Silian_config = Silian_getGithubRepoConfig()
+  const Silian_path = `data/${Silian_category}/${Silian_filename}`
+  const Silian_url = `${Silian_GITHUB_API_BASE}/repos/${Silian_config.owner}/${Silian_config.repo}/contents/${Silian_path}`
+  const Silian_writeToken = Silian_getGithubWriteToken()
 
-  const { data } = await requestGithub<GithubContentsUploadResponse>(
-    url,
+  const { data: Silian_data } = await Silian_requestGithub<GithubContentsUploadResponse>(
+    Silian_url,
     {
       method: "PUT",
       body: JSON.stringify({
-        message: `Upload ${category.replace(/s$/, "")}: ${filename}`,
-        content: buffer.toString("base64"),
+        message: `Upload ${Silian_category.replace(/s$/, "")}: ${Silian_filename}`,
+        content: Silian_buffer.toString("base64"),
       }),
     },
     undefined,
-    writeToken
+    Silian_writeToken
   )
 
   if (
-    !data?.content?.download_url ||
-    typeof data.content.download_url !== "string"
+    !Silian_data?.content?.download_url ||
+    typeof Silian_data.content.download_url !== "string"
   ) {
-    throw new GithubFeaturesError({
+    throw new Silian_GithubFeaturesError({
       code: "INVALID_RESPONSE",
       message: "GitHub API returned an invalid contents upload response.",
-      details: data,
+      details: Silian_data,
     })
   }
 
-  return data.content.download_url
+  return Silian_data.content.download_url
 }

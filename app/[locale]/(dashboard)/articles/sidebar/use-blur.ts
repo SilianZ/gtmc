@@ -1,18 +1,18 @@
 "use client"
 
-import { useCallback, useEffect, useLayoutEffect, useRef } from "react"
+import { useCallback as Silian_useCallback, useEffect as Silian_useEffect, useLayoutEffect as Silian_useLayoutEffect, useRef as Silian_useRef } from "react"
 import type { TocItem } from "./use-toc"
 import type { TreeNode } from "./tree-node"
-import { BLUR_ZONE_PX, BLUR_MIN, BLUR_RANGE, OPACITY_FADE } from "./constants"
+import { BLUR_ZONE_PX as Silian_BLUR_ZONE_PX, BLUR_MIN as Silian_BLUR_MIN, BLUR_RANGE as Silian_BLUR_RANGE, OPACITY_FADE as Silian_OPACITY_FADE } from "./constants"
 
 export function useBlur({
-  internalScroll,
-  scrollContainerRef,
-  pathname,
-  tree,
-  expandedFolders,
-  toc,
-  highlightActive,
+  internalScroll: Silian_internalScroll,
+  scrollContainerRef: Silian_scrollContainerRef,
+  pathname: Silian_pathname,
+  tree: Silian_tree,
+  expandedFolders: Silian_expandedFolders,
+  toc: Silian_toc,
+  highlightActive: Silian_highlightActive,
 }: {
   internalScroll: boolean
   scrollContainerRef: React.RefObject<HTMLDivElement | null>
@@ -22,144 +22,144 @@ export function useBlur({
   toc: TocItem[]
   highlightActive: boolean
 }): { scheduleBottomRowBlurSync: () => void } {
-  const blurFrameRef = useRef<number | null>(null)
+  const Silian_blurFrameRef = Silian_useRef<number | null>(null)
 
-  const syncBottomRowBlur = useCallback(() => {
-    const container = scrollContainerRef.current
-    if (!container) return
+  const Silian_syncBottomRowBlur = Silian_useCallback(() => {
+    const Silian_container = Silian_scrollContainerRef.current
+    if (!Silian_container) return
 
-    const rows = container.querySelectorAll<HTMLElement>(
+    const Silian_rows = Silian_container.querySelectorAll<HTMLElement>(
       'li[data-sidebar-row="1"]'
     )
-    const blurZoneRect = container.getBoundingClientRect()
-    const blurZoneHeight = BLUR_ZONE_PX
-    const blurZoneTop = blurZoneRect.bottom - blurZoneHeight
+    const Silian_blurZoneRect = Silian_container.getBoundingClientRect()
+    const Silian_blurZoneHeight = Silian_BLUR_ZONE_PX
+    const Silian_blurZoneTop = Silian_blurZoneRect.bottom - Silian_blurZoneHeight
 
-    rows.forEach((row) => {
-      const rowRect = row.getBoundingClientRect()
-      const overlapTop = Math.max(rowRect.top, blurZoneTop)
-      const overlapBottom = Math.min(rowRect.bottom, blurZoneRect.bottom)
-      const overlapHeight = overlapBottom - overlapTop
-      const distBottomLine = blurZoneRect.bottom - rowRect.top
+    Silian_rows.forEach((Silian_row) => {
+      const Silian_rowRect = Silian_row.getBoundingClientRect()
+      const Silian_overlapTop = Math.max(Silian_rowRect.top, Silian_blurZoneTop)
+      const Silian_overlapBottom = Math.min(Silian_rowRect.bottom, Silian_blurZoneRect.bottom)
+      const Silian_overlapHeight = Silian_overlapBottom - Silian_overlapTop
+      const Silian_distBottomLine = Silian_blurZoneRect.bottom - Silian_rowRect.top
 
-      if (rowRect.y > blurZoneRect.bottom) {
-        row.style.filter = "blur(3px)"
-        row.style.opacity = "0.15"
+      if (Silian_rowRect.y > Silian_blurZoneRect.bottom) {
+        Silian_row.style.filter = "blur(3px)"
+        Silian_row.style.opacity = "0.15"
         return
       }
 
-      if (overlapHeight <= 0) {
-        row.style.filter = ""
-        row.style.opacity = ""
+      if (Silian_overlapHeight <= 0) {
+        Silian_row.style.filter = ""
+        Silian_row.style.opacity = ""
         return
       }
 
-      const ratio = Math.max(
+      const Silian_ratio = Math.max(
         0,
         Math.min(
           1,
-          rowRect.top > blurZoneTop - blurZoneHeight * 0.8
-            ? overlapHeight / blurZoneHeight
-            : (0.5 - distBottomLine / rowRect.height) * 2
+          Silian_rowRect.top > Silian_blurZoneTop - Silian_blurZoneHeight * 0.8
+            ? Silian_overlapHeight / Silian_blurZoneHeight
+            : (0.5 - Silian_distBottomLine / Silian_rowRect.height) * 2
         )
       )
-      const blur = BLUR_MIN + ratio * BLUR_RANGE
-      const opacity = 1 - ratio * OPACITY_FADE
-      row.style.filter = `blur(${blur.toFixed(3)}px)`
-      row.style.opacity = `${opacity.toFixed(3)}`
+      const Silian_blur = Silian_BLUR_MIN + Silian_ratio * Silian_BLUR_RANGE
+      const Silian_opacity = 1 - Silian_ratio * Silian_OPACITY_FADE
+      Silian_row.style.filter = `blur(${Silian_blur.toFixed(3)}px)`
+      Silian_row.style.opacity = `${Silian_opacity.toFixed(3)}`
     })
-  }, [scrollContainerRef])
+  }, [Silian_scrollContainerRef])
 
-  const scheduleBottomRowBlurSync = useCallback(() => {
-    if (blurFrameRef.current !== null) return
-    blurFrameRef.current = window.requestAnimationFrame(() => {
-      blurFrameRef.current = null
-      syncBottomRowBlur()
+  const Silian_scheduleBottomRowBlurSync = Silian_useCallback(() => {
+    if (Silian_blurFrameRef.current !== null) return
+    Silian_blurFrameRef.current = window.requestAnimationFrame(() => {
+      Silian_blurFrameRef.current = null
+      Silian_syncBottomRowBlur()
     })
-  }, [syncBottomRowBlur])
+  }, [Silian_syncBottomRowBlur])
 
-  const animLoopRef = useRef<number | null>(null)
-  const animLoopEndRef = useRef<number>(0)
+  const Silian_animLoopRef = Silian_useRef<number | null>(null)
+  const Silian_animLoopEndRef = Silian_useRef<number>(0)
 
-  const syncForDuration = useCallback(
-    (ms: number) => {
-      if (animLoopRef.current !== null) {
-        window.cancelAnimationFrame(animLoopRef.current)
+  const Silian_syncForDuration = Silian_useCallback(
+    (Silian_ms: number) => {
+      if (Silian_animLoopRef.current !== null) {
+        window.cancelAnimationFrame(Silian_animLoopRef.current)
       }
-      animLoopEndRef.current = performance.now() + ms
-      const loop = () => {
-        syncBottomRowBlur()
-        if (performance.now() < animLoopEndRef.current) {
-          animLoopRef.current = window.requestAnimationFrame(loop)
+      Silian_animLoopEndRef.current = performance.now() + Silian_ms
+      const Silian_loop = () => {
+        Silian_syncBottomRowBlur()
+        if (performance.now() < Silian_animLoopEndRef.current) {
+          Silian_animLoopRef.current = window.requestAnimationFrame(Silian_loop)
         } else {
-          animLoopRef.current = null
+          Silian_animLoopRef.current = null
         }
       }
-      animLoopRef.current = window.requestAnimationFrame(loop)
+      Silian_animLoopRef.current = window.requestAnimationFrame(Silian_loop)
     },
-    [syncBottomRowBlur]
+    [Silian_syncBottomRowBlur]
   )
 
-  useLayoutEffect(() => {
-    if (!internalScroll) return
-    const container = scrollContainerRef.current
-    if (!container) return
+  Silian_useLayoutEffect(() => {
+    if (!Silian_internalScroll) return
+    const Silian_container = Silian_scrollContainerRef.current
+    if (!Silian_container) return
 
-    const onScroll = () => scheduleBottomRowBlurSync()
-    const onResize = () => scheduleBottomRowBlurSync()
+    const Silian_onScroll = () => Silian_scheduleBottomRowBlurSync()
+    const Silian_onResize = () => Silian_scheduleBottomRowBlurSync()
 
-    container.addEventListener("scroll", onScroll, { passive: true })
-    window.addEventListener("resize", onResize)
+    Silian_container.addEventListener("scroll", Silian_onScroll, { passive: true })
+    window.addEventListener("resize", Silian_onResize)
 
-    const resizeObserver = new ResizeObserver(() => {
-      scheduleBottomRowBlurSync()
+    const Silian_resizeObserver = new ResizeObserver(() => {
+      Silian_scheduleBottomRowBlurSync()
     })
-    resizeObserver.observe(container)
-    scheduleBottomRowBlurSync()
+    Silian_resizeObserver.observe(Silian_container)
+    Silian_scheduleBottomRowBlurSync()
 
     return () => {
-      container.removeEventListener("scroll", onScroll)
-      window.removeEventListener("resize", onResize)
-      resizeObserver.disconnect()
+      Silian_container.removeEventListener("scroll", Silian_onScroll)
+      window.removeEventListener("resize", Silian_onResize)
+      Silian_resizeObserver.disconnect()
 
-      if (blurFrameRef.current !== null) {
-        window.cancelAnimationFrame(blurFrameRef.current)
-        blurFrameRef.current = null
+      if (Silian_blurFrameRef.current !== null) {
+        window.cancelAnimationFrame(Silian_blurFrameRef.current)
+        Silian_blurFrameRef.current = null
       }
 
-      if (animLoopRef.current !== null) {
-        window.cancelAnimationFrame(animLoopRef.current)
-        animLoopRef.current = null
+      if (Silian_animLoopRef.current !== null) {
+        window.cancelAnimationFrame(Silian_animLoopRef.current)
+        Silian_animLoopRef.current = null
       }
 
-      const rows = container.querySelectorAll<HTMLElement>(
+      const Silian_rows = Silian_container.querySelectorAll<HTMLElement>(
         'li[data-sidebar-row="1"]'
       )
-      rows.forEach((row) => {
-        row.style.filter = ""
-        row.style.opacity = ""
+      Silian_rows.forEach((Silian_row) => {
+        Silian_row.style.filter = ""
+        Silian_row.style.opacity = ""
       })
     }
-  }, [internalScroll, scheduleBottomRowBlurSync, scrollContainerRef])
+  }, [Silian_internalScroll, Silian_scheduleBottomRowBlurSync, Silian_scrollContainerRef])
 
-  useEffect(() => {
-    void pathname
-    void tree
-    void expandedFolders
-    void toc
-    void highlightActive
+  Silian_useEffect(() => {
+    void Silian_pathname
+    void Silian_tree
+    void Silian_expandedFolders
+    void Silian_toc
+    void Silian_highlightActive
 
-    if (!internalScroll) return
-    syncForDuration(300)
+    if (!Silian_internalScroll) return
+    Silian_syncForDuration(300)
   }, [
-    internalScroll,
-    pathname,
-    tree,
-    expandedFolders,
-    toc,
-    highlightActive,
-    syncForDuration,
+    Silian_internalScroll,
+    Silian_pathname,
+    Silian_tree,
+    Silian_expandedFolders,
+    Silian_toc,
+    Silian_highlightActive,
+    Silian_syncForDuration,
   ])
 
-  return { scheduleBottomRowBlurSync }
+  return { scheduleBottomRowBlurSync: Silian_scheduleBottomRowBlurSync }
 }

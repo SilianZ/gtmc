@@ -1,29 +1,29 @@
 "use client"
 
-import { useTranslations } from "next-intl"
-import { useState } from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { useState as Silian_useState } from "react"
 
 export function SidebarActions({
-  internalScroll,
-  onCollapseAll,
-  onLocate,
+  internalScroll: Silian_internalScroll,
+  onCollapseAll: Silian_onCollapseAll,
+  onLocate: Silian_onLocate,
 }: {
   internalScroll: boolean
   onCollapseAll: (e: React.MouseEvent) => void
   onLocate: () => void
 }) {
-  const [locateDisabled, setLocateDisabled] = useState(false)
-  const t = useTranslations("Sidebar")
+  const [Silian_locateDisabled, Silian_setLocateDisabled] = Silian_useState(false)
+  const Silian_t = Silian_useTranslations("Sidebar")
 
-  const handleLocate = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (locateDisabled) return
-    setLocateDisabled(true)
-    onLocate()
-    e.currentTarget.blur()
-    setTimeout(() => setLocateDisabled(false), 500)
+  const Silian_handleLocate = (Silian_e: React.MouseEvent<HTMLButtonElement>) => {
+    if (Silian_locateDisabled) return
+    Silian_setLocateDisabled(true)
+    Silian_onLocate()
+    Silian_e.currentTarget.blur()
+    setTimeout(() => Silian_setLocateDisabled(false), 500)
   }
 
-  if (internalScroll) {
+  if (Silian_internalScroll) {
     return (
       <div
         className="
@@ -34,28 +34,28 @@ export function SidebarActions({
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={(e) => {
-                onCollapseAll(e)
-                e.currentTarget.blur()
+              onClick={(Silian_e) => {
+                Silian_onCollapseAll(Silian_e)
+                Silian_e.currentTarget.blur()
               }}
               className="
                 flex-3 cursor-pointer border border-tech-main/40 px-3 py-1.5
                 pl-2 font-mono text-[0.6875rem] transition-colors
                 hover:bg-tech-main hover:text-white
               ">
-              {t("buttonCollapseAll")}
+              {Silian_t("buttonCollapseAll")}
             </button>
             <button
               type="button"
-              disabled={locateDisabled}
-              onClick={handleLocate}
+              disabled={Silian_locateDisabled}
+              onClick={Silian_handleLocate}
               className="
                 flex-2 cursor-pointer border border-tech-main/40 px-3 py-1.5
                 pl-2 font-mono text-[0.6875rem] transition-colors
                 hover:bg-tech-main hover:text-white
                 disabled:cursor-not-allowed disabled:opacity-50
               ">
-              {t("buttonLocate")}
+              {Silian_t("buttonLocate")}
             </button>
           </div>
         </div>
@@ -72,25 +72,25 @@ export function SidebarActions({
       <div className="flex flex-wrap justify-center gap-2">
         <button
           type="button"
-          onClick={onCollapseAll}
+          onClick={Silian_onCollapseAll}
           className="
             cursor-pointer border border-tech-main/40 px-3 py-1.5 font-mono
             text-[0.625rem] transition-colors
             hover:bg-tech-main hover:text-white
           ">
-          {t("buttonCollapseAll")}
+          {Silian_t("buttonCollapseAll")}
         </button>
         <button
           type="button"
-          disabled={locateDisabled}
-          onClick={handleLocate}
+          disabled={Silian_locateDisabled}
+          onClick={Silian_handleLocate}
           className="
             cursor-pointer border border-tech-main/40 px-3 py-1.5 font-mono
             text-[0.625rem] transition-colors
             hover:bg-tech-main hover:text-white
             disabled:cursor-not-allowed disabled:opacity-50
           ">
-          {t("buttonLocate")}
+          {Silian_t("buttonLocate")}
         </button>
       </div>
     </div>

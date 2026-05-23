@@ -1,336 +1,336 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
-import { Prisma } from "@prisma/client"
+import { revalidatePath as Silian_revalidatePath } from "next/cache"
+import { Prisma as Silian_Prisma } from "@prisma/client"
 
-import { revalidatePaths } from "@/lib/revalidation"
+import { revalidatePaths as Silian_revalidatePaths } from "@/lib/revalidation"
 import {
-  forcePushResolvedToPRBranch,
-  getArticleFileContent,
-  getMainBranchHeadSha,
-  resolveDraftSyncConflict,
-  resolveSimpleConflicts,
-  upsertFileOnBranch,
-  upsertFilesOnBranch,
+  forcePushResolvedToPRBranch as Silian_forcePushResolvedToPRBranch,
+  getArticleFileContent as Silian_getArticleFileContent,
+  getMainBranchHeadSha as Silian_getMainBranchHeadSha,
+  resolveDraftSyncConflict as Silian_resolveDraftSyncConflict,
+  resolveSimpleConflicts as Silian_resolveSimpleConflicts,
+  upsertFileOnBranch as Silian_upsertFileOnBranch,
+  upsertFilesOnBranch as Silian_upsertFilesOnBranch,
 } from "@/lib/article-submission"
 import {
-  abortRebase,
-  rebaseArticleContentMultiFile,
-  rebaseArticleContent,
-  resumeRebase,
+  abortRebase as Silian_abortRebase,
+  rebaseArticleContentMultiFile as Silian_rebaseArticleContentMultiFile,
+  rebaseArticleContent as Silian_rebaseArticleContent,
+  resumeRebase as Silian_resumeRebase,
 } from "@/lib/article-rebase"
-import { requireAuth } from "@/lib/auth-helpers"
-import { getGithubPatForUser, requireAdmin } from "@/lib/auth-context"
+import { requireAuth as Silian_requireAuth } from "@/lib/auth-helpers"
+import { getGithubPatForUser as Silian_getGithubPatForUser, requireAdmin as Silian_requireAdmin } from "@/lib/auth-context"
 import {
-  decodeStoredDraftFiles,
-  deserializeDraftFilesPayload,
-  getActiveDraftFile,
-  normalizeDraftFileCollection,
-  serializeDraftFilesForStorage,
+  decodeStoredDraftFiles as Silian_decodeStoredDraftFiles,
+  deserializeDraftFilesPayload as Silian_deserializeDraftFilesPayload,
+  getActiveDraftFile as Silian_getActiveDraftFile,
+  normalizeDraftFileCollection as Silian_normalizeDraftFileCollection,
+  serializeDraftFilesForStorage as Silian_serializeDraftFilesForStorage,
   type DraftFileCollection,
 } from "@/lib/draft-files"
-import { formatErrorMessage } from "@/lib/error-handling"
+import { formatErrorMessage as Silian_formatErrorMessage } from "@/lib/error-handling"
 import {
-  ARTICLES_REPO_NAME,
-  ARTICLES_REPO_OWNER,
-  getOctokit,
+  ARTICLES_REPO_NAME as Silian_ARTICLES_REPO_NAME,
+  ARTICLES_REPO_OWNER as Silian_ARTICLES_REPO_OWNER,
+  getOctokit as Silian_getOctokit,
 } from "@/lib/github/articles-repo"
-import { reconcileDraftAssetsForPRCompletion } from "@/lib/draft-asset-reconciler"
-import { mergePR } from "@/lib/github/pr-manager"
-import { prisma } from "@/lib/prisma"
+import { reconcileDraftAssetsForPRCompletion as Silian_reconcileDraftAssetsForPRCompletion } from "@/lib/draft-asset-reconciler"
+import { mergePR as Silian_mergePR } from "@/lib/github/pr-manager"
+import { prisma as Silian_prisma } from "@/lib/prisma"
 import {
-  parseConflictBlocks,
-  SIMPLE_CONFLICT_BLOCK_RE,
-  storeRerere,
+  parseConflictBlocks as Silian_parseConflictBlocks,
+  SIMPLE_CONFLICT_BLOCK_RE as Silian_SIMPLE_CONFLICT_BLOCK_RE,
+  storeRerere as Silian_storeRerere,
 } from "@/lib/rerere"
 import type { RebaseState } from "@/types/rebase"
 import type { ConflictMode, ReviewMergeMethod } from "@/types/review"
 
-const owner = ARTICLES_REPO_OWNER
-const repo = ARTICLES_REPO_NAME
-const SIMPLE_CONFLICT_MARKER_RE = new RegExp(
-  SIMPLE_CONFLICT_BLOCK_RE.source,
+const Silian_owner = Silian_ARTICLES_REPO_OWNER
+const Silian_repo = Silian_ARTICLES_REPO_NAME
+const Silian_SIMPLE_CONFLICT_MARKER_RE = new RegExp(
+  Silian_SIMPLE_CONFLICT_BLOCK_RE.source,
   "g"
 )
 
-function reviewLog(action: string, details: Record<string, unknown>) {
-  console.log(`[review:${action}]`, details)
+function Silian_reviewLog(Silian_action: string, Silian_details: Record<string, unknown>) {
+  console.log(`[review:${Silian_action}]`, Silian_details)
 }
 
-function reviewError(
-  action: string,
-  error: unknown,
-  details: Record<string, unknown>
+function Silian_reviewError(
+  Silian_action: string,
+  Silian_error: unknown,
+  Silian_details: Record<string, unknown>
 ) {
-  console.error(`[review:${action}]`, {
-    ...details,
+  console.error(`[review:${Silian_action}]`, {
+    ...Silian_details,
     error:
-      error instanceof Error
+      Silian_error instanceof Error
         ? {
-            name: error.name,
-            message: error.message,
-            stack: error.stack,
+            name: Silian_error.name,
+            message: Silian_error.message,
+            stack: Silian_error.stack,
           }
-        : error,
+        : Silian_error,
   })
 }
 
-function summarizeSha(sha?: string | null) {
-  return sha ? sha.slice(0, 7) : null
+function Silian_summarizeSha(Silian_sha?: string | null) {
+  return Silian_sha ? Silian_sha.slice(0, 7) : null
 }
 
-function hasSimpleConflictMarkers(content: string) {
-  SIMPLE_CONFLICT_MARKER_RE.lastIndex = 0
-  return SIMPLE_CONFLICT_MARKER_RE.test(content)
+function Silian_hasSimpleConflictMarkers(Silian_content: string) {
+  Silian_SIMPLE_CONFLICT_MARKER_RE.lastIndex = 0
+  return Silian_SIMPLE_CONFLICT_MARKER_RE.test(Silian_content)
 }
 
 type ConflictSection =
   | { type: "ok"; content: string }
   | { type: "conflict"; blockIndex: number }
 
-function parseConflictSections(content: string): ConflictSection[] {
-  const regex = new RegExp(SIMPLE_CONFLICT_BLOCK_RE.source, "g")
-  const sections: ConflictSection[] = []
-  let lastIndex = 0
-  let blockIndex = 0
-  let match = regex.exec(content)
+function Silian_parseConflictSections(Silian_content: string): ConflictSection[] {
+  const Silian_regex = new RegExp(Silian_SIMPLE_CONFLICT_BLOCK_RE.source, "g")
+  const Silian_sections: ConflictSection[] = []
+  let Silian_lastIndex = 0
+  let Silian_blockIndex = 0
+  let Silian_match = Silian_regex.exec(Silian_content)
 
-  while (match !== null) {
-    if (match.index > lastIndex) {
-      sections.push({
+  while (Silian_match !== null) {
+    if (Silian_match.index > Silian_lastIndex) {
+      Silian_sections.push({
         type: "ok",
-        content: content.slice(lastIndex, match.index),
+        content: Silian_content.slice(Silian_lastIndex, Silian_match.index),
       })
     }
 
-    sections.push({ type: "conflict", blockIndex })
-    blockIndex += 1
-    lastIndex = regex.lastIndex
-    match = regex.exec(content)
+    Silian_sections.push({ type: "conflict", blockIndex: Silian_blockIndex })
+    Silian_blockIndex += 1
+    Silian_lastIndex = Silian_regex.lastIndex
+    Silian_match = Silian_regex.exec(Silian_content)
   }
 
-  if (lastIndex < content.length) {
-    sections.push({ type: "ok", content: content.slice(lastIndex) })
+  if (Silian_lastIndex < Silian_content.length) {
+    Silian_sections.push({ type: "ok", content: Silian_content.slice(Silian_lastIndex) })
   }
 
-  return sections
+  return Silian_sections
 }
 
-function extractResolvedBlockResolutions(input: {
+function Silian_extractResolvedBlockResolutions(Silian_input: {
   originalConflictContent: string
   resolvedContent: string
   filePath: string
   baseContent: string
 }) {
-  const blocks = parseConflictBlocks(
-    input.originalConflictContent,
-    input.filePath,
-    input.baseContent
+  const Silian_blocks = Silian_parseConflictBlocks(
+    Silian_input.originalConflictContent,
+    Silian_input.filePath,
+    Silian_input.baseContent
   )
-  const sections = parseConflictSections(input.originalConflictContent)
-  const resolutions: Array<{
-    block: (typeof blocks)[number]
+  const Silian_sections = Silian_parseConflictSections(Silian_input.originalConflictContent)
+  const Silian_resolutions: Array<{
+    block: (typeof Silian_blocks)[number]
     resolution: string
   }> = []
-  let cursor = 0
+  let Silian_cursor = 0
 
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i]
+  for (let Silian_i = 0; Silian_i < Silian_sections.length; Silian_i++) {
+    const Silian_section = Silian_sections[Silian_i]
 
-    if (section?.type === "ok") {
-      if (!section.content) {
+    if (Silian_section?.type === "ok") {
+      if (!Silian_section.content) {
         continue
       }
 
-      const index = input.resolvedContent.indexOf(section.content, cursor)
-      if (index === -1) {
+      const Silian_index = Silian_input.resolvedContent.indexOf(Silian_section.content, Silian_cursor)
+      if (Silian_index === -1) {
         return []
       }
 
-      cursor = index + section.content.length
+      Silian_cursor = Silian_index + Silian_section.content.length
       continue
     }
 
-    if (!section || section.type !== "conflict") {
+    if (!Silian_section || Silian_section.type !== "conflict") {
       continue
     }
 
-    const nextOk = sections
-      .slice(i + 1)
+    const Silian_nextOk = Silian_sections
+      .slice(Silian_i + 1)
       .find(
-        (candidate): candidate is Extract<ConflictSection, { type: "ok" }> =>
-          candidate.type === "ok" && candidate.content.length > 0
+        (Silian_candidate): Silian_candidate is Extract<ConflictSection, { type: "ok" }> =>
+          Silian_candidate.type === "ok" && Silian_candidate.content.length > 0
       )
-    const endIndex = nextOk
-      ? input.resolvedContent.indexOf(nextOk.content, cursor)
-      : input.resolvedContent.length
+    const Silian_endIndex = Silian_nextOk
+      ? Silian_input.resolvedContent.indexOf(Silian_nextOk.content, Silian_cursor)
+      : Silian_input.resolvedContent.length
 
-    if (endIndex === -1) {
+    if (Silian_endIndex === -1) {
       return []
     }
 
-    const block = blocks[section.blockIndex]
-    if (!block) {
+    const Silian_block = Silian_blocks[Silian_section.blockIndex]
+    if (!Silian_block) {
       continue
     }
 
-    resolutions.push({
-      block,
-      resolution: input.resolvedContent.slice(cursor, endIndex),
+    Silian_resolutions.push({
+      block: Silian_block,
+      resolution: Silian_input.resolvedContent.slice(Silian_cursor, Silian_endIndex),
     })
-    cursor = endIndex
+    Silian_cursor = Silian_endIndex
   }
 
-  return resolutions
+  return Silian_resolutions
 }
 
-async function recordResolvedRerereEntries(input: {
+async function Silian_recordResolvedRerereEntries(Silian_input: {
   token?: string
   storedFiles: DraftFileCollection["files"]
   resolvedFiles: DraftFileCollection["files"]
   baseRef?: string | null
 }) {
-  if (!input.baseRef) {
+  if (!Silian_input.baseRef) {
     return
   }
 
-  const resolvedById = new Map(
-    input.resolvedFiles.map((file) => [file.id, file])
+  const Silian_resolvedById = new Map(
+    Silian_input.resolvedFiles.map((Silian_file) => [Silian_file.id, Silian_file])
   )
 
-  for (const storedFile of input.storedFiles) {
-    const originalConflictContent = storedFile.conflictContent
-    const resolvedFile = resolvedById.get(storedFile.id)
+  for (const Silian_storedFile of Silian_input.storedFiles) {
+    const Silian_originalConflictContent = Silian_storedFile.conflictContent
+    const Silian_resolvedFile = Silian_resolvedById.get(Silian_storedFile.id)
 
     if (
-      !originalConflictContent ||
-      !resolvedFile ||
-      hasSimpleConflictMarkers(resolvedFile.content)
+      !Silian_originalConflictContent ||
+      !Silian_resolvedFile ||
+      Silian_hasSimpleConflictMarkers(Silian_resolvedFile.content)
     ) {
       continue
     }
 
-    const baseContent = await getArticleFileContent(
-      storedFile.filePath,
-      input.baseRef,
-      input.token
+    const Silian_baseContent = await Silian_getArticleFileContent(
+      Silian_storedFile.filePath,
+      Silian_input.baseRef,
+      Silian_input.token
     )
-    const resolutions = extractResolvedBlockResolutions({
-      originalConflictContent,
-      resolvedContent: resolvedFile.content,
-      filePath: storedFile.filePath,
-      baseContent,
+    const Silian_resolutions = Silian_extractResolvedBlockResolutions({
+      originalConflictContent: Silian_originalConflictContent,
+      resolvedContent: Silian_resolvedFile.content,
+      filePath: Silian_storedFile.filePath,
+      baseContent: Silian_baseContent,
     })
 
     await Promise.all(
-      resolutions.map(({ block, resolution }) =>
-        storeRerere(
-          block.filePath,
-          block.base,
-          block.ours,
-          block.theirs,
-          resolution
+      Silian_resolutions.map(({ block: Silian_block, resolution: Silian_resolution }) =>
+        Silian_storeRerere(
+          Silian_block.filePath,
+          Silian_block.base,
+          Silian_block.ours,
+          Silian_block.theirs,
+          Silian_resolution
         )
       )
     )
   }
 }
 
-function getReviewRevalidatePaths(
-  revisionId: string,
-  prNumber?: number | null
+function Silian_getReviewRevalidatePaths(
+  Silian_revisionId: string,
+  Silian_prNumber?: number | null
 ) {
   return [
     "/draft",
-    `/draft/${revisionId}`,
+    `/draft/${Silian_revisionId}`,
     "/review",
-    prNumber ? `/review/${prNumber}` : "",
+    Silian_prNumber ? `/review/${Silian_prNumber}` : "",
   ].filter(Boolean)
 }
 
-async function requireReviewAdminContext() {
-  const session = await requireAuth()
-  await requireAdmin(session.user.id)
+async function Silian_requireReviewAdminContext() {
+  const Silian_session = await Silian_requireAuth()
+  await Silian_requireAdmin(Silian_session.user.id)
 
   return {
-    session,
-    token: await getGithubPatForUser(session.user.id),
-    authorName: session.user.name || "GTMC Admin",
-    authorEmail: session.user.email || "admin@gtmc.dev",
+    session: Silian_session,
+    token: await Silian_getGithubPatForUser(Silian_session.user.id),
+    authorName: Silian_session.user.name || "GTMC Admin",
+    authorEmail: Silian_session.user.email || "admin@gtmc.dev",
   }
 }
 
-function focusDraftFileByPath(
-  draftFiles: DraftFileCollection,
-  filePath?: string | null
+function Silian_focusDraftFileByPath(
+  Silian_draftFiles: DraftFileCollection,
+  Silian_filePath?: string | null
 ) {
-  if (!filePath) {
-    return draftFiles
+  if (!Silian_filePath) {
+    return Silian_draftFiles
   }
 
-  const targetFile = draftFiles.files.find((file) => file.filePath === filePath)
+  const Silian_targetFile = Silian_draftFiles.files.find((Silian_file) => Silian_file.filePath === Silian_filePath)
 
-  if (!targetFile) {
-    return draftFiles
+  if (!Silian_targetFile) {
+    return Silian_draftFiles
   }
 
-  return normalizeDraftFileCollection({
-    activeFileId: targetFile.id,
-    folders: draftFiles.folders || [],
-    files: draftFiles.files,
+  return Silian_normalizeDraftFileCollection({
+    activeFileId: Silian_targetFile.id,
+    folders: Silian_draftFiles.folders || [],
+    files: Silian_draftFiles.files,
   })
 }
 
-function getFirstConflictedFilePath(files: DraftFileCollection["files"]) {
+function Silian_getFirstConflictedFilePath(Silian_files: DraftFileCollection["files"]) {
   return (
-    files.find(
-      (file) =>
-        file.conflictContent !== undefined && file.conflictContent !== null
+    Silian_files.find(
+      (Silian_file) =>
+        Silian_file.conflictContent !== undefined && Silian_file.conflictContent !== null
     )?.filePath ?? null
   )
 }
 
-function buildDraftSnapshot(draftFiles: DraftFileCollection) {
+function Silian_buildDraftSnapshot(Silian_draftFiles: DraftFileCollection) {
   return {
-    activeFileId: draftFiles.activeFileId,
-    files: draftFiles.files.map((file) => ({
-      id: file.id,
-      filePath: file.filePath,
-      content: file.content,
-      conflictContent: file.conflictContent ?? null,
+    activeFileId: Silian_draftFiles.activeFileId,
+    files: Silian_draftFiles.files.map((Silian_file) => ({
+      id: Silian_file.id,
+      filePath: Silian_file.filePath,
+      content: Silian_file.content,
+      conflictContent: Silian_file.conflictContent ?? null,
     })),
   }
 }
 
-function applyRebasedFilesToDraft(
-  draftFiles: DraftFileCollection,
-  rebasedFiles?: Array<{ filePath: string; content: string }>,
-  singleFileFallback?: { filePath: string; content: string },
-  conflict?: { filePath?: string; content?: string | null }
+function Silian_applyRebasedFilesToDraft(
+  Silian_draftFiles: DraftFileCollection,
+  Silian_rebasedFiles?: Array<{ filePath: string; content: string }>,
+  Silian_singleFileFallback?: { filePath: string; content: string },
+  Silian_conflict?: { filePath?: string; content?: string | null }
 ) {
-  const rebasedFileMap = new Map(
-    (rebasedFiles ?? []).map((file) => [file.filePath, file.content])
+  const Silian_rebasedFileMap = new Map(
+    (Silian_rebasedFiles ?? []).map((Silian_file) => [Silian_file.filePath, Silian_file.content])
   )
 
-  return normalizeDraftFileCollection({
-    activeFileId: draftFiles.activeFileId,
-    folders: draftFiles.folders || [],
-    files: draftFiles.files.map((file) => ({
-      ...file,
+  return Silian_normalizeDraftFileCollection({
+    activeFileId: Silian_draftFiles.activeFileId,
+    folders: Silian_draftFiles.folders || [],
+    files: Silian_draftFiles.files.map((Silian_file) => ({
+      ...Silian_file,
       content:
-        rebasedFileMap.get(file.filePath) ??
-        (singleFileFallback && file.filePath === singleFileFallback.filePath
-          ? singleFileFallback.content
-          : file.content),
+        Silian_rebasedFileMap.get(Silian_file.filePath) ??
+        (Silian_singleFileFallback && Silian_file.filePath === Silian_singleFileFallback.filePath
+          ? Silian_singleFileFallback.content
+          : Silian_file.content),
       conflictContent:
-        conflict?.content && file.filePath === conflict.filePath
-          ? conflict.content
+        Silian_conflict?.content && Silian_file.filePath === Silian_conflict.filePath
+          ? Silian_conflict.content
           : undefined,
     })),
   })
 }
 
-async function persistRebasedBranchFiles(input: {
+async function Silian_persistRebasedBranchFiles(Silian_input: {
   authorEmail: string
   authorName: string
   branchName: string
@@ -338,180 +338,180 @@ async function persistRebasedBranchFiles(input: {
   message: string
   token?: string
 }) {
-  if (input.files.length <= 1) {
-    const file = input.files[0]
-    if (!file) {
+  if (Silian_input.files.length <= 1) {
+    const Silian_file = Silian_input.files[0]
+    if (!Silian_file) {
       return
     }
 
-    await upsertFileOnBranch({
-      authorEmail: input.authorEmail,
-      authorName: input.authorName,
-      branchName: input.branchName,
-      content: file.content,
-      filePath: file.filePath,
-      message: input.message,
-      token: input.token,
+    await Silian_upsertFileOnBranch({
+      authorEmail: Silian_input.authorEmail,
+      authorName: Silian_input.authorName,
+      branchName: Silian_input.branchName,
+      content: Silian_file.content,
+      filePath: Silian_file.filePath,
+      message: Silian_input.message,
+      token: Silian_input.token,
     })
     return
   }
 
-  if (!input.token) {
+  if (!Silian_input.token) {
     throw new Error("GitHub token is required to update multiple files")
   }
 
-  await upsertFilesOnBranch(
-    input.token,
-    input.files.map((file) => ({
-      path: file.filePath,
-      content: file.content,
+  await Silian_upsertFilesOnBranch(
+    Silian_input.token,
+    Silian_input.files.map((Silian_file) => ({
+      path: Silian_file.filePath,
+      content: Silian_file.content,
     })),
-    input.branchName
+    Silian_input.branchName
   )
 }
 
 export async function mergePRAction(
-  prNumber: number,
-  options?: {
+  Silian_prNumber: number,
+  Silian_options?: {
     commitBody?: string
     commitTitle?: string
     mergeMethod?: ReviewMergeMethod
   }
 ) {
-  const session = await requireAuth()
-  await requireAdmin(session.user.id)
+  const Silian_session = await Silian_requireAuth()
+  await Silian_requireAdmin(Silian_session.user.id)
 
-  const token = await getGithubPatForUser(session.user.id)
+  const Silian_token = await Silian_getGithubPatForUser(Silian_session.user.id)
 
   try {
-    reviewLog("mergePRAction", {
-      prNumber,
+    Silian_reviewLog("mergePRAction", {
+      prNumber: Silian_prNumber,
       status: "start",
-      mergeMethod: options?.mergeMethod ?? "auto",
+      mergeMethod: Silian_options?.mergeMethod ?? "auto",
     })
-    reviewLog("mergePRAction", {
-      prNumber,
+    Silian_reviewLog("mergePRAction", {
+      prNumber: Silian_prNumber,
       status: "merge-dispatch",
-      mergeMethod: options?.mergeMethod ?? "auto",
+      mergeMethod: Silian_options?.mergeMethod ?? "auto",
     })
-    await mergePR(prNumber, options, token)
-    reviewLog("mergePRAction", {
-      prNumber,
+    await Silian_mergePR(Silian_prNumber, Silian_options, Silian_token)
+    Silian_reviewLog("mergePRAction", {
+      prNumber: Silian_prNumber,
       status: "github-api-after",
       operation: "mergePR",
       result: "completed",
     })
     try {
-      reviewLog("mergePRAction", {
-        prNumber,
+      Silian_reviewLog("mergePRAction", {
+        prNumber: Silian_prNumber,
         status: "reconcile-start",
         outcome: "PR-merged",
       })
-      await reconcileDraftAssetsForPRCompletion({
-        prNumber,
+      await Silian_reconcileDraftAssetsForPRCompletion({
+        prNumber: Silian_prNumber,
         outcome: "PR-merged",
       })
-      reviewLog("mergePRAction", {
-        prNumber,
+      Silian_reviewLog("mergePRAction", {
+        prNumber: Silian_prNumber,
         status: "reconcile-complete",
         outcome: "PR-merged",
       })
-    } catch (reconcileError) {
-      reviewError("mergePRAction", reconcileError, {
-        prNumber,
+    } catch (Silian_reconcileError) {
+      Silian_reviewError("mergePRAction", Silian_reconcileError, {
+        prNumber: Silian_prNumber,
         status: "reconcile-error",
         outcome: "PR-merged",
       })
     }
-    revalidatePath("/draft")
-    revalidatePath("/review")
-    reviewLog("mergePRAction", { prNumber, status: "complete" })
+    Silian_revalidatePath("/draft")
+    Silian_revalidatePath("/review")
+    Silian_reviewLog("mergePRAction", { prNumber: Silian_prNumber, status: "complete" })
     return { success: true }
-  } catch (error) {
-    reviewError("mergePRAction", error, { prNumber, status: "error" })
-    throw new Error(formatErrorMessage("Merge failed", error))
+  } catch (Silian_error) {
+    Silian_reviewError("mergePRAction", Silian_error, { prNumber: Silian_prNumber, status: "error" })
+    throw new Error(Silian_formatErrorMessage("Merge failed", Silian_error))
   }
 }
 
-export async function closePRAction(prNumber: number) {
-  const session = await requireAuth()
-  await requireAdmin(session.user.id)
+export async function closePRAction(Silian_prNumber: number) {
+  const Silian_session = await Silian_requireAuth()
+  await Silian_requireAdmin(Silian_session.user.id)
 
-  const token = await getGithubPatForUser(session.user.id)
-  const octokit = getOctokit(token)
+  const Silian_token = await Silian_getGithubPatForUser(Silian_session.user.id)
+  const Silian_octokit = Silian_getOctokit(Silian_token)
 
   try {
-    reviewLog("closePRAction", { prNumber, status: "start" })
-    reviewLog("closePRAction", {
-      prNumber,
+    Silian_reviewLog("closePRAction", { prNumber: Silian_prNumber, status: "start" })
+    Silian_reviewLog("closePRAction", {
+      prNumber: Silian_prNumber,
       status: "github-api-before",
       operation: "pulls.update",
       nextState: "closed",
     })
-    await octokit.pulls.update({
-      owner,
-      repo,
-      pull_number: prNumber,
+    await Silian_octokit.pulls.update({
+      owner: Silian_owner,
+      repo: Silian_repo,
+      pull_number: Silian_prNumber,
       state: "closed",
     })
-    reviewLog("closePRAction", {
-      prNumber,
+    Silian_reviewLog("closePRAction", {
+      prNumber: Silian_prNumber,
       status: "github-api-after",
       operation: "pulls.update",
       result: "closed",
     })
     try {
-      reviewLog("closePRAction", {
-        prNumber,
+      Silian_reviewLog("closePRAction", {
+        prNumber: Silian_prNumber,
         status: "reconcile-start",
         outcome: "PR-closed",
       })
-      await reconcileDraftAssetsForPRCompletion({
-        prNumber,
+      await Silian_reconcileDraftAssetsForPRCompletion({
+        prNumber: Silian_prNumber,
         outcome: "PR-closed",
       })
-      reviewLog("closePRAction", {
-        prNumber,
+      Silian_reviewLog("closePRAction", {
+        prNumber: Silian_prNumber,
         status: "reconcile-complete",
         outcome: "PR-closed",
       })
-    } catch (reconcileError) {
-      reviewError("closePRAction", reconcileError, {
-        prNumber,
+    } catch (Silian_reconcileError) {
+      Silian_reviewError("closePRAction", Silian_reconcileError, {
+        prNumber: Silian_prNumber,
         status: "reconcile-error",
         outcome: "PR-closed",
       })
     }
-    revalidatePath("/draft")
-    revalidatePath("/review")
-    reviewLog("closePRAction", { prNumber, status: "complete" })
+    Silian_revalidatePath("/draft")
+    Silian_revalidatePath("/review")
+    Silian_reviewLog("closePRAction", { prNumber: Silian_prNumber, status: "complete" })
     return { success: true }
-  } catch (error) {
-    reviewError("closePRAction", error, { prNumber, status: "error" })
-    throw new Error(formatErrorMessage("Close failed", error))
+  } catch (Silian_error) {
+    Silian_reviewError("closePRAction", Silian_error, { prNumber: Silian_prNumber, status: "error" })
+    throw new Error(Silian_formatErrorMessage("Close failed", Silian_error))
   }
 }
 
 export async function resolveConflictAction(
-  prNumber: number,
-  formData: FormData
+  Silian_prNumber: number,
+  Silian_formData: FormData
 ) {
-  reviewLog("resolveConflictAction", {
-    prNumber,
+  Silian_reviewLog("resolveConflictAction", {
+    prNumber: Silian_prNumber,
     status: "start",
-    contentProvided: Boolean(formData.get("content")),
-    draftFilesProvided: Boolean(formData.get("draftFiles")),
+    contentProvided: Boolean(Silian_formData.get("content")),
+    draftFilesProvided: Boolean(Silian_formData.get("draftFiles")),
   })
 
   try {
-    const { session, token, authorName, authorEmail } =
-      await requireReviewAdminContext()
+    const { session: Silian_session, token: Silian_token, authorName: Silian_authorName, authorEmail: Silian_authorEmail } =
+      await Silian_requireReviewAdminContext()
 
-    const content = formData.get("content") as string | null
-    const draftFilesPayload = formData.get("draftFiles") as string | null
+    const Silian_content = Silian_formData.get("content") as string | null
+    const Silian_draftFilesPayload = Silian_formData.get("draftFiles") as string | null
 
-    const linkedDraft = await prisma.revision.findFirst({
-      where: { githubPrNum: prNumber },
+    const Silian_linkedDraft = await Silian_prisma.revision.findFirst({
+      where: { githubPrNum: Silian_prNumber },
       include: {
         author: {
           select: {
@@ -522,237 +522,237 @@ export async function resolveConflictAction(
       },
     })
 
-    if (!linkedDraft) {
+    if (!Silian_linkedDraft) {
       throw new Error("Linked draft not found")
     }
 
-    if (!linkedDraft.filePath || !linkedDraft.prBranchName) {
+    if (!Silian_linkedDraft.filePath || !Silian_linkedDraft.prBranchName) {
       throw new Error("The linked draft is missing PR metadata")
     }
 
-    const submitterName = linkedDraft.author?.name || authorName
-    const submitterEmail = linkedDraft.author?.email || authorEmail
+    const Silian_submitterName = Silian_linkedDraft.author?.name || Silian_authorName
+    const Silian_submitterEmail = Silian_linkedDraft.author?.email || Silian_authorEmail
 
-    const storedDraftFiles = decodeStoredDraftFiles({
-      content: linkedDraft.content,
-      conflictContent: linkedDraft.conflictContent,
-      filePath: linkedDraft.filePath,
+    const Silian_storedDraftFiles = Silian_decodeStoredDraftFiles({
+      content: Silian_linkedDraft.content,
+      conflictContent: Silian_linkedDraft.conflictContent,
+      filePath: Silian_linkedDraft.filePath,
     })
-    const submittedDraftFiles = deserializeDraftFilesPayload(draftFilesPayload)
-    const resolvedDraftFiles =
-      submittedDraftFiles ||
-      (content
-        ? normalizeDraftFileCollection({
-            activeFileId: storedDraftFiles.activeFileId,
-            folders: storedDraftFiles.folders || [],
-            files: storedDraftFiles.files.map((file) => ({
-              ...file,
+    const Silian_submittedDraftFiles = Silian_deserializeDraftFilesPayload(Silian_draftFilesPayload)
+    const Silian_resolvedDraftFiles =
+      Silian_submittedDraftFiles ||
+      (Silian_content
+        ? Silian_normalizeDraftFileCollection({
+            activeFileId: Silian_storedDraftFiles.activeFileId,
+            folders: Silian_storedDraftFiles.folders || [],
+            files: Silian_storedDraftFiles.files.map((Silian_file) => ({
+              ...Silian_file,
               content:
-                file.id === storedDraftFiles.activeFileId
-                  ? content
-                  : file.content,
+                Silian_file.id === Silian_storedDraftFiles.activeFileId
+                  ? Silian_content
+                  : Silian_file.content,
             })),
           })
         : null)
 
-    if (!resolvedDraftFiles) {
+    if (!Silian_resolvedDraftFiles) {
       throw new Error("Resolved content is required")
     }
 
-    const conflictMode = (linkedDraft as { conflictMode?: ConflictMode | null })
+    const Silian_conflictMode = (Silian_linkedDraft as { conflictMode?: ConflictMode | null })
       .conflictMode
 
-    reviewLog("resolveConflictAction", {
-      prNumber,
-      revisionId: linkedDraft.id,
+    Silian_reviewLog("resolveConflictAction", {
+      prNumber: Silian_prNumber,
+      revisionId: Silian_linkedDraft.id,
       status: "loaded",
-      conflictMode,
-      fileCount: storedDraftFiles.files.length,
-      actorUserId: session.user.id,
+      conflictMode: Silian_conflictMode,
+      fileCount: Silian_storedDraftFiles.files.length,
+      actorUserId: Silian_session.user.id,
     })
 
-    if (conflictMode === "SIMPLE") {
-      reviewLog("resolveConflictAction", {
-        prNumber,
+    if (Silian_conflictMode === "SIMPLE") {
+      Silian_reviewLog("resolveConflictAction", {
+        prNumber: Silian_prNumber,
         status: "branch",
         branch: "SIMPLE",
-        fileCount: resolvedDraftFiles.files.length,
+        fileCount: Silian_resolvedDraftFiles.files.length,
       })
-      const storedFileMap = new Map(
-        storedDraftFiles.files.map((file) => [file.id, file])
+      const Silian_storedFileMap = new Map(
+        Silian_storedDraftFiles.files.map((Silian_file) => [Silian_file.id, Silian_file])
       )
-      const nextDraftFiles = normalizeDraftFileCollection({
-        activeFileId: resolvedDraftFiles.activeFileId,
-        folders: resolvedDraftFiles.folders || [],
-        files: resolvedDraftFiles.files.map((file) => {
-          const previousFile = storedFileMap.get(file.id)
-          const stillHasConflict = hasSimpleConflictMarkers(file.content)
+      const Silian_nextDraftFiles = Silian_normalizeDraftFileCollection({
+        activeFileId: Silian_resolvedDraftFiles.activeFileId,
+        folders: Silian_resolvedDraftFiles.folders || [],
+        files: Silian_resolvedDraftFiles.files.map((Silian_file) => {
+          const Silian_previousFile = Silian_storedFileMap.get(Silian_file.id)
+          const Silian_stillHasConflict = Silian_hasSimpleConflictMarkers(Silian_file.content)
 
           return {
-            ...file,
-            content: stillHasConflict
-              ? (previousFile?.content ?? file.content)
-              : file.content,
-            ...(stillHasConflict ? { conflictContent: file.content } : {}),
+            ...Silian_file,
+            content: Silian_stillHasConflict
+              ? (Silian_previousFile?.content ?? Silian_file.content)
+              : Silian_file.content,
+            ...(Silian_stillHasConflict ? { conflictContent: Silian_file.content } : {}),
           }
         }),
       })
-      const focusedNextDraftFiles = focusDraftFileByPath(
-        nextDraftFiles,
-        getFirstConflictedFilePath(nextDraftFiles.files)
+      const Silian_focusedNextDraftFiles = Silian_focusDraftFileByPath(
+        Silian_nextDraftFiles,
+        Silian_getFirstConflictedFilePath(Silian_nextDraftFiles.files)
       )
-      const nextStorage = serializeDraftFilesForStorage(focusedNextDraftFiles)
-      const nextStatus = focusedNextDraftFiles.files.some(
-        (file) =>
-          file.conflictContent !== undefined && file.conflictContent !== null
+      const Silian_nextStorage = Silian_serializeDraftFilesForStorage(Silian_focusedNextDraftFiles)
+      const Silian_nextStatus = Silian_focusedNextDraftFiles.files.some(
+        (Silian_file) =>
+          Silian_file.conflictContent !== undefined && Silian_file.conflictContent !== null
       )
         ? "SYNC_CONFLICT"
         : "IN_REVIEW"
-      const focusFilePath = getFirstConflictedFilePath(
-        focusedNextDraftFiles.files
+      const Silian_focusFilePath = Silian_getFirstConflictedFilePath(
+        Silian_focusedNextDraftFiles.files
       )
 
-      await recordResolvedRerereEntries({
-        token,
-        storedFiles: storedDraftFiles.files,
-        resolvedFiles: focusedNextDraftFiles.files,
-        baseRef: linkedDraft.baseMainSha,
+      await Silian_recordResolvedRerereEntries({
+        token: Silian_token,
+        storedFiles: Silian_storedDraftFiles.files,
+        resolvedFiles: Silian_focusedNextDraftFiles.files,
+        baseRef: Silian_linkedDraft.baseMainSha,
       })
 
-      reviewLog("resolveConflictAction", {
-        prNumber,
+      Silian_reviewLog("resolveConflictAction", {
+        prNumber: Silian_prNumber,
         status: "db-write-before",
         fields: ["conflictContent", "content", "filePath", "status"],
-        nextStatus,
+        nextStatus: Silian_nextStatus,
       })
-      await prisma.revision.update({
-        where: { id: linkedDraft.id },
+      await Silian_prisma.revision.update({
+        where: { id: Silian_linkedDraft.id },
         data: {
-          conflictContent: nextStorage.conflictContent,
-          content: nextStorage.content,
-          filePath: nextStorage.filePath,
-          status: nextStatus,
+          conflictContent: Silian_nextStorage.conflictContent,
+          content: Silian_nextStorage.content,
+          filePath: Silian_nextStorage.filePath,
+          status: Silian_nextStatus,
         },
       })
-      reviewLog("resolveConflictAction", {
-        prNumber,
+      Silian_reviewLog("resolveConflictAction", {
+        prNumber: Silian_prNumber,
         status: "db-write-after",
         fields: ["conflictContent", "content", "filePath", "status"],
-        nextStatus,
+        nextStatus: Silian_nextStatus,
       })
 
-      const latestMainSha = await getMainBranchHeadSha(token)
-      reviewLog("resolveConflictAction", {
-        prNumber,
+      const Silian_latestMainSha = await Silian_getMainBranchHeadSha(Silian_token)
+      Silian_reviewLog("resolveConflictAction", {
+        prNumber: Silian_prNumber,
         status: "force-push-start",
-        prBranchName: linkedDraft.prBranchName,
-        fileCount: focusedNextDraftFiles.files.length,
-        latestMainSha: summarizeSha(latestMainSha),
+        prBranchName: Silian_linkedDraft.prBranchName,
+        fileCount: Silian_focusedNextDraftFiles.files.length,
+        latestMainSha: Silian_summarizeSha(Silian_latestMainSha),
       })
-      await forcePushResolvedToPRBranch({
-        resolvedFiles: focusedNextDraftFiles.files.map((file) => ({
-          filePath: file.filePath,
-          content: file.content,
+      await Silian_forcePushResolvedToPRBranch({
+        resolvedFiles: Silian_focusedNextDraftFiles.files.map((Silian_file) => ({
+          filePath: Silian_file.filePath,
+          content: Silian_file.content,
         })),
-        prBranchName: linkedDraft.prBranchName,
-        latestMainSha,
+        prBranchName: Silian_linkedDraft.prBranchName,
+        latestMainSha: Silian_latestMainSha,
         commitMessage: "chore(review): apply conflict resolution",
-        authorName: submitterName,
-        authorEmail: submitterEmail,
-        token,
+        authorName: Silian_submitterName,
+        authorEmail: Silian_submitterEmail,
+        token: Silian_token,
       })
-      reviewLog("resolveConflictAction", {
-        prNumber,
+      Silian_reviewLog("resolveConflictAction", {
+        prNumber: Silian_prNumber,
         status: "force-push-complete",
-        prBranchName: linkedDraft.prBranchName,
+        prBranchName: Silian_linkedDraft.prBranchName,
       })
 
-      revalidatePaths(getReviewRevalidatePaths(linkedDraft.id, prNumber))
-      reviewLog("resolveConflictAction", {
-        prNumber,
+      Silian_revalidatePaths(Silian_getReviewRevalidatePaths(Silian_linkedDraft.id, Silian_prNumber))
+      Silian_reviewLog("resolveConflictAction", {
+        prNumber: Silian_prNumber,
         status: "complete",
-        conflictMode,
-        resultStatus: nextStatus,
+        conflictMode: Silian_conflictMode,
+        resultStatus: Silian_nextStatus,
       })
       return {
         success: true,
-        status: nextStatus,
-        hasConflicts: nextStatus === "SYNC_CONFLICT",
-        focusFilePath,
-        draftSnapshot: buildDraftSnapshot(focusedNextDraftFiles),
+        status: Silian_nextStatus,
+        hasConflicts: Silian_nextStatus === "SYNC_CONFLICT",
+        focusFilePath: Silian_focusFilePath,
+        draftSnapshot: Silian_buildDraftSnapshot(Silian_focusedNextDraftFiles),
       }
     }
 
-    const rebaseState = linkedDraft.rebaseState as RebaseState | null
+    const Silian_rebaseState = Silian_linkedDraft.rebaseState as RebaseState | null
 
-    if (rebaseState?.status === "CONFLICT") {
-      reviewLog("resolveConflictAction", {
-        prNumber,
+    if (Silian_rebaseState?.status === "CONFLICT") {
+      Silian_reviewLog("resolveConflictAction", {
+        prNumber: Silian_prNumber,
         status: "branch",
         branch: "FINE_GRAINED",
-        currentCommitIndex: rebaseState.currentCommitIndex,
+        currentCommitIndex: Silian_rebaseState.currentCommitIndex,
       })
-      const resolvedFile = getActiveDraftFile(resolvedDraftFiles)
-      const storedFile = getActiveDraftFile(storedDraftFiles)
-      const rebaseConflictBaseRef =
-        rebaseState.currentCommitIndex > 0
-          ? rebaseState.commitInfos[rebaseState.currentCommitIndex - 1]?.sha
-          : linkedDraft.baseMainSha
+      const Silian_resolvedFile = Silian_getActiveDraftFile(Silian_resolvedDraftFiles)
+      const Silian_storedFile = Silian_getActiveDraftFile(Silian_storedDraftFiles)
+      const Silian_rebaseConflictBaseRef =
+        Silian_rebaseState.currentCommitIndex > 0
+          ? Silian_rebaseState.commitInfos[Silian_rebaseState.currentCommitIndex - 1]?.sha
+          : Silian_linkedDraft.baseMainSha
 
-      await recordResolvedRerereEntries({
-        token,
-        storedFiles: storedDraftFiles.files,
-        resolvedFiles: resolvedDraftFiles.files,
-        baseRef: rebaseConflictBaseRef,
+      await Silian_recordResolvedRerereEntries({
+        token: Silian_token,
+        storedFiles: Silian_storedDraftFiles.files,
+        resolvedFiles: Silian_resolvedDraftFiles.files,
+        baseRef: Silian_rebaseConflictBaseRef,
       })
 
-      const result = await resumeRebase({
-        draftId: linkedDraft.id,
-        resolvedContent: resolvedFile.content,
-        resolvedFiles: resolvedDraftFiles.files.map((file) => ({
-          filePath: file.filePath,
-          content: file.content,
+      const Silian_result = await Silian_resumeRebase({
+        draftId: Silian_linkedDraft.id,
+        resolvedContent: Silian_resolvedFile.content,
+        resolvedFiles: Silian_resolvedDraftFiles.files.map((Silian_file) => ({
+          filePath: Silian_file.filePath,
+          content: Silian_file.content,
         })),
-        token,
+        token: Silian_token,
       })
-      reviewLog("resolveConflictAction", {
-        prNumber,
+      Silian_reviewLog("resolveConflictAction", {
+        prNumber: Silian_prNumber,
         status: "resume-rebase-result",
-        resultStatus: result.status,
+        resultStatus: Silian_result.status,
       })
 
-      if (result.status === "SUCCESS") {
-        const rebasedDraftFiles = applyRebasedFilesToDraft(
-          storedDraftFiles,
-          result.files,
-          { filePath: storedFile.filePath, content: result.finalContent }
+      if (Silian_result.status === "SUCCESS") {
+        const Silian_rebasedDraftFiles = Silian_applyRebasedFilesToDraft(
+          Silian_storedDraftFiles,
+          Silian_result.files,
+          { filePath: Silian_storedFile.filePath, content: Silian_result.finalContent }
         )
-        reviewLog("resolveConflictAction", {
-          prNumber,
+        Silian_reviewLog("resolveConflictAction", {
+          prNumber: Silian_prNumber,
           status: "force-push-start",
-          prBranchName: linkedDraft.prBranchName,
-          fileCount: rebasedDraftFiles.files.length,
+          prBranchName: Silian_linkedDraft.prBranchName,
+          fileCount: Silian_rebasedDraftFiles.files.length,
         })
-        await persistRebasedBranchFiles({
-          authorEmail: submitterEmail,
-          authorName: submitterName,
-          branchName: linkedDraft.prBranchName,
-          files: rebasedDraftFiles.files.map((file) => ({
-            filePath: file.filePath,
-            content: file.content,
+        await Silian_persistRebasedBranchFiles({
+          authorEmail: Silian_submitterEmail,
+          authorName: Silian_submitterName,
+          branchName: Silian_linkedDraft.prBranchName,
+          files: Silian_rebasedDraftFiles.files.map((Silian_file) => ({
+            filePath: Silian_file.filePath,
+            content: Silian_file.content,
           })),
-          message: `docs: apply rebase for ${linkedDraft.title}`,
-          token,
+          message: `docs: apply rebase for ${Silian_linkedDraft.title}`,
+          token: Silian_token,
         })
-        reviewLog("resolveConflictAction", {
-          prNumber,
+        Silian_reviewLog("resolveConflictAction", {
+          prNumber: Silian_prNumber,
           status: "force-push-complete",
-          prBranchName: linkedDraft.prBranchName,
+          prBranchName: Silian_linkedDraft.prBranchName,
         })
-        const rebasedDraftStorage =
-          serializeDraftFilesForStorage(rebasedDraftFiles)
-        reviewLog("resolveConflictAction", {
-          prNumber,
+        const Silian_rebasedDraftStorage =
+          Silian_serializeDraftFilesForStorage(Silian_rebasedDraftFiles)
+        Silian_reviewLog("resolveConflictAction", {
+          prNumber: Silian_prNumber,
           status: "db-write-before",
           fields: [
             "status",
@@ -763,22 +763,22 @@ export async function resolveConflictAction(
           ],
           nextStatus: "IN_REVIEW",
         })
-        await prisma.revision.update({
-          where: { id: linkedDraft.id },
+        await Silian_prisma.revision.update({
+          where: { id: Silian_linkedDraft.id },
           data: {
             status: "IN_REVIEW",
-            conflictContent: rebasedDraftStorage.conflictContent,
-            content: rebasedDraftStorage.content,
-            filePath: rebasedDraftStorage.filePath,
+            conflictContent: Silian_rebasedDraftStorage.conflictContent,
+            content: Silian_rebasedDraftStorage.content,
+            filePath: Silian_rebasedDraftStorage.filePath,
             rebaseState: {
-              ...rebaseState,
+              ...Silian_rebaseState,
               status: "COMPLETED",
-              resolvedContent: result.finalContent,
-            } as unknown as Prisma.InputJsonValue,
+              resolvedContent: Silian_result.finalContent,
+            } as unknown as Silian_Prisma.InputJsonValue,
           },
         })
-        reviewLog("resolveConflictAction", {
-          prNumber,
+        Silian_reviewLog("resolveConflictAction", {
+          prNumber: Silian_prNumber,
           status: "db-write-after",
           fields: [
             "status",
@@ -789,130 +789,130 @@ export async function resolveConflictAction(
           ],
           nextStatus: "IN_REVIEW",
         })
-      } else if (result.status === "CONFLICT") {
-        const focusFilePath = result.conflictFilePath ?? storedFile.filePath
-        const conflictDraftFiles = focusDraftFileByPath(
-          applyRebasedFilesToDraft(storedDraftFiles, result.files, undefined, {
-            filePath: focusFilePath,
-            content: result.conflictContent,
+      } else if (Silian_result.status === "CONFLICT") {
+        const Silian_focusFilePath = Silian_result.conflictFilePath ?? Silian_storedFile.filePath
+        const Silian_conflictDraftFiles = Silian_focusDraftFileByPath(
+          Silian_applyRebasedFilesToDraft(Silian_storedDraftFiles, Silian_result.files, undefined, {
+            filePath: Silian_focusFilePath,
+            content: Silian_result.conflictContent,
           }),
-          focusFilePath
+          Silian_focusFilePath
         )
-        const conflictDraftStorage =
-          serializeDraftFilesForStorage(conflictDraftFiles)
-        reviewLog("resolveConflictAction", {
-          prNumber,
+        const Silian_conflictDraftStorage =
+          Silian_serializeDraftFilesForStorage(Silian_conflictDraftFiles)
+        Silian_reviewLog("resolveConflictAction", {
+          prNumber: Silian_prNumber,
           status: "branch-decision",
           branch: "CONFLICT",
-          conflictFilePath: focusFilePath,
+          conflictFilePath: Silian_focusFilePath,
         })
-        reviewLog("resolveConflictAction", {
-          prNumber,
+        Silian_reviewLog("resolveConflictAction", {
+          prNumber: Silian_prNumber,
           status: "db-write-before",
           fields: ["status", "conflictContent", "content", "filePath"],
           nextStatus: "SYNC_CONFLICT",
         })
-        await prisma.revision.update({
-          where: { id: linkedDraft.id },
+        await Silian_prisma.revision.update({
+          where: { id: Silian_linkedDraft.id },
           data: {
             status: "SYNC_CONFLICT",
-            conflictContent: conflictDraftStorage.conflictContent,
-            content: conflictDraftStorage.content,
-            filePath: conflictDraftStorage.filePath,
+            conflictContent: Silian_conflictDraftStorage.conflictContent,
+            content: Silian_conflictDraftStorage.content,
+            filePath: Silian_conflictDraftStorage.filePath,
           },
         })
-        reviewLog("resolveConflictAction", {
-          prNumber,
+        Silian_reviewLog("resolveConflictAction", {
+          prNumber: Silian_prNumber,
           status: "db-write-after",
           fields: ["status", "conflictContent", "content", "filePath"],
           nextStatus: "SYNC_CONFLICT",
         })
-      } else if (result.status === "FILE_DELETED_CONFLICT") {
-        const deletedConflictDraftStorage = serializeDraftFilesForStorage(
-          applyRebasedFilesToDraft(storedDraftFiles, result.files)
+      } else if (Silian_result.status === "FILE_DELETED_CONFLICT") {
+        const Silian_deletedConflictDraftStorage = Silian_serializeDraftFilesForStorage(
+          Silian_applyRebasedFilesToDraft(Silian_storedDraftFiles, Silian_result.files)
         )
-        reviewLog("resolveConflictAction", {
-          prNumber,
+        Silian_reviewLog("resolveConflictAction", {
+          prNumber: Silian_prNumber,
           status: "branch-decision",
           branch: "FILE_DELETED_CONFLICT",
         })
-        reviewLog("resolveConflictAction", {
-          prNumber,
+        Silian_reviewLog("resolveConflictAction", {
+          prNumber: Silian_prNumber,
           status: "db-write-before",
           fields: ["status", "content", "filePath", "conflictContent"],
           nextStatus: "SYNC_CONFLICT",
         })
-        await prisma.revision.update({
-          where: { id: linkedDraft.id },
+        await Silian_prisma.revision.update({
+          where: { id: Silian_linkedDraft.id },
           data: {
             status: "SYNC_CONFLICT",
-            content: deletedConflictDraftStorage.content,
-            filePath: deletedConflictDraftStorage.filePath,
-            conflictContent: deletedConflictDraftStorage.conflictContent,
+            content: Silian_deletedConflictDraftStorage.content,
+            filePath: Silian_deletedConflictDraftStorage.filePath,
+            conflictContent: Silian_deletedConflictDraftStorage.conflictContent,
           },
         })
-        reviewLog("resolveConflictAction", {
-          prNumber,
+        Silian_reviewLog("resolveConflictAction", {
+          prNumber: Silian_prNumber,
           status: "db-write-after",
           fields: ["status", "content", "filePath", "conflictContent"],
           nextStatus: "SYNC_CONFLICT",
         })
       } else {
-        throw new Error(formatErrorMessage("Resume rebase failed", result))
+        throw new Error(Silian_formatErrorMessage("Resume rebase failed", Silian_result))
       }
 
-      revalidatePaths([
+      Silian_revalidatePaths([
         "/draft",
-        `/draft/${linkedDraft.id}`,
+        `/draft/${Silian_linkedDraft.id}`,
         "/review",
-        `/review/${prNumber}`,
+        `/review/${Silian_prNumber}`,
       ])
-      reviewLog("resolveConflictAction", {
-        prNumber,
+      Silian_reviewLog("resolveConflictAction", {
+        prNumber: Silian_prNumber,
         status: "complete",
-        conflictMode,
-        resultStatus: result.status,
+        conflictMode: Silian_conflictMode,
+        resultStatus: Silian_result.status,
       })
       return {
         success: true,
-        status: result.status,
+        status: Silian_result.status,
         hasConflicts:
-          result.status === "CONFLICT" ||
-          result.status === "FILE_DELETED_CONFLICT",
+          Silian_result.status === "CONFLICT" ||
+          Silian_result.status === "FILE_DELETED_CONFLICT",
         focusFilePath:
-          result.status === "CONFLICT"
-            ? (result.conflictFilePath ?? storedFile.filePath)
+          Silian_result.status === "CONFLICT"
+            ? (Silian_result.conflictFilePath ?? Silian_storedFile.filePath)
             : null,
       }
     }
 
-    const result = await resolveDraftSyncConflict({
-      activeFileId: resolvedDraftFiles.activeFileId,
-      authorEmail,
-      authorName,
-      branchName: linkedDraft.prBranchName,
-      files: resolvedDraftFiles.files.map((file) => ({
-        ...file,
+    const Silian_result = await Silian_resolveDraftSyncConflict({
+      activeFileId: Silian_resolvedDraftFiles.activeFileId,
+      authorEmail: Silian_authorEmail,
+      authorName: Silian_authorName,
+      branchName: Silian_linkedDraft.prBranchName,
+      files: Silian_resolvedDraftFiles.files.map((Silian_file) => ({
+        ...Silian_file,
         conflictContent: undefined,
       })),
-      syncedMainSha: linkedDraft.syncedMainSha,
-      title: linkedDraft.title,
-      token,
+      syncedMainSha: Silian_linkedDraft.syncedMainSha,
+      title: Silian_linkedDraft.title,
+      token: Silian_token,
     })
 
-    const syncedDraftFiles = focusDraftFileByPath(
+    const Silian_syncedDraftFiles = Silian_focusDraftFileByPath(
       {
-        activeFileId: result.activeFileId,
-        folders: storedDraftFiles.folders || [],
-        files: result.files,
+        activeFileId: Silian_result.activeFileId,
+        folders: Silian_storedDraftFiles.folders || [],
+        files: Silian_result.files,
       },
-      getFirstConflictedFilePath(result.files)
+      Silian_getFirstConflictedFilePath(Silian_result.files)
     )
-    const syncedDraftStorage = serializeDraftFilesForStorage(syncedDraftFiles)
-    const focusFilePath = getFirstConflictedFilePath(syncedDraftFiles.files)
+    const Silian_syncedDraftStorage = Silian_serializeDraftFilesForStorage(Silian_syncedDraftFiles)
+    const Silian_focusFilePath = Silian_getFirstConflictedFilePath(Silian_syncedDraftFiles.files)
 
-    reviewLog("resolveConflictAction", {
-      prNumber,
+    Silian_reviewLog("resolveConflictAction", {
+      prNumber: Silian_prNumber,
       status: "db-write-before",
       fields: [
         "conflictContent",
@@ -921,21 +921,21 @@ export async function resolveConflictAction(
         "status",
         "syncedMainSha",
       ],
-      nextStatus: result.status,
-      syncedMainSha: summarizeSha(result.syncedMainSha),
+      nextStatus: Silian_result.status,
+      syncedMainSha: Silian_summarizeSha(Silian_result.syncedMainSha),
     })
-    await prisma.revision.update({
-      where: { id: linkedDraft.id },
+    await Silian_prisma.revision.update({
+      where: { id: Silian_linkedDraft.id },
       data: {
-        conflictContent: syncedDraftStorage.conflictContent,
-        content: syncedDraftStorage.content,
-        filePath: syncedDraftStorage.filePath,
-        status: result.status,
-        syncedMainSha: result.syncedMainSha,
+        conflictContent: Silian_syncedDraftStorage.conflictContent,
+        content: Silian_syncedDraftStorage.content,
+        filePath: Silian_syncedDraftStorage.filePath,
+        status: Silian_result.status,
+        syncedMainSha: Silian_result.syncedMainSha,
       },
     })
-    reviewLog("resolveConflictAction", {
-      prNumber,
+    Silian_reviewLog("resolveConflictAction", {
+      prNumber: Silian_prNumber,
       status: "db-write-after",
       fields: [
         "conflictContent",
@@ -944,265 +944,265 @@ export async function resolveConflictAction(
         "status",
         "syncedMainSha",
       ],
-      nextStatus: result.status,
-      syncedMainSha: summarizeSha(result.syncedMainSha),
+      nextStatus: Silian_result.status,
+      syncedMainSha: Silian_summarizeSha(Silian_result.syncedMainSha),
     })
 
-    revalidatePaths([
+    Silian_revalidatePaths([
       "/draft",
-      `/draft/${linkedDraft.id}`,
+      `/draft/${Silian_linkedDraft.id}`,
       "/review",
-      `/review/${prNumber}`,
+      `/review/${Silian_prNumber}`,
     ])
 
-    reviewLog("resolveConflictAction", {
-      prNumber,
+    Silian_reviewLog("resolveConflictAction", {
+      prNumber: Silian_prNumber,
       status: "complete",
-      conflictMode,
-      resultStatus: result.status,
+      conflictMode: Silian_conflictMode,
+      resultStatus: Silian_result.status,
     })
     return {
       success: true,
-      status: result.status,
-      hasConflicts: focusFilePath !== null,
-      focusFilePath,
-      draftSnapshot: buildDraftSnapshot(syncedDraftFiles),
+      status: Silian_result.status,
+      hasConflicts: Silian_focusFilePath !== null,
+      focusFilePath: Silian_focusFilePath,
+      draftSnapshot: Silian_buildDraftSnapshot(Silian_syncedDraftFiles),
     }
-  } catch (error) {
-    reviewError("resolveConflictAction", error, { prNumber, status: "error" })
-    throw error
+  } catch (Silian_error) {
+    Silian_reviewError("resolveConflictAction", Silian_error, { prNumber: Silian_prNumber, status: "error" })
+    throw Silian_error
   }
 }
 
-export async function submitWithRebaseAction(revisionId: string) {
-  const { token, authorName, authorEmail } = await requireReviewAdminContext()
+export async function submitWithRebaseAction(Silian_revisionId: string) {
+  const { token: Silian_token, authorName: Silian_authorName, authorEmail: Silian_authorEmail } = await Silian_requireReviewAdminContext()
 
-  const revision = await prisma.revision.findUnique({
-    where: { id: revisionId },
+  const Silian_revision = await Silian_prisma.revision.findUnique({
+    where: { id: Silian_revisionId },
   })
 
-  if (!revision) {
+  if (!Silian_revision) {
     throw new Error("Revision not found")
   }
 
-  const storedDraftFiles = decodeStoredDraftFiles({
-    content: revision.content,
-    conflictContent: revision.conflictContent,
-    filePath: revision.filePath,
+  const Silian_storedDraftFiles = Silian_decodeStoredDraftFiles({
+    content: Silian_revision.content,
+    conflictContent: Silian_revision.conflictContent,
+    filePath: Silian_revision.filePath,
   })
 
-  const draftFile = getActiveDraftFile(storedDraftFiles)
+  const Silian_draftFile = Silian_getActiveDraftFile(Silian_storedDraftFiles)
 
-  if (!draftFile.filePath || !revision.prBranchName) {
+  if (!Silian_draftFile.filePath || !Silian_revision.prBranchName) {
     throw new Error("The revision is missing PR metadata")
   }
 
-  if (!revision.baseMainSha || !revision.syncedMainSha) {
+  if (!Silian_revision.baseMainSha || !Silian_revision.syncedMainSha) {
     throw new Error("The revision is missing main SHA metadata")
   }
 
-  const result =
-    storedDraftFiles.files.length === 1
-      ? await rebaseArticleContent({
-          draftId: revisionId,
-          filePath: draftFile.filePath,
-          baseMainSha: revision.baseMainSha,
-          latestMainSha: revision.syncedMainSha,
-          draftContent: draftFile.content,
-          token,
+  const Silian_result =
+    Silian_storedDraftFiles.files.length === 1
+      ? await Silian_rebaseArticleContent({
+          draftId: Silian_revisionId,
+          filePath: Silian_draftFile.filePath,
+          baseMainSha: Silian_revision.baseMainSha,
+          latestMainSha: Silian_revision.syncedMainSha,
+          draftContent: Silian_draftFile.content,
+          token: Silian_token,
         })
-      : await rebaseArticleContentMultiFile({
-          draftId: revisionId,
-          files: storedDraftFiles.files.map((file) => ({
-            filePath: file.filePath,
-            content: file.content,
+      : await Silian_rebaseArticleContentMultiFile({
+          draftId: Silian_revisionId,
+          files: Silian_storedDraftFiles.files.map((Silian_file) => ({
+            filePath: Silian_file.filePath,
+            content: Silian_file.content,
           })),
-          baseMainSha: revision.baseMainSha,
-          latestMainSha: revision.syncedMainSha,
-          token,
+          baseMainSha: Silian_revision.baseMainSha,
+          latestMainSha: Silian_revision.syncedMainSha,
+          token: Silian_token,
         })
 
-  if (result.status === "SUCCESS") {
-    const rebasedDraftFiles = applyRebasedFilesToDraft(
-      storedDraftFiles,
-      result.files,
-      { filePath: draftFile.filePath, content: result.finalContent }
+  if (Silian_result.status === "SUCCESS") {
+    const Silian_rebasedDraftFiles = Silian_applyRebasedFilesToDraft(
+      Silian_storedDraftFiles,
+      Silian_result.files,
+      { filePath: Silian_draftFile.filePath, content: Silian_result.finalContent }
     )
-    await persistRebasedBranchFiles({
-      authorEmail,
-      authorName,
-      branchName: revision.prBranchName,
-      files: rebasedDraftFiles.files.map((file) => ({
-        filePath: file.filePath,
-        content: file.content,
+    await Silian_persistRebasedBranchFiles({
+      authorEmail: Silian_authorEmail,
+      authorName: Silian_authorName,
+      branchName: Silian_revision.prBranchName,
+      files: Silian_rebasedDraftFiles.files.map((Silian_file) => ({
+        filePath: Silian_file.filePath,
+        content: Silian_file.content,
       })),
-      message: `docs: apply fine-grained rebase for ${revision.title}`,
-      token,
+      message: `docs: apply fine-grained rebase for ${Silian_revision.title}`,
+      token: Silian_token,
     })
-    const rebasedDraftStorage = serializeDraftFilesForStorage(rebasedDraftFiles)
-    await prisma.revision.update({
-      where: { id: revisionId },
+    const Silian_rebasedDraftStorage = Silian_serializeDraftFilesForStorage(Silian_rebasedDraftFiles)
+    await Silian_prisma.revision.update({
+      where: { id: Silian_revisionId },
       data: {
         status: "IN_REVIEW",
-        conflictContent: rebasedDraftStorage.conflictContent,
-        content: rebasedDraftStorage.content,
-        filePath: rebasedDraftStorage.filePath,
+        conflictContent: Silian_rebasedDraftStorage.conflictContent,
+        content: Silian_rebasedDraftStorage.content,
+        filePath: Silian_rebasedDraftStorage.filePath,
       },
     })
-  } else if (result.status === "CONFLICT") {
-    const conflictDraftStorage = serializeDraftFilesForStorage(
-      applyRebasedFilesToDraft(storedDraftFiles, result.files, undefined, {
-        filePath: result.conflictFilePath ?? draftFile.filePath,
-        content: result.conflictContent,
+  } else if (Silian_result.status === "CONFLICT") {
+    const Silian_conflictDraftStorage = Silian_serializeDraftFilesForStorage(
+      Silian_applyRebasedFilesToDraft(Silian_storedDraftFiles, Silian_result.files, undefined, {
+        filePath: Silian_result.conflictFilePath ?? Silian_draftFile.filePath,
+        content: Silian_result.conflictContent,
       })
     )
-    await prisma.revision.update({
-      where: { id: revisionId },
+    await Silian_prisma.revision.update({
+      where: { id: Silian_revisionId },
       data: {
         status: "SYNC_CONFLICT",
-        conflictContent: conflictDraftStorage.conflictContent,
-        content: conflictDraftStorage.content,
-        filePath: conflictDraftStorage.filePath,
+        conflictContent: Silian_conflictDraftStorage.conflictContent,
+        content: Silian_conflictDraftStorage.content,
+        filePath: Silian_conflictDraftStorage.filePath,
       },
     })
-  } else if (result.status === "FILE_DELETED_CONFLICT") {
-    const deletedConflictDraftStorage = serializeDraftFilesForStorage(
-      applyRebasedFilesToDraft(storedDraftFiles, result.files)
+  } else if (Silian_result.status === "FILE_DELETED_CONFLICT") {
+    const Silian_deletedConflictDraftStorage = Silian_serializeDraftFilesForStorage(
+      Silian_applyRebasedFilesToDraft(Silian_storedDraftFiles, Silian_result.files)
     )
-    await prisma.revision.update({
-      where: { id: revisionId },
+    await Silian_prisma.revision.update({
+      where: { id: Silian_revisionId },
       data: {
         status: "SYNC_CONFLICT",
-        content: deletedConflictDraftStorage.content,
-        filePath: deletedConflictDraftStorage.filePath,
-        conflictContent: deletedConflictDraftStorage.conflictContent,
+        content: Silian_deletedConflictDraftStorage.content,
+        filePath: Silian_deletedConflictDraftStorage.filePath,
+        conflictContent: Silian_deletedConflictDraftStorage.conflictContent,
       },
     })
   }
 
-  revalidatePaths(
+  Silian_revalidatePaths(
     [
       "/draft",
-      `/draft/${revisionId}`,
+      `/draft/${Silian_revisionId}`,
       "/review",
-      revision.githubPrNum ? `/review/${revision.githubPrNum}` : "",
+      Silian_revision.githubPrNum ? `/review/${Silian_revision.githubPrNum}` : "",
     ].filter(Boolean)
   )
 
-  return { success: true, status: result.status }
+  return { success: true, status: Silian_result.status }
 }
 
-export async function abortRebaseAction(revisionId: string) {
-  const { token } = await requireReviewAdminContext()
+export async function abortRebaseAction(Silian_revisionId: string) {
+  const { token: Silian_token } = await Silian_requireReviewAdminContext()
 
   try {
-    const revision = await prisma.revision.findUnique({
-      where: { id: revisionId },
+    const Silian_revision = await Silian_prisma.revision.findUnique({
+      where: { id: Silian_revisionId },
     })
 
-    if (!revision) {
+    if (!Silian_revision) {
       throw new Error("Revision not found")
     }
 
-    await abortRebase({
-      draftId: revisionId,
-      token,
+    await Silian_abortRebase({
+      draftId: Silian_revisionId,
+      token: Silian_token,
     })
 
-    revalidatePaths(
+    Silian_revalidatePaths(
       [
         "/draft",
-        `/draft/${revisionId}`,
+        `/draft/${Silian_revisionId}`,
         "/review",
-        revision.githubPrNum ? `/review/${revision.githubPrNum}` : "",
+        Silian_revision.githubPrNum ? `/review/${Silian_revision.githubPrNum}` : "",
       ].filter(Boolean)
     )
 
     return { success: true }
-  } catch (error) {
-    throw new Error(formatErrorMessage("Abort rebase failed", error))
+  } catch (Silian_error) {
+    throw new Error(Silian_formatErrorMessage("Abort rebase failed", Silian_error))
   }
 }
 
-export async function keepFileAction(revisionId: string) {
-  const { token, authorName, authorEmail } = await requireReviewAdminContext()
+export async function keepFileAction(Silian_revisionId: string) {
+  const { token: Silian_token, authorName: Silian_authorName, authorEmail: Silian_authorEmail } = await Silian_requireReviewAdminContext()
 
-  const revision = await prisma.revision.findUnique({
-    where: { id: revisionId },
+  const Silian_revision = await Silian_prisma.revision.findUnique({
+    where: { id: Silian_revisionId },
   })
 
-  if (!revision) {
+  if (!Silian_revision) {
     throw new Error("Revision not found")
   }
 
-  const storedDraftFiles = decodeStoredDraftFiles({
-    content: revision.content,
-    conflictContent: revision.conflictContent,
-    filePath: revision.filePath,
+  const Silian_storedDraftFiles = Silian_decodeStoredDraftFiles({
+    content: Silian_revision.content,
+    conflictContent: Silian_revision.conflictContent,
+    filePath: Silian_revision.filePath,
   })
 
-  if (storedDraftFiles.files.length !== 1) {
+  if (Silian_storedDraftFiles.files.length !== 1) {
     throw new Error("Keep file only supports single-file drafts")
   }
 
-  const draftFile = getActiveDraftFile(storedDraftFiles)
+  const Silian_draftFile = Silian_getActiveDraftFile(Silian_storedDraftFiles)
 
-  if (!draftFile.filePath || !revision.prBranchName) {
+  if (!Silian_draftFile.filePath || !Silian_revision.prBranchName) {
     throw new Error("The revision is missing PR metadata")
   }
 
-  await upsertFileOnBranch({
-    authorEmail,
-    authorName,
-    branchName: revision.prBranchName,
-    content: draftFile.content,
-    filePath: draftFile.filePath,
-    message: `docs: keep file despite deletion in main for ${revision.title}`,
-    token,
+  await Silian_upsertFileOnBranch({
+    authorEmail: Silian_authorEmail,
+    authorName: Silian_authorName,
+    branchName: Silian_revision.prBranchName,
+    content: Silian_draftFile.content,
+    filePath: Silian_draftFile.filePath,
+    message: `docs: keep file despite deletion in main for ${Silian_revision.title}`,
+    token: Silian_token,
   })
 
-  const keptDraftStorage = serializeDraftFilesForStorage({
-    activeFileId: storedDraftFiles.activeFileId,
-    folders: storedDraftFiles.folders || [],
+  const Silian_keptDraftStorage = Silian_serializeDraftFilesForStorage({
+    activeFileId: Silian_storedDraftFiles.activeFileId,
+    folders: Silian_storedDraftFiles.folders || [],
     files: [
       {
-        ...draftFile,
+        ...Silian_draftFile,
         conflictContent: undefined,
       },
     ],
   })
 
-  await prisma.revision.update({
-    where: { id: revisionId },
+  await Silian_prisma.revision.update({
+    where: { id: Silian_revisionId },
     data: {
       status: "IN_REVIEW",
-      conflictContent: keptDraftStorage.conflictContent,
-      content: keptDraftStorage.content,
-      filePath: keptDraftStorage.filePath,
-      rebaseState: Prisma.DbNull,
+      conflictContent: Silian_keptDraftStorage.conflictContent,
+      content: Silian_keptDraftStorage.content,
+      filePath: Silian_keptDraftStorage.filePath,
+      rebaseState: Silian_Prisma.DbNull,
     },
   })
 
-  revalidatePaths(
+  Silian_revalidatePaths(
     [
       "/draft",
-      `/draft/${revisionId}`,
+      `/draft/${Silian_revisionId}`,
       "/review",
-      revision.githubPrNum ? `/review/${revision.githubPrNum}` : "",
+      Silian_revision.githubPrNum ? `/review/${Silian_revision.githubPrNum}` : "",
     ].filter(Boolean)
   )
 
   return { success: true }
 }
 
-export async function selectModeAction(revisionId: string, mode: ConflictMode) {
-  reviewLog("selectModeAction", { revisionId, status: "start", mode })
+export async function selectModeAction(Silian_revisionId: string, Silian_mode: ConflictMode) {
+  Silian_reviewLog("selectModeAction", { revisionId: Silian_revisionId, status: "start", mode: Silian_mode })
 
   try {
-    const { token, authorName, authorEmail } = await requireReviewAdminContext()
+    const { token: Silian_token, authorName: Silian_authorName, authorEmail: Silian_authorEmail } = await Silian_requireReviewAdminContext()
 
-    const revision = await prisma.revision.findUnique({
-      where: { id: revisionId },
+    const Silian_revision = await Silian_prisma.revision.findUnique({
+      where: { id: Silian_revisionId },
       include: {
         author: {
           select: {
@@ -1213,107 +1213,107 @@ export async function selectModeAction(revisionId: string, mode: ConflictMode) {
       },
     })
 
-    if (!revision) {
+    if (!Silian_revision) {
       throw new Error("Revision not found")
     }
 
-    if (!revision.prBranchName) {
+    if (!Silian_revision.prBranchName) {
       throw new Error("The revision is missing PR metadata")
     }
 
-    const submitterName = revision.author?.name || authorName
-    const submitterEmail = revision.author?.email || authorEmail
+    const Silian_submitterName = Silian_revision.author?.name || Silian_authorName
+    const Silian_submitterEmail = Silian_revision.author?.email || Silian_authorEmail
 
-    const storedDraftFiles = decodeStoredDraftFiles({
-      content: revision.content,
-      conflictContent: revision.conflictContent,
-      filePath: revision.filePath,
+    const Silian_storedDraftFiles = Silian_decodeStoredDraftFiles({
+      content: Silian_revision.content,
+      conflictContent: Silian_revision.conflictContent,
+      filePath: Silian_revision.filePath,
     })
-    const draftFile = getActiveDraftFile(storedDraftFiles)
+    const Silian_draftFile = Silian_getActiveDraftFile(Silian_storedDraftFiles)
 
-    reviewLog("selectModeAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("selectModeAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "loaded",
-      mode,
-      fileCount: storedDraftFiles.files.length,
+      mode: Silian_mode,
+      fileCount: Silian_storedDraftFiles.files.length,
     })
 
-    if (mode === "FINE_GRAINED") {
-      reviewLog("selectModeAction", {
-        revisionId,
-        prNumber: revision.githubPrNum,
+    if (Silian_mode === "FINE_GRAINED") {
+      Silian_reviewLog("selectModeAction", {
+        revisionId: Silian_revisionId,
+        prNumber: Silian_revision.githubPrNum,
         status: "branch",
         branch: "FINE_GRAINED",
       })
-      if (!revision.baseMainSha || !revision.syncedMainSha) {
+      if (!Silian_revision.baseMainSha || !Silian_revision.syncedMainSha) {
         throw new Error("The revision is missing main SHA metadata")
       }
 
-      const result =
-        storedDraftFiles.files.length === 1
-          ? await rebaseArticleContent({
-              draftId: revisionId,
-              filePath: draftFile.filePath,
-              baseMainSha: revision.baseMainSha,
-              latestMainSha: revision.syncedMainSha,
-              draftContent: draftFile.content,
-              token,
+      const Silian_result =
+        Silian_storedDraftFiles.files.length === 1
+          ? await Silian_rebaseArticleContent({
+              draftId: Silian_revisionId,
+              filePath: Silian_draftFile.filePath,
+              baseMainSha: Silian_revision.baseMainSha,
+              latestMainSha: Silian_revision.syncedMainSha,
+              draftContent: Silian_draftFile.content,
+              token: Silian_token,
             })
-          : await rebaseArticleContentMultiFile({
-              draftId: revisionId,
-              files: storedDraftFiles.files.map((file) => ({
-                filePath: file.filePath,
-                content: file.content,
+          : await Silian_rebaseArticleContentMultiFile({
+              draftId: Silian_revisionId,
+              files: Silian_storedDraftFiles.files.map((Silian_file) => ({
+                filePath: Silian_file.filePath,
+                content: Silian_file.content,
               })),
-              baseMainSha: revision.baseMainSha,
-              latestMainSha: revision.syncedMainSha,
-              token,
+              baseMainSha: Silian_revision.baseMainSha,
+              latestMainSha: Silian_revision.syncedMainSha,
+              token: Silian_token,
             })
 
-      reviewLog("selectModeAction", {
-        revisionId,
-        prNumber: revision.githubPrNum,
+      Silian_reviewLog("selectModeAction", {
+        revisionId: Silian_revisionId,
+        prNumber: Silian_revision.githubPrNum,
         status: "rebase-result",
-        mode,
-        resultStatus: result.status,
+        mode: Silian_mode,
+        resultStatus: Silian_result.status,
       })
 
-      if (result.status === "SUCCESS") {
-        const rebasedDraftFiles = applyRebasedFilesToDraft(
-          storedDraftFiles,
-          result.files,
-          { filePath: draftFile.filePath, content: result.finalContent }
+      if (Silian_result.status === "SUCCESS") {
+        const Silian_rebasedDraftFiles = Silian_applyRebasedFilesToDraft(
+          Silian_storedDraftFiles,
+          Silian_result.files,
+          { filePath: Silian_draftFile.filePath, content: Silian_result.finalContent }
         )
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "force-push-start",
-          prBranchName: revision.prBranchName,
-          fileCount: rebasedDraftFiles.files.length,
+          prBranchName: Silian_revision.prBranchName,
+          fileCount: Silian_rebasedDraftFiles.files.length,
         })
-        await persistRebasedBranchFiles({
-          authorEmail: submitterEmail,
-          authorName: submitterName,
-          branchName: revision.prBranchName,
-          files: rebasedDraftFiles.files.map((file) => ({
-            filePath: file.filePath,
-            content: file.content,
+        await Silian_persistRebasedBranchFiles({
+          authorEmail: Silian_submitterEmail,
+          authorName: Silian_submitterName,
+          branchName: Silian_revision.prBranchName,
+          files: Silian_rebasedDraftFiles.files.map((Silian_file) => ({
+            filePath: Silian_file.filePath,
+            content: Silian_file.content,
           })),
-          message: `docs: apply fine-grained rebase for ${revision.title}`,
-          token,
+          message: `docs: apply fine-grained rebase for ${Silian_revision.title}`,
+          token: Silian_token,
         })
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "force-push-complete",
-          prBranchName: revision.prBranchName,
+          prBranchName: Silian_revision.prBranchName,
         })
-        const rebasedDraftStorage =
-          serializeDraftFilesForStorage(rebasedDraftFiles)
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+        const Silian_rebasedDraftStorage =
+          Silian_serializeDraftFilesForStorage(Silian_rebasedDraftFiles)
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "db-write-before",
           fields: [
             "status",
@@ -1324,19 +1324,19 @@ export async function selectModeAction(revisionId: string, mode: ConflictMode) {
           ],
           nextStatus: "IN_REVIEW",
         })
-        await prisma.revision.update({
-          where: { id: revisionId },
+        await Silian_prisma.revision.update({
+          where: { id: Silian_revisionId },
           data: {
             status: "IN_REVIEW",
-            conflictMode: mode,
-            conflictContent: rebasedDraftStorage.conflictContent,
-            content: rebasedDraftStorage.content,
-            filePath: rebasedDraftStorage.filePath,
+            conflictMode: Silian_mode,
+            conflictContent: Silian_rebasedDraftStorage.conflictContent,
+            content: Silian_rebasedDraftStorage.content,
+            filePath: Silian_rebasedDraftStorage.filePath,
           },
         })
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "db-write-after",
           fields: [
             "status",
@@ -1347,245 +1347,245 @@ export async function selectModeAction(revisionId: string, mode: ConflictMode) {
           ],
           nextStatus: "IN_REVIEW",
         })
-      } else if (result.status === "CONFLICT") {
-        const conflictDraftStorage = serializeDraftFilesForStorage(
-          applyRebasedFilesToDraft(storedDraftFiles, result.files, undefined, {
-            filePath: result.conflictFilePath ?? draftFile.filePath,
-            content: result.conflictContent,
+      } else if (Silian_result.status === "CONFLICT") {
+        const Silian_conflictDraftStorage = Silian_serializeDraftFilesForStorage(
+          Silian_applyRebasedFilesToDraft(Silian_storedDraftFiles, Silian_result.files, undefined, {
+            filePath: Silian_result.conflictFilePath ?? Silian_draftFile.filePath,
+            content: Silian_result.conflictContent,
           })
         )
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "branch-decision",
           branch: "CONFLICT",
         })
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "db-write-before",
           fields: ["status", "conflictContent", "content", "filePath"],
           nextStatus: "SYNC_CONFLICT",
         })
-        await prisma.revision.update({
-          where: { id: revisionId },
+        await Silian_prisma.revision.update({
+          where: { id: Silian_revisionId },
           data: {
             status: "SYNC_CONFLICT",
-            conflictContent: conflictDraftStorage.conflictContent,
-            content: conflictDraftStorage.content,
-            filePath: conflictDraftStorage.filePath,
+            conflictContent: Silian_conflictDraftStorage.conflictContent,
+            content: Silian_conflictDraftStorage.content,
+            filePath: Silian_conflictDraftStorage.filePath,
           },
         })
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "db-write-after",
           fields: ["status", "conflictContent", "content", "filePath"],
           nextStatus: "SYNC_CONFLICT",
         })
-      } else if (result.status === "FILE_DELETED_CONFLICT") {
-        const deletedConflictDraftStorage = serializeDraftFilesForStorage(
-          applyRebasedFilesToDraft(storedDraftFiles, result.files)
+      } else if (Silian_result.status === "FILE_DELETED_CONFLICT") {
+        const Silian_deletedConflictDraftStorage = Silian_serializeDraftFilesForStorage(
+          Silian_applyRebasedFilesToDraft(Silian_storedDraftFiles, Silian_result.files)
         )
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "branch-decision",
           branch: "FILE_DELETED_CONFLICT",
         })
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "db-write-before",
           fields: ["status", "content", "filePath", "conflictContent"],
           nextStatus: "SYNC_CONFLICT",
         })
-        await prisma.revision.update({
-          where: { id: revisionId },
+        await Silian_prisma.revision.update({
+          where: { id: Silian_revisionId },
           data: {
             status: "SYNC_CONFLICT",
-            content: deletedConflictDraftStorage.content,
-            filePath: deletedConflictDraftStorage.filePath,
-            conflictContent: deletedConflictDraftStorage.conflictContent,
+            content: Silian_deletedConflictDraftStorage.content,
+            filePath: Silian_deletedConflictDraftStorage.filePath,
+            conflictContent: Silian_deletedConflictDraftStorage.conflictContent,
           },
         })
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "db-write-after",
           fields: ["status", "content", "filePath", "conflictContent"],
           nextStatus: "SYNC_CONFLICT",
         })
-      } else if (result.status === "NO_CHANGE") {
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+      } else if (Silian_result.status === "NO_CHANGE") {
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "branch-decision",
           branch: "NO_CHANGE",
         })
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "db-write-before",
           fields: ["status", "conflictMode", "conflictContent"],
           nextStatus: "IN_REVIEW",
         })
-        await prisma.revision.update({
-          where: { id: revisionId },
+        await Silian_prisma.revision.update({
+          where: { id: Silian_revisionId },
           data: {
             status: "IN_REVIEW",
-            conflictMode: mode,
+            conflictMode: Silian_mode,
             conflictContent: null,
           },
         })
-        reviewLog("selectModeAction", {
-          revisionId,
-          prNumber: revision.githubPrNum,
+        Silian_reviewLog("selectModeAction", {
+          revisionId: Silian_revisionId,
+          prNumber: Silian_revision.githubPrNum,
           status: "db-write-after",
           fields: ["status", "conflictMode", "conflictContent"],
           nextStatus: "IN_REVIEW",
         })
       }
 
-      revalidatePaths(
-        getReviewRevalidatePaths(revisionId, revision.githubPrNum)
+      Silian_revalidatePaths(
+        Silian_getReviewRevalidatePaths(Silian_revisionId, Silian_revision.githubPrNum)
       )
-      reviewLog("selectModeAction", {
-        revisionId,
-        prNumber: revision.githubPrNum,
+      Silian_reviewLog("selectModeAction", {
+        revisionId: Silian_revisionId,
+        prNumber: Silian_revision.githubPrNum,
         status: "complete",
-        mode,
-        resultStatus: result.status,
-        conflictMode: mode,
+        mode: Silian_mode,
+        resultStatus: Silian_result.status,
+        conflictMode: Silian_mode,
       })
       return {
         success: true,
-        status: result.status,
-        conflictMode: mode,
+        status: Silian_result.status,
+        conflictMode: Silian_mode,
         hasConflicts:
-          result.status === "CONFLICT" ||
-          result.status === "FILE_DELETED_CONFLICT",
+          Silian_result.status === "CONFLICT" ||
+          Silian_result.status === "FILE_DELETED_CONFLICT",
         focusFilePath:
-          result.status === "CONFLICT"
-            ? (result.conflictFilePath ?? draftFile.filePath)
+          Silian_result.status === "CONFLICT"
+            ? (Silian_result.conflictFilePath ?? Silian_draftFile.filePath)
             : null,
       }
     }
 
-    reviewLog("selectModeAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("selectModeAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "branch",
       branch: "SIMPLE",
     })
-    if (!revision.baseMainSha || !revision.syncedMainSha) {
+    if (!Silian_revision.baseMainSha || !Silian_revision.syncedMainSha) {
       throw new Error("The revision is missing main SHA metadata")
     }
 
-    const latestMainSha = await getMainBranchHeadSha(token)
-    const fileInputs = await Promise.all(
-      storedDraftFiles.files.map(async (file) => ({
-        filePath: file.filePath,
-        baseContent: await getArticleFileContent(
-          file.filePath,
-          revision.baseMainSha as string,
-          token
+    const Silian_latestMainSha = await Silian_getMainBranchHeadSha(Silian_token)
+    const Silian_fileInputs = await Promise.all(
+      Silian_storedDraftFiles.files.map(async (Silian_file) => ({
+        filePath: Silian_file.filePath,
+        baseContent: await Silian_getArticleFileContent(
+          Silian_file.filePath,
+          Silian_revision.baseMainSha as string,
+          Silian_token
         ),
-        draftContent: file.content,
-        latestMainContent: await getArticleFileContent(
-          file.filePath,
-          latestMainSha,
-          token
+        draftContent: Silian_file.content,
+        latestMainContent: await Silian_getArticleFileContent(
+          Silian_file.filePath,
+          Silian_latestMainSha,
+          Silian_token
         ),
       }))
     )
-    reviewLog("selectModeAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("selectModeAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "simple-sha-debug",
-      baseMainSha: summarizeSha(revision.baseMainSha as string),
-      syncedMainSha: summarizeSha(revision.syncedMainSha as string),
-      latestMainSha: summarizeSha(latestMainSha),
-      shaMatch: revision.baseMainSha === latestMainSha,
+      baseMainSha: Silian_summarizeSha(Silian_revision.baseMainSha as string),
+      syncedMainSha: Silian_summarizeSha(Silian_revision.syncedMainSha as string),
+      latestMainSha: Silian_summarizeSha(Silian_latestMainSha),
+      shaMatch: Silian_revision.baseMainSha === Silian_latestMainSha,
     })
-    const result = await resolveSimpleConflicts({
-      files: fileInputs,
-      prBranchName: revision.prBranchName,
-      latestMainSha,
-      token,
+    const Silian_result = await Silian_resolveSimpleConflicts({
+      files: Silian_fileInputs,
+      prBranchName: Silian_revision.prBranchName,
+      latestMainSha: Silian_latestMainSha,
+      token: Silian_token,
     })
-    reviewLog("selectModeAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("selectModeAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "simple-merge-result",
-      hasConflicts: result.hasConflicts,
-      fileResults: result.fileResults.map((file) => ({
-        filePath: file.filePath,
-        status: file.status,
-        contentLength: file.content?.length,
+      hasConflicts: Silian_result.hasConflicts,
+      fileResults: Silian_result.fileResults.map((Silian_file) => ({
+        filePath: Silian_file.filePath,
+        status: Silian_file.status,
+        contentLength: Silian_file.content?.length,
       })),
     })
 
-    reviewLog("selectModeAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("selectModeAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "force-push-start",
-      prBranchName: revision.prBranchName,
-      fileCount: storedDraftFiles.files.length,
-      latestMainSha: summarizeSha(latestMainSha),
+      prBranchName: Silian_revision.prBranchName,
+      fileCount: Silian_storedDraftFiles.files.length,
+      latestMainSha: Silian_summarizeSha(Silian_latestMainSha),
     })
-    await forcePushResolvedToPRBranch({
-      resolvedFiles: storedDraftFiles.files.map((file) => ({
-        filePath: file.filePath,
-        content: file.content,
+    await Silian_forcePushResolvedToPRBranch({
+      resolvedFiles: Silian_storedDraftFiles.files.map((Silian_file) => ({
+        filePath: Silian_file.filePath,
+        content: Silian_file.content,
       })),
-      prBranchName: revision.prBranchName,
-      latestMainSha,
+      prBranchName: Silian_revision.prBranchName,
+      latestMainSha: Silian_latestMainSha,
       commitMessage: "chore(review): sync draft to PR branch for review",
-      authorName: submitterName,
-      authorEmail: submitterEmail,
-      token,
+      authorName: Silian_submitterName,
+      authorEmail: Silian_submitterEmail,
+      token: Silian_token,
     })
-    reviewLog("selectModeAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("selectModeAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "force-push-complete",
-      prBranchName: revision.prBranchName,
+      prBranchName: Silian_revision.prBranchName,
     })
 
-    const firstConflictFilePath =
-      result.fileResults.find((file) => file.status === "conflict")?.filePath ??
+    const Silian_firstConflictFilePath =
+      Silian_result.fileResults.find((Silian_file) => Silian_file.status === "conflict")?.filePath ??
       null
-    const mergedDraftFiles = focusDraftFileByPath(
-      normalizeDraftFileCollection({
-        activeFileId: storedDraftFiles.activeFileId,
-        folders: storedDraftFiles.folders || [],
-        files: storedDraftFiles.files.map((file) => {
-          const mergedFile = result.fileResults.find(
-            (candidate) => candidate.filePath === file.filePath
+    const Silian_mergedDraftFiles = Silian_focusDraftFileByPath(
+      Silian_normalizeDraftFileCollection({
+        activeFileId: Silian_storedDraftFiles.activeFileId,
+        folders: Silian_storedDraftFiles.folders || [],
+        files: Silian_storedDraftFiles.files.map((Silian_file) => {
+          const Silian_mergedFile = Silian_result.fileResults.find(
+            (Silian_candidate) => Silian_candidate.filePath === Silian_file.filePath
           )
 
-          if (!mergedFile) {
-            return file
+          if (!Silian_mergedFile) {
+            return Silian_file
           }
 
           return {
-            ...file,
+            ...Silian_file,
             content:
-              mergedFile.status === "clean" ? mergedFile.content : file.content,
-            ...(mergedFile.status === "conflict"
-              ? { conflictContent: mergedFile.content }
+              Silian_mergedFile.status === "clean" ? Silian_mergedFile.content : Silian_file.content,
+            ...(Silian_mergedFile.status === "conflict"
+              ? { conflictContent: Silian_mergedFile.content }
               : { conflictContent: undefined }),
           }
         }),
       }),
-      firstConflictFilePath
+      Silian_firstConflictFilePath
     )
-    const mergedDraftStorage = serializeDraftFilesForStorage(mergedDraftFiles)
+    const Silian_mergedDraftStorage = Silian_serializeDraftFilesForStorage(Silian_mergedDraftFiles)
 
-    reviewLog("selectModeAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("selectModeAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "db-write-before",
       fields: [
         "conflictContent",
@@ -1595,23 +1595,23 @@ export async function selectModeAction(revisionId: string, mode: ConflictMode) {
         "syncedMainSha",
         "conflictMode",
       ],
-      nextStatus: result.hasConflicts ? "SYNC_CONFLICT" : "IN_REVIEW",
-      syncedMainSha: summarizeSha(latestMainSha),
+      nextStatus: Silian_result.hasConflicts ? "SYNC_CONFLICT" : "IN_REVIEW",
+      syncedMainSha: Silian_summarizeSha(Silian_latestMainSha),
     })
-    await prisma.revision.update({
-      where: { id: revisionId },
+    await Silian_prisma.revision.update({
+      where: { id: Silian_revisionId },
       data: {
-        conflictContent: mergedDraftStorage.conflictContent,
-        content: mergedDraftStorage.content,
-        filePath: mergedDraftStorage.filePath,
-        status: result.hasConflicts ? "SYNC_CONFLICT" : "IN_REVIEW",
-        syncedMainSha: latestMainSha,
-        conflictMode: mode,
+        conflictContent: Silian_mergedDraftStorage.conflictContent,
+        content: Silian_mergedDraftStorage.content,
+        filePath: Silian_mergedDraftStorage.filePath,
+        status: Silian_result.hasConflicts ? "SYNC_CONFLICT" : "IN_REVIEW",
+        syncedMainSha: Silian_latestMainSha,
+        conflictMode: Silian_mode,
       },
     })
-    reviewLog("selectModeAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("selectModeAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "db-write-after",
       fields: [
         "conflictContent",
@@ -1621,59 +1621,59 @@ export async function selectModeAction(revisionId: string, mode: ConflictMode) {
         "syncedMainSha",
         "conflictMode",
       ],
-      nextStatus: result.hasConflicts ? "SYNC_CONFLICT" : "IN_REVIEW",
-      syncedMainSha: summarizeSha(latestMainSha),
+      nextStatus: Silian_result.hasConflicts ? "SYNC_CONFLICT" : "IN_REVIEW",
+      syncedMainSha: Silian_summarizeSha(Silian_latestMainSha),
     })
 
-    revalidatePaths(getReviewRevalidatePaths(revisionId, revision.githubPrNum))
+    Silian_revalidatePaths(Silian_getReviewRevalidatePaths(Silian_revisionId, Silian_revision.githubPrNum))
 
-    reviewLog("selectModeAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("selectModeAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "complete",
-      mode,
-      resultStatus: result.hasConflicts ? "CONFLICT" : "CLEAN",
-      conflictMode: mode,
+      mode: Silian_mode,
+      resultStatus: Silian_result.hasConflicts ? "CONFLICT" : "CLEAN",
+      conflictMode: Silian_mode,
     })
     return {
       success: true,
-      status: result.hasConflicts ? "CONFLICT" : "CLEAN",
-      conflictMode: mode,
-      hasConflicts: result.hasConflicts,
-      focusFilePath: firstConflictFilePath,
-      draftSnapshot: buildDraftSnapshot(mergedDraftFiles),
+      status: Silian_result.hasConflicts ? "CONFLICT" : "CLEAN",
+      conflictMode: Silian_mode,
+      hasConflicts: Silian_result.hasConflicts,
+      focusFilePath: Silian_firstConflictFilePath,
+      draftSnapshot: Silian_buildDraftSnapshot(Silian_mergedDraftFiles),
     }
-  } catch (error) {
-    reviewError("selectModeAction", error, {
-      revisionId,
-      mode,
+  } catch (Silian_error) {
+    Silian_reviewError("selectModeAction", Silian_error, {
+      revisionId: Silian_revisionId,
+      mode: Silian_mode,
       status: "error",
     })
-    throw error
+    throw Silian_error
   }
 }
 
 export async function finalizeReviewAction(
-  prNumber: number,
-  options?: {
+  Silian_prNumber: number,
+  Silian_options?: {
     commitTitle?: string
     commitBody?: string
     mergeMethod?: ReviewMergeMethod
   }
 ) {
-  reviewLog("finalizeReviewAction", {
-    prNumber,
+  Silian_reviewLog("finalizeReviewAction", {
+    prNumber: Silian_prNumber,
     status: "start",
-    commitTitleProvided: Boolean(options?.commitTitle),
-    commitBodyProvided: Boolean(options?.commitBody),
-    mergeMethod: options?.mergeMethod ?? "auto",
+    commitTitleProvided: Boolean(Silian_options?.commitTitle),
+    commitBodyProvided: Boolean(Silian_options?.commitBody),
+    mergeMethod: Silian_options?.mergeMethod ?? "auto",
   })
 
   try {
-    const { token, authorName, authorEmail } = await requireReviewAdminContext()
+    const { token: Silian_token, authorName: Silian_authorName, authorEmail: Silian_authorEmail } = await Silian_requireReviewAdminContext()
 
-    const revision = await prisma.revision.findFirst({
-      where: { githubPrNum: prNumber },
+    const Silian_revision = await Silian_prisma.revision.findFirst({
+      where: { githubPrNum: Silian_prNumber },
       include: {
         author: {
           select: {
@@ -1684,230 +1684,230 @@ export async function finalizeReviewAction(
       },
     })
 
-    if (!revision) {
+    if (!Silian_revision) {
       throw new Error("Linked draft not found")
     }
 
-    const submitterName = revision.author?.name || authorName
-    const submitterEmail = revision.author?.email || authorEmail
+    const Silian_submitterName = Silian_revision.author?.name || Silian_authorName
+    const Silian_submitterEmail = Silian_revision.author?.email || Silian_authorEmail
 
-    const conflictMode = (revision as { conflictMode?: ConflictMode | null })
+    const Silian_conflictMode = (Silian_revision as { conflictMode?: ConflictMode | null })
       .conflictMode
-    const rebaseState = revision.rebaseState as RebaseState | null
-    const storedDraftFiles = decodeStoredDraftFiles({
-      content: revision.content,
-      conflictContent: revision.conflictContent,
-      filePath: revision.filePath,
+    const Silian_rebaseState = Silian_revision.rebaseState as RebaseState | null
+    const Silian_storedDraftFiles = Silian_decodeStoredDraftFiles({
+      content: Silian_revision.content,
+      conflictContent: Silian_revision.conflictContent,
+      filePath: Silian_revision.filePath,
     })
 
-    reviewLog("finalizeReviewAction", {
-      prNumber,
-      revisionId: revision.id,
+    Silian_reviewLog("finalizeReviewAction", {
+      prNumber: Silian_prNumber,
+      revisionId: Silian_revision.id,
       status: "loaded",
-      conflictMode,
-      fileCount: storedDraftFiles.files.length,
+      conflictMode: Silian_conflictMode,
+      fileCount: Silian_storedDraftFiles.files.length,
     })
 
-    if (conflictMode === "SIMPLE") {
-      if (!revision.prBranchName || !revision.syncedMainSha) {
+    if (Silian_conflictMode === "SIMPLE") {
+      if (!Silian_revision.prBranchName || !Silian_revision.syncedMainSha) {
         throw new Error("The linked draft is missing PR metadata")
       }
 
       if (
-        storedDraftFiles.files.some((file) =>
-          hasSimpleConflictMarkers(file.content)
+        Silian_storedDraftFiles.files.some((Silian_file) =>
+          Silian_hasSimpleConflictMarkers(Silian_file.content)
         )
       ) {
         throw new Error("Resolve all simple conflicts before finalizing review")
       }
 
-      reviewLog("finalizeReviewAction", {
-        prNumber,
+      Silian_reviewLog("finalizeReviewAction", {
+        prNumber: Silian_prNumber,
         status: "merge-pr-start",
-        mode: conflictMode,
-        mergeMethod: options?.mergeMethod ?? "auto",
+        mode: Silian_conflictMode,
+        mergeMethod: Silian_options?.mergeMethod ?? "auto",
       })
-      await mergePR(
-        prNumber,
+      await Silian_mergePR(
+        Silian_prNumber,
         {
-          mergeMethod: options?.mergeMethod,
-          commitTitle: options?.commitTitle,
-          commitBody: options?.commitBody,
+          mergeMethod: Silian_options?.mergeMethod,
+          commitTitle: Silian_options?.commitTitle,
+          commitBody: Silian_options?.commitBody,
         },
-        token
+        Silian_token
       )
-      reviewLog("finalizeReviewAction", {
-        prNumber,
+      Silian_reviewLog("finalizeReviewAction", {
+        prNumber: Silian_prNumber,
         status: "merge-pr-complete",
-        mode: conflictMode,
+        mode: Silian_conflictMode,
       })
     } else {
-      if (!revision.prBranchName) {
+      if (!Silian_revision.prBranchName) {
         throw new Error("The linked draft is missing PR metadata")
       }
 
-      const latestMainSha = await getMainBranchHeadSha(token)
-      const resolvedFiles =
-        rebaseState?.fileStates &&
-        Object.keys(rebaseState.fileStates).length > 0
-          ? Object.values(rebaseState.fileStates).map((fileState) => ({
-              filePath: fileState.filePath,
-              content: fileState.currentContent,
+      const Silian_latestMainSha = await Silian_getMainBranchHeadSha(Silian_token)
+      const Silian_resolvedFiles =
+        Silian_rebaseState?.fileStates &&
+        Object.keys(Silian_rebaseState.fileStates).length > 0
+          ? Object.values(Silian_rebaseState.fileStates).map((Silian_fileState) => ({
+              filePath: Silian_fileState.filePath,
+              content: Silian_fileState.currentContent,
             }))
-          : storedDraftFiles.files.map((file) => ({
-              filePath: file.filePath,
-              content: file.content,
+          : Silian_storedDraftFiles.files.map((Silian_file) => ({
+              filePath: Silian_file.filePath,
+              content: Silian_file.content,
             }))
 
-      reviewLog("finalizeReviewAction", {
-        prNumber,
+      Silian_reviewLog("finalizeReviewAction", {
+        prNumber: Silian_prNumber,
         status: "force-push-start",
-        mode: conflictMode,
-        prBranchName: revision.prBranchName,
-        fileCount: resolvedFiles.length,
-        latestMainSha: summarizeSha(latestMainSha),
+        mode: Silian_conflictMode,
+        prBranchName: Silian_revision.prBranchName,
+        fileCount: Silian_resolvedFiles.length,
+        latestMainSha: Silian_summarizeSha(Silian_latestMainSha),
       })
-      await forcePushResolvedToPRBranch({
-        resolvedFiles,
-        prBranchName: revision.prBranchName,
-        latestMainSha,
-        authorName: submitterName,
-        authorEmail: submitterEmail,
-        token,
+      await Silian_forcePushResolvedToPRBranch({
+        resolvedFiles: Silian_resolvedFiles,
+        prBranchName: Silian_revision.prBranchName,
+        latestMainSha: Silian_latestMainSha,
+        authorName: Silian_submitterName,
+        authorEmail: Silian_submitterEmail,
+        token: Silian_token,
       })
-      reviewLog("finalizeReviewAction", {
-        prNumber,
+      Silian_reviewLog("finalizeReviewAction", {
+        prNumber: Silian_prNumber,
         status: "force-push-complete",
-        mode: conflictMode,
-        prBranchName: revision.prBranchName,
+        mode: Silian_conflictMode,
+        prBranchName: Silian_revision.prBranchName,
       })
 
-      reviewLog("finalizeReviewAction", {
-        prNumber,
+      Silian_reviewLog("finalizeReviewAction", {
+        prNumber: Silian_prNumber,
         status: "merge-pr-start",
-        mode: conflictMode,
-        mergeMethod: options?.mergeMethod ?? "auto",
+        mode: Silian_conflictMode,
+        mergeMethod: Silian_options?.mergeMethod ?? "auto",
       })
-      await mergePR(
-        prNumber,
+      await Silian_mergePR(
+        Silian_prNumber,
         {
-          mergeMethod: options?.mergeMethod,
-          commitTitle: options?.commitTitle,
-          commitBody: options?.commitBody,
+          mergeMethod: Silian_options?.mergeMethod,
+          commitTitle: Silian_options?.commitTitle,
+          commitBody: Silian_options?.commitBody,
         },
-        token
+        Silian_token
       )
-      reviewLog("finalizeReviewAction", {
-        prNumber,
+      Silian_reviewLog("finalizeReviewAction", {
+        prNumber: Silian_prNumber,
         status: "merge-pr-complete",
-        mode: conflictMode,
+        mode: Silian_conflictMode,
       })
     }
 
     try {
-      reviewLog("finalizeReviewAction", {
-        prNumber,
+      Silian_reviewLog("finalizeReviewAction", {
+        prNumber: Silian_prNumber,
         status: "db-cleanup-start",
         operation: "reconcileDraftAssetsForPRCompletion",
       })
-      await reconcileDraftAssetsForPRCompletion({
-        prNumber,
+      await Silian_reconcileDraftAssetsForPRCompletion({
+        prNumber: Silian_prNumber,
         outcome: "PR-merged",
       })
-      reviewLog("finalizeReviewAction", {
-        prNumber,
+      Silian_reviewLog("finalizeReviewAction", {
+        prNumber: Silian_prNumber,
         status: "db-cleanup-complete",
         operation: "reconcileDraftAssetsForPRCompletion",
       })
-    } catch (reconcileError) {
-      reviewError("finalizeReviewAction", reconcileError, {
-        prNumber,
+    } catch (Silian_reconcileError) {
+      Silian_reviewError("finalizeReviewAction", Silian_reconcileError, {
+        prNumber: Silian_prNumber,
         status: "db-cleanup-error",
         operation: "reconcileDraftAssetsForPRCompletion",
       })
     }
 
-    revalidatePaths(getReviewRevalidatePaths(revision.id, prNumber))
-    reviewLog("finalizeReviewAction", {
-      prNumber,
+    Silian_revalidatePaths(Silian_getReviewRevalidatePaths(Silian_revision.id, Silian_prNumber))
+    Silian_reviewLog("finalizeReviewAction", {
+      prNumber: Silian_prNumber,
       status: "complete",
-      conflictMode,
+      conflictMode: Silian_conflictMode,
     })
     return { success: true }
-  } catch (error) {
-    reviewError("finalizeReviewAction", error, { prNumber, status: "error" })
-    throw error
+  } catch (Silian_error) {
+    Silian_reviewError("finalizeReviewAction", Silian_error, { prNumber: Silian_prNumber, status: "error" })
+    throw Silian_error
   }
 }
 
-export async function abortResolutionAction(revisionId: string) {
-  reviewLog("abortResolutionAction", { revisionId, status: "start" })
+export async function abortResolutionAction(Silian_revisionId: string) {
+  Silian_reviewLog("abortResolutionAction", { revisionId: Silian_revisionId, status: "start" })
 
   try {
-    const { token } = await requireReviewAdminContext()
+    const { token: Silian_token } = await Silian_requireReviewAdminContext()
 
-    const revision = await prisma.revision.findUnique({
-      where: { id: revisionId },
+    const Silian_revision = await Silian_prisma.revision.findUnique({
+      where: { id: Silian_revisionId },
     })
 
-    if (!revision) {
+    if (!Silian_revision) {
       throw new Error("Revision not found")
     }
 
-    const conflictMode = (revision as { conflictMode?: ConflictMode | null })
+    const Silian_conflictMode = (Silian_revision as { conflictMode?: ConflictMode | null })
       .conflictMode
 
-    reviewLog("abortResolutionAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("abortResolutionAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "loaded",
-      conflictMode,
+      conflictMode: Silian_conflictMode,
     })
 
-    if (conflictMode === "FINE_GRAINED") {
-      reviewLog("abortResolutionAction", {
-        revisionId,
-        prNumber: revision.githubPrNum,
+    if (Silian_conflictMode === "FINE_GRAINED") {
+      Silian_reviewLog("abortResolutionAction", {
+        revisionId: Silian_revisionId,
+        prNumber: Silian_revision.githubPrNum,
         status: "abort-rebase-start",
-        mode: conflictMode,
+        mode: Silian_conflictMode,
       })
-      await abortRebase({
-        draftId: revisionId,
-        token,
+      await Silian_abortRebase({
+        draftId: Silian_revisionId,
+        token: Silian_token,
       })
-      reviewLog("abortResolutionAction", {
-        revisionId,
-        prNumber: revision.githubPrNum,
+      Silian_reviewLog("abortResolutionAction", {
+        revisionId: Silian_revisionId,
+        prNumber: Silian_revision.githubPrNum,
         status: "abort-rebase-complete",
-        mode: conflictMode,
+        mode: Silian_conflictMode,
       })
     }
 
-    reviewLog("abortResolutionAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("abortResolutionAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "db-write-before",
       fields:
-        conflictMode === "SIMPLE"
+        Silian_conflictMode === "SIMPLE"
           ? ["conflictContent", "status", "conflictMode"]
           : ["status", "conflictMode"],
       nextStatus: "IN_REVIEW",
       nextConflictMode: null,
     })
-    await prisma.revision.update({
-      where: { id: revisionId },
+    await Silian_prisma.revision.update({
+      where: { id: Silian_revisionId },
       data: {
-        ...(conflictMode === "SIMPLE" ? { conflictContent: null } : {}),
+        ...(Silian_conflictMode === "SIMPLE" ? { conflictContent: null } : {}),
         status: "IN_REVIEW",
         conflictMode: null,
-      } as Prisma.RevisionUpdateInput,
+      } as Silian_Prisma.RevisionUpdateInput,
     })
-    reviewLog("abortResolutionAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("abortResolutionAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "db-write-after",
       fields:
-        conflictMode === "SIMPLE"
+        Silian_conflictMode === "SIMPLE"
           ? ["conflictContent", "status", "conflictMode"]
           : ["status", "conflictMode"],
       nextStatus: "IN_REVIEW",
@@ -1915,61 +1915,61 @@ export async function abortResolutionAction(revisionId: string) {
     })
 
     // Decode original draft files and force-push back to PR branch
-    reviewLog("abortResolutionAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_reviewLog("abortResolutionAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "force-push-start",
     })
 
-    const storedDraftFiles = decodeStoredDraftFiles({
-      content: revision.content,
+    const Silian_storedDraftFiles = Silian_decodeStoredDraftFiles({
+      content: Silian_revision.content,
       conflictContent: null,
-      filePath: revision.filePath,
+      filePath: Silian_revision.filePath,
     })
 
-    const revisionWithAuthor = await prisma.revision.findFirst({
-      where: { id: revisionId },
+    const Silian_revisionWithAuthor = await Silian_prisma.revision.findFirst({
+      where: { id: Silian_revisionId },
       include: { author: { select: { name: true, email: true } } },
     })
-    const submitterName = revisionWithAuthor?.author?.name ?? "gtmc-bot"
-    const submitterEmail =
-      revisionWithAuthor?.author?.email ?? "gtmc-bot@gtmc.dev"
+    const Silian_submitterName = Silian_revisionWithAuthor?.author?.name ?? "gtmc-bot"
+    const Silian_submitterEmail =
+      Silian_revisionWithAuthor?.author?.email ?? "gtmc-bot@gtmc.dev"
 
-    const latestMainSha = await getMainBranchHeadSha(token)
+    const Silian_latestMainSha = await Silian_getMainBranchHeadSha(Silian_token)
 
-    if (revision.prBranchName) {
-      await forcePushResolvedToPRBranch({
-        resolvedFiles: storedDraftFiles.files.map((f) => ({
-          filePath: f.filePath,
-          content: f.content,
+    if (Silian_revision.prBranchName) {
+      await Silian_forcePushResolvedToPRBranch({
+        resolvedFiles: Silian_storedDraftFiles.files.map((Silian_f) => ({
+          filePath: Silian_f.filePath,
+          content: Silian_f.content,
         })),
-        prBranchName: revision.prBranchName,
-        latestMainSha,
+        prBranchName: Silian_revision.prBranchName,
+        latestMainSha: Silian_latestMainSha,
         commitMessage:
           "chore(review): restore draft branch after resolution abort",
-        authorName: submitterName,
-        authorEmail: submitterEmail,
-        token,
+        authorName: Silian_submitterName,
+        authorEmail: Silian_submitterEmail,
+        token: Silian_token,
       })
 
-      reviewLog("abortResolutionAction", {
-        revisionId,
-        prNumber: revision.githubPrNum,
+      Silian_reviewLog("abortResolutionAction", {
+        revisionId: Silian_revisionId,
+        prNumber: Silian_revision.githubPrNum,
         status: "force-push-complete",
-        prBranchName: revision.prBranchName,
+        prBranchName: Silian_revision.prBranchName,
       })
     }
 
-    revalidatePaths(getReviewRevalidatePaths(revisionId, revision.githubPrNum))
-    reviewLog("abortResolutionAction", {
-      revisionId,
-      prNumber: revision.githubPrNum,
+    Silian_revalidatePaths(Silian_getReviewRevalidatePaths(Silian_revisionId, Silian_revision.githubPrNum))
+    Silian_reviewLog("abortResolutionAction", {
+      revisionId: Silian_revisionId,
+      prNumber: Silian_revision.githubPrNum,
       status: "complete",
-      conflictMode,
+      conflictMode: Silian_conflictMode,
     })
     return { success: true }
-  } catch (error) {
-    reviewError("abortResolutionAction", error, { revisionId, status: "error" })
-    throw error
+  } catch (Silian_error) {
+    Silian_reviewError("abortResolutionAction", Silian_error, { revisionId: Silian_revisionId, status: "error" })
+    throw Silian_error
   }
 }

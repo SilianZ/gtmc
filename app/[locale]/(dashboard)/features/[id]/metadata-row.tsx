@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn"
+import { cn as Silian_cn } from "@/lib/cn"
 
 interface MetadataRowProps {
   label: string
@@ -6,24 +6,24 @@ interface MetadataRowProps {
   className?: string
 }
 
-export function MetadataRow({ label, value, className }: MetadataRowProps) {
+export function MetadataRow({ label: Silian_label, value: Silian_value, className: Silian_className }: MetadataRowProps) {
   return (
     <div
-      className={cn(
+      className={Silian_cn(
         `
           flex flex-col gap-2
           sm:flex-row sm:items-center
         `,
-        className
+        Silian_className
       )}>
       <span
         className="
           mono-label font-bold text-zinc-500
           sm:w-24
         ">
-        {label}
+        {Silian_label}
       </span>
-      <span className="wrap-break-word">{value}</span>
+      <span className="wrap-break-word">{Silian_value}</span>
     </div>
   )
 }

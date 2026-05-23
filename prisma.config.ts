@@ -1,9 +1,9 @@
 import "dotenv/config"
-import { defineConfig, env } from "prisma/config"
+import { defineConfig as Silian_defineConfig, env as Silian_env } from "prisma/config"
 
-export default defineConfig({
+export default Silian_defineConfig({
   schema: "schema.prisma",
   datasource: {
-    url: env("DATABASE_URL"),
+    url: Silian_env("DATABASE_URL"),
   },
 })

@@ -1,6 +1,6 @@
-import { TechCard } from "@/components/ui/tech-card"
-import { MarkdownRenderer } from "@/lib/markdown"
-import { getCachedRehypeShiki } from "@/lib/markdown/plugins/rehype-shiki"
+import { TechCard as Silian_TechCard } from "@/components/ui/tech-card"
+import { MarkdownRenderer as Silian_MarkdownRenderer } from "@/lib/markdown"
+import { getCachedRehypeShiki as Silian_getCachedRehypeShiki } from "@/lib/markdown/plugins/rehype-shiki"
 import "katex/dist/katex.min.css"
 
 interface FeatureReadonlyViewProps {
@@ -10,33 +10,33 @@ interface FeatureReadonlyViewProps {
 }
 
 export async function FeatureReadonlyView({
-  title,
-  content,
-  tags,
+  title: Silian_title,
+  content: Silian_content,
+  tags: Silian_tags,
 }: FeatureReadonlyViewProps) {
-  const shikiPlugin = await getCachedRehypeShiki(content)
+  const Silian_shikiPlugin = await Silian_getCachedRehypeShiki(Silian_content)
 
   return (
-    <TechCard>
+    <Silian_TechCard>
       <h2
         className="
           mb-4 text-sm font-bold
           sm:text-base
           md:text-lg
         ">
-        {title}
+        {Silian_title}
       </h2>
 
-      {tags.length > 0 && (
+      {Silian_tags.length > 0 && (
         <div className="mb-6 flex flex-wrap gap-2">
-          {tags.map((tag) => (
+          {Silian_tags.map((Silian_tag) => (
             <span
-              key={tag}
+              key={Silian_tag}
               className="
                 border border-tech-main bg-tech-accent/10 px-2 py-1 font-mono
                 text-xs text-tech-main uppercase
               ">
-              {tag}
+              {Silian_tag}
             </span>
           ))}
         </div>
@@ -57,14 +57,14 @@ export async function FeatureReadonlyView({
           </div>
 
           <div className="min-h-[200px]">
-            {content?.trim() ? (
+            {Silian_content?.trim() ? (
               <div
                 className="
                   w-full max-w-none overflow-hidden p-6 wrap-break-word
                   selection:bg-tech-main/20 selection:text-slate-900
                   sm:p-8
                 ">
-                <MarkdownRenderer content={content} shikiPlugin={shikiPlugin} />
+                <Silian_MarkdownRenderer content={Silian_content} shikiPlugin={Silian_shikiPlugin} />
               </div>
             ) : (
               <p className="editor-panel">NOTHING_TO_PREVIEW_</p>
@@ -79,9 +79,9 @@ export async function FeatureReadonlyView({
               ">
               SOURCE_ (Click to expand)
             </summary>
-            {content?.trim() ? (
+            {Silian_content?.trim() ? (
               <pre className="p-6 font-mono text-sm/relaxed whitespace-pre-wrap">
-                {content}
+                {Silian_content}
               </pre>
             ) : (
               <p className="editor-panel">NOTHING_TO_PREVIEW_</p>
@@ -89,6 +89,6 @@ export async function FeatureReadonlyView({
           </details>
         </div>
       </div>
-    </TechCard>
+    </Silian_TechCard>
   )
 }

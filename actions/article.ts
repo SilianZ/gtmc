@@ -1,188 +1,188 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath as Silian_revalidatePath } from "next/cache"
 
-import { revalidatePaths } from "@/lib/revalidation"
+import { revalidatePaths as Silian_revalidatePaths } from "@/lib/revalidation"
 import {
-  getMainBranchHeadSha,
-  openDraftPullRequest,
+  getMainBranchHeadSha as Silian_getMainBranchHeadSha,
+  openDraftPullRequest as Silian_openDraftPullRequest,
   type BranchFileEntry,
 } from "@/lib/article-submission"
 import {
-  buildMigrationTargets,
+  buildMigrationTargets as Silian_buildMigrationTargets,
   type MigrationAssetInput,
-  parseDraftTempImageRefs,
-  rewriteDraftTempUrls,
+  parseDraftTempImageRefs as Silian_parseDraftTempImageRefs,
+  rewriteDraftTempUrls as Silian_rewriteDraftTempUrls,
 } from "@/lib/draft-markdown"
 import {
-  createDraftFile,
-  decodeStoredDraftFiles,
-  deserializeDraftFilesPayload,
-  getDuplicateDraftFilePaths,
-  normalizeDraftFileCollection,
-  serializeDraftFilesForStorage,
+  createDraftFile as Silian_createDraftFile,
+  decodeStoredDraftFiles as Silian_decodeStoredDraftFiles,
+  deserializeDraftFilesPayload as Silian_deserializeDraftFilesPayload,
+  getDuplicateDraftFilePaths as Silian_getDuplicateDraftFilePaths,
+  normalizeDraftFileCollection as Silian_normalizeDraftFileCollection,
+  serializeDraftFilesForStorage as Silian_serializeDraftFilesForStorage,
   type DraftFileRecord,
 } from "@/lib/draft-files"
-import { deleteDraftAsset, downloadDraftAsset } from "@/lib/draft-storage"
-import { getGithubPatForUser } from "@/lib/auth-context"
-import { requireAuth } from "@/lib/auth-helpers"
-import { getGitHubWriteToken } from "@/lib/github/articles-repo"
-import { prisma } from "@/lib/prisma"
+import { deleteDraftAsset as Silian_deleteDraftAsset, downloadDraftAsset as Silian_downloadDraftAsset } from "@/lib/draft-storage"
+import { getGithubPatForUser as Silian_getGithubPatForUser } from "@/lib/auth-context"
+import { requireAuth as Silian_requireAuth } from "@/lib/auth-helpers"
+import { getGitHubWriteToken as Silian_getGitHubWriteToken } from "@/lib/github/articles-repo"
+import { prisma as Silian_prisma } from "@/lib/prisma"
 import {
-  findDraftAssetsByRevision,
-  findDraftAssetsByRevisionForSubmit,
-  findFailedDraftAssets,
-  markDraftAssetCleanupFailed,
-  markDraftAssetDeleted,
-  markDraftAssetMigrated,
-  markDraftAssetOrphaned,
-  markDraftAssetReferenced,
+  findDraftAssetsByRevision as Silian_findDraftAssetsByRevision,
+  findDraftAssetsByRevisionForSubmit as Silian_findDraftAssetsByRevisionForSubmit,
+  findFailedDraftAssets as Silian_findFailedDraftAssets,
+  markDraftAssetCleanupFailed as Silian_markDraftAssetCleanupFailed,
+  markDraftAssetDeleted as Silian_markDraftAssetDeleted,
+  markDraftAssetMigrated as Silian_markDraftAssetMigrated,
+  markDraftAssetOrphaned as Silian_markDraftAssetOrphaned,
+  markDraftAssetReferenced as Silian_markDraftAssetReferenced,
 } from "@/lib/draft-asset-db"
 
-const EDITABLE_STATUSES = new Set(["DRAFT"])
-const UPLOAD_PLACEHOLDER_RE = /<!--\s*UPLOAD_PENDING_[a-f0-9-]+\s*-->/i
+const Silian_EDITABLE_STATUSES = new Set(["DRAFT"])
+const Silian_UPLOAD_PLACEHOLDER_RE = /<!--\s*UPLOAD_PENDING_[a-f0-9-]+\s*-->/i
 
-async function reconcileDraftAssetReferences(
-  revisionId: string,
-  files: DraftFileRecord[]
+async function Silian_reconcileDraftAssetReferences(
+  Silian_revisionId: string,
+  Silian_files: DraftFileRecord[]
 ) {
-  const tempPrefix = process.env.DRAFT_STORAGE_TEMP_PREFIX ?? "draft-temp"
-  const referencedStoragePaths = new Set<string>()
+  const Silian_tempPrefix = process.env.DRAFT_STORAGE_TEMP_PREFIX ?? "draft-temp"
+  const Silian_referencedStoragePaths = new Set<string>()
 
-  for (const file of files) {
-    const refs = parseDraftTempImageRefs(file.content, tempPrefix)
-    for (const ref of refs) {
-      referencedStoragePaths.add(ref.storagePath)
+  for (const Silian_file of Silian_files) {
+    const Silian_refs = Silian_parseDraftTempImageRefs(Silian_file.content, Silian_tempPrefix)
+    for (const Silian_ref of Silian_refs) {
+      Silian_referencedStoragePaths.add(Silian_ref.storagePath)
     }
   }
 
-  await markDraftAssetReferenced(revisionId, [...referencedStoragePaths])
-  await markDraftAssetOrphaned(revisionId, [...referencedStoragePaths])
+  await Silian_markDraftAssetReferenced(Silian_revisionId, [...Silian_referencedStoragePaths])
+  await Silian_markDraftAssetOrphaned(Silian_revisionId, [...Silian_referencedStoragePaths])
 }
 
-export async function saveDraftAction(formData: FormData) {
-  const session = await requireAuth()
+export async function saveDraftAction(Silian_formData: FormData) {
+  const Silian_session = await Silian_requireAuth()
 
-  const userId = session.user.id
+  const Silian_userId = Silian_session.user.id
 
-  const title = formData.get("title") as string
-  const content = formData.get("content") as string
-  const revisionId = formData.get("revisionId") as string | null
-  const filePath = formData.get("filePath") as string | null
-  const activeFileId = formData.get("activeFileId") as string | null
-  const draftFilesPayload = formData.get("draftFiles") as string | null
-  const token = await getGithubPatForUser(session.user.id)
+  const Silian_title = Silian_formData.get("title") as string
+  const Silian_content = Silian_formData.get("content") as string
+  const Silian_revisionId = Silian_formData.get("revisionId") as string | null
+  const Silian_filePath = Silian_formData.get("filePath") as string | null
+  const Silian_activeFileId = Silian_formData.get("activeFileId") as string | null
+  const Silian_draftFilesPayload = Silian_formData.get("draftFiles") as string | null
+  const Silian_token = await Silian_getGithubPatForUser(Silian_session.user.id)
 
-  const draftFiles =
-    deserializeDraftFilesPayload(draftFilesPayload) ||
-    normalizeDraftFileCollection({
-      activeFileId: activeFileId || undefined,
+  const Silian_draftFiles =
+    Silian_deserializeDraftFilesPayload(Silian_draftFilesPayload) ||
+    Silian_normalizeDraftFileCollection({
+      activeFileId: Silian_activeFileId || undefined,
       files: [
-        createDraftFile({
-          content: content || "",
-          filePath: filePath || "",
+        Silian_createDraftFile({
+          content: Silian_content || "",
+          filePath: Silian_filePath || "",
         }),
       ],
     })
 
-  if (!title) {
+  if (!Silian_title) {
     throw new Error("Title is required")
   }
 
-  const nextDraftStorage = serializeDraftFilesForStorage(draftFiles)
+  const Silian_nextDraftStorage = Silian_serializeDraftFilesForStorage(Silian_draftFiles)
 
-  let savedRevision: { id: string }
+  let Silian_savedRevision: { id: string }
 
-  if (revisionId) {
-    const existing = await prisma.revision.findUnique({
-      where: { id: revisionId },
+  if (Silian_revisionId) {
+    const Silian_existing = await Silian_prisma.revision.findUnique({
+      where: { id: Silian_revisionId },
     })
 
-    if (!existing) {
+    if (!Silian_existing) {
       throw new Error("Draft not found")
     }
 
-    if (existing.authorId !== userId) {
+    if (Silian_existing.authorId !== Silian_userId) {
       throw new Error("Unauthorized")
     }
 
-    if (!EDITABLE_STATUSES.has(existing.status)) {
+    if (!Silian_EDITABLE_STATUSES.has(Silian_existing.status)) {
       throw new Error("Cannot edit a draft that is already in review")
     }
 
-    savedRevision = await prisma.revision.update({
-      where: { id: revisionId },
+    Silian_savedRevision = await Silian_prisma.revision.update({
+      where: { id: Silian_revisionId },
       data: {
-        conflictContent: nextDraftStorage.conflictContent,
-        content: nextDraftStorage.content,
-        filePath: nextDraftStorage.filePath,
-        title,
+        conflictContent: Silian_nextDraftStorage.conflictContent,
+        content: Silian_nextDraftStorage.content,
+        filePath: Silian_nextDraftStorage.filePath,
+        title: Silian_title,
       },
     })
 
-    await reconcileDraftAssetReferences(savedRevision.id, draftFiles.files)
+    await Silian_reconcileDraftAssetReferences(Silian_savedRevision.id, Silian_draftFiles.files)
   } else {
-    const baseMainSha = await getMainBranchHeadSha(token)
-    const createData: Parameters<typeof prisma.revision.create>[0]["data"] = {
-      baseMainSha,
-      content: nextDraftStorage.content,
-      ...(nextDraftStorage.conflictContent
-        ? { conflictContent: nextDraftStorage.conflictContent }
+    const Silian_baseMainSha = await Silian_getMainBranchHeadSha(Silian_token)
+    const Silian_createData: Parameters<typeof Silian_prisma.revision.create>[0]["data"] = {
+      baseMainSha: Silian_baseMainSha,
+      content: Silian_nextDraftStorage.content,
+      ...(Silian_nextDraftStorage.conflictContent
+        ? { conflictContent: Silian_nextDraftStorage.conflictContent }
         : {}),
-      filePath: nextDraftStorage.filePath || undefined,
+      filePath: Silian_nextDraftStorage.filePath || undefined,
       status: "DRAFT",
-      syncedMainSha: baseMainSha,
-      title,
-      author: { connect: { id: userId } },
+      syncedMainSha: Silian_baseMainSha,
+      title: Silian_title,
+      author: { connect: { id: Silian_userId } },
     }
 
-    savedRevision = await prisma.revision.create({
-      data: createData,
+    Silian_savedRevision = await Silian_prisma.revision.create({
+      data: Silian_createData,
     })
 
-    await reconcileDraftAssetReferences(savedRevision.id, draftFiles.files)
+    await Silian_reconcileDraftAssetReferences(Silian_savedRevision.id, Silian_draftFiles.files)
   }
 
-  revalidatePath("/draft")
-  return { success: true, revisionId: savedRevision.id }
+  Silian_revalidatePath("/draft")
+  return { success: true, revisionId: Silian_savedRevision.id }
 }
 
-export async function submitForReviewAction(revisionId: string) {
-  const session = await requireAuth()
+export async function submitForReviewAction(Silian_revisionId: string) {
+  const Silian_session = await Silian_requireAuth()
 
-  if (!revisionId) {
+  if (!Silian_revisionId) {
     throw new Error("Revision ID is required")
   }
 
-  const existing = await prisma.revision.findUnique({
-    where: { id: revisionId },
+  const Silian_existing = await Silian_prisma.revision.findUnique({
+    where: { id: Silian_revisionId },
     include: { author: true },
   })
 
-  if (!existing) {
+  if (!Silian_existing) {
     throw new Error("Revision not found")
   }
 
-  if (existing.authorId !== session.user.id) {
+  if (Silian_existing.authorId !== Silian_session.user.id) {
     throw new Error("Unauthorized")
   }
 
   if (
-    existing.status !== "DRAFT" &&
-    existing.githubPrNum &&
-    (existing.status === "IN_REVIEW" || existing.status === "SYNC_CONFLICT")
+    Silian_existing.status !== "DRAFT" &&
+    Silian_existing.githubPrNum &&
+    (Silian_existing.status === "IN_REVIEW" || Silian_existing.status === "SYNC_CONFLICT")
   ) {
-    return { success: true, status: existing.status }
+    return { success: true, status: Silian_existing.status }
   }
 
-  if (existing.status !== "DRAFT") {
+  if (Silian_existing.status !== "DRAFT") {
     throw new Error("Only a draft can open a PR")
   }
 
-  const submitLock = await prisma.revision.updateMany({
+  const Silian_submitLock = await Silian_prisma.revision.updateMany({
     where: {
-      id: revisionId,
-      authorId: session.user.id,
+      id: Silian_revisionId,
+      authorId: Silian_session.user.id,
       status: "DRAFT",
     },
     data: {
@@ -190,397 +190,397 @@ export async function submitForReviewAction(revisionId: string) {
     },
   })
 
-  if (submitLock.count === 0) {
-    const latestState = await prisma.revision.findUnique({
-      where: { id: revisionId },
+  if (Silian_submitLock.count === 0) {
+    const Silian_latestState = await Silian_prisma.revision.findUnique({
+      where: { id: Silian_revisionId },
       select: { status: true, githubPrNum: true },
     })
 
     if (
-      latestState?.githubPrNum &&
-      (latestState.status === "IN_REVIEW" ||
-        latestState.status === "SYNC_CONFLICT")
+      Silian_latestState?.githubPrNum &&
+      (Silian_latestState.status === "IN_REVIEW" ||
+        Silian_latestState.status === "SYNC_CONFLICT")
     ) {
-      return { success: true, status: latestState.status }
+      return { success: true, status: Silian_latestState.status }
     }
 
     throw new Error(
-      latestState?.status === "PENDING"
+      Silian_latestState?.status === "PENDING"
         ? "Submit already in progress for this draft"
         : "Only a draft can open a PR"
     )
   }
 
   try {
-    const storedDraftFiles = decodeStoredDraftFiles({
-      content: existing.content,
-      conflictContent: existing.conflictContent,
-      filePath: existing.filePath,
+    const Silian_storedDraftFiles = Silian_decodeStoredDraftFiles({
+      content: Silian_existing.content,
+      conflictContent: Silian_existing.conflictContent,
+      filePath: Silian_existing.filePath,
     })
-    const missingFilePath = storedDraftFiles.files.find(
-      (file) => !file.filePath
+    const Silian_missingFilePath = Silian_storedDraftFiles.files.find(
+      (Silian_file) => !Silian_file.filePath
     )
-    if (missingFilePath) {
+    if (Silian_missingFilePath) {
       throw new Error(
         "Every file in a draft requires a file path before opening a PR."
       )
     }
 
-    const duplicateFilePaths = getDuplicateDraftFilePaths(
-      storedDraftFiles.files
+    const Silian_duplicateFilePaths = Silian_getDuplicateDraftFilePaths(
+      Silian_storedDraftFiles.files
     )
-    if (duplicateFilePaths.length > 0) {
+    if (Silian_duplicateFilePaths.length > 0) {
       throw new Error(
-        `Duplicate file paths are not allowed in one draft: ${duplicateFilePaths.join(", ")}`
+        `Duplicate file paths are not allowed in one draft: ${Silian_duplicateFilePaths.join(", ")}`
       )
     }
 
-    const fileWithPendingUpload = storedDraftFiles.files.find((file) =>
-      UPLOAD_PLACEHOLDER_RE.test(file.content)
+    const Silian_fileWithPendingUpload = Silian_storedDraftFiles.files.find((Silian_file) =>
+      Silian_UPLOAD_PLACEHOLDER_RE.test(Silian_file.content)
     )
-    if (fileWithPendingUpload) {
+    if (Silian_fileWithPendingUpload) {
       throw new Error(
-        `Draft still contains upload placeholder in ${fileWithPendingUpload.filePath || "an unsaved file"}. Finish upload before opening a PR.`
+        `Draft still contains upload placeholder in ${Silian_fileWithPendingUpload.filePath || "an unsaved file"}. Finish upload before opening a PR.`
       )
     }
 
-    await reconcileDraftAssetReferences(revisionId, storedDraftFiles.files)
+    await Silian_reconcileDraftAssetReferences(Silian_revisionId, Silian_storedDraftFiles.files)
 
-    const token = getGitHubWriteToken(existing.author.githubPat)
-    const authorName = session.user.name || "GTMC Author"
-    const authorEmail = session.user.email || "author@gtmc.dev"
-    const baseMainSha =
-      existing.baseMainSha || (await getMainBranchHeadSha(token))
+    const Silian_token = Silian_getGitHubWriteToken(Silian_existing.author.githubPat)
+    const Silian_authorName = Silian_session.user.name || "GTMC Author"
+    const Silian_authorEmail = Silian_session.user.email || "author@gtmc.dev"
+    const Silian_baseMainSha =
+      Silian_existing.baseMainSha || (await Silian_getMainBranchHeadSha(Silian_token))
 
-    if (!token) {
+    if (!Silian_token) {
       throw new Error(
         "Failed to create PR: missing GITHUB_ARTICLES_WRITE_PAT or another token with repo write permission."
       )
     }
 
-    const tempPrefix = process.env.DRAFT_STORAGE_TEMP_PREFIX ?? "draft-temp"
-    const parsedRefsByFileId = new Map<
+    const Silian_tempPrefix = process.env.DRAFT_STORAGE_TEMP_PREFIX ?? "draft-temp"
+    const Silian_parsedRefsByFileId = new Map<
       string,
-      ReturnType<typeof parseDraftTempImageRefs>
+      ReturnType<typeof Silian_parseDraftTempImageRefs>
     >()
-    const referencedStoragePaths = new Set<string>()
-    const migrationTargetByStoragePath = new Map<
-      string,
-      { assetId: string; storagePath: string; repoPath: string }
-    >()
-    const migrationTargetsByRepoPath = new Map<
+    const Silian_referencedStoragePaths = new Set<string>()
+    const Silian_migrationTargetByStoragePath = new Map<
       string,
       { assetId: string; storagePath: string; repoPath: string }
     >()
-    const migratedAssetsById = new Map<
+    const Silian_migrationTargetsByRepoPath = new Map<
+      string,
+      { assetId: string; storagePath: string; repoPath: string }
+    >()
+    const Silian_migratedAssetsById = new Map<
       string,
       { assetId: string; repoPath: string }
     >()
-    const allStoragePathsToDownload = new Set<string>()
+    const Silian_allStoragePathsToDownload = new Set<string>()
 
-    for (const file of storedDraftFiles.files) {
-      const refs = parseDraftTempImageRefs(file.content, tempPrefix)
-      parsedRefsByFileId.set(file.id, refs)
+    for (const Silian_file of Silian_storedDraftFiles.files) {
+      const Silian_refs = Silian_parseDraftTempImageRefs(Silian_file.content, Silian_tempPrefix)
+      Silian_parsedRefsByFileId.set(Silian_file.id, Silian_refs)
 
-      for (const ref of refs) {
-        referencedStoragePaths.add(ref.storagePath)
+      for (const Silian_ref of Silian_refs) {
+        Silian_referencedStoragePaths.add(Silian_ref.storagePath)
       }
     }
 
-    if (referencedStoragePaths.size > 0) {
-      const draftAssets = await findDraftAssetsByRevisionForSubmit(revisionId)
-      const draftAssetByStoragePath = new Map(
-        draftAssets.map((asset) => [asset.storagePath, asset])
+    if (Silian_referencedStoragePaths.size > 0) {
+      const Silian_draftAssets = await Silian_findDraftAssetsByRevisionForSubmit(Silian_revisionId)
+      const Silian_draftAssetByStoragePath = new Map(
+        Silian_draftAssets.map((Silian_asset) => [Silian_asset.storagePath, Silian_asset])
       )
 
-      for (const storagePath of referencedStoragePaths) {
-        if (!draftAssetByStoragePath.has(storagePath)) {
+      for (const Silian_storagePath of Silian_referencedStoragePaths) {
+        if (!Silian_draftAssetByStoragePath.has(Silian_storagePath)) {
           throw new Error(
-            `Referenced draft asset is missing from database for revision ${revisionId}: ${storagePath}`
+            `Referenced draft asset is missing from database for revision ${Silian_revisionId}: ${Silian_storagePath}`
           )
         }
       }
 
-      for (const file of storedDraftFiles.files) {
-        const refs = parsedRefsByFileId.get(file.id) || []
-        if (refs.length === 0) {
+      for (const Silian_file of Silian_storedDraftFiles.files) {
+        const Silian_refs = Silian_parsedRefsByFileId.get(Silian_file.id) || []
+        if (Silian_refs.length === 0) {
           continue
         }
 
-        const uniqueStoragePaths = [
-          ...new Set(refs.map((ref) => ref.storagePath)),
+        const Silian_uniqueStoragePaths = [
+          ...new Set(Silian_refs.map((Silian_ref) => Silian_ref.storagePath)),
         ]
-        const unresolvedStoragePaths = uniqueStoragePaths.filter(
-          (storagePath) => !migrationTargetByStoragePath.has(storagePath)
+        const Silian_unresolvedStoragePaths = Silian_uniqueStoragePaths.filter(
+          (Silian_storagePath) => !Silian_migrationTargetByStoragePath.has(Silian_storagePath)
         )
 
-        if (unresolvedStoragePaths.length > 0) {
-          const migrationAssets: MigrationAssetInput[] =
-            unresolvedStoragePaths.map((storagePath) => {
-              const matchingAsset = draftAssetByStoragePath.get(storagePath)
-              if (!matchingAsset) {
+        if (Silian_unresolvedStoragePaths.length > 0) {
+          const Silian_migrationAssets: MigrationAssetInput[] =
+            Silian_unresolvedStoragePaths.map((Silian_storagePath) => {
+              const Silian_matchingAsset = Silian_draftAssetByStoragePath.get(Silian_storagePath)
+              if (!Silian_matchingAsset) {
                 throw new Error(
-                  `Referenced draft asset is missing from database for revision ${revisionId}: ${storagePath}`
+                  `Referenced draft asset is missing from database for revision ${Silian_revisionId}: ${Silian_storagePath}`
                 )
               }
 
               return {
-                id: matchingAsset.id,
-                storagePath: matchingAsset.storagePath,
-                filename: matchingAsset.filename,
-                contentHash: matchingAsset.contentHash,
+                id: Silian_matchingAsset.id,
+                storagePath: Silian_matchingAsset.storagePath,
+                filename: Silian_matchingAsset.filename,
+                contentHash: Silian_matchingAsset.contentHash,
               }
             })
 
-          const migrationTargets = buildMigrationTargets(
-            file.filePath,
-            migrationAssets
+          const Silian_migrationTargets = Silian_buildMigrationTargets(
+            Silian_file.filePath,
+            Silian_migrationAssets
           )
-          for (const target of migrationTargets) {
-            migrationTargetByStoragePath.set(target.storagePath, {
-              assetId: target.assetId,
-              storagePath: target.storagePath,
-              repoPath: target.repoPath,
+          for (const Silian_target of Silian_migrationTargets) {
+            Silian_migrationTargetByStoragePath.set(Silian_target.storagePath, {
+              assetId: Silian_target.assetId,
+              storagePath: Silian_target.storagePath,
+              repoPath: Silian_target.repoPath,
             })
           }
         }
       }
     }
 
-    const rewrittenDraftFiles = storedDraftFiles.files.map((file) => {
-      const refs = parsedRefsByFileId.get(file.id) || []
-      if (refs.length === 0) {
-        return file
+    const Silian_rewrittenDraftFiles = Silian_storedDraftFiles.files.map((Silian_file) => {
+      const Silian_refs = Silian_parsedRefsByFileId.get(Silian_file.id) || []
+      if (Silian_refs.length === 0) {
+        return Silian_file
       }
 
-      const fileUrlToRepoPath = new Map<string, string>()
-      for (const ref of refs) {
-        const migrationTarget = migrationTargetByStoragePath.get(
-          ref.storagePath
+      const Silian_fileUrlToRepoPath = new Map<string, string>()
+      for (const Silian_ref of Silian_refs) {
+        const Silian_migrationTarget = Silian_migrationTargetByStoragePath.get(
+          Silian_ref.storagePath
         )
-        if (!migrationTarget) {
+        if (!Silian_migrationTarget) {
           throw new Error(
-            `Failed to resolve migration target for storage path: ${ref.storagePath}`
+            `Failed to resolve migration target for storage path: ${Silian_ref.storagePath}`
           )
         }
 
-        fileUrlToRepoPath.set(ref.url, migrationTarget.repoPath)
+        Silian_fileUrlToRepoPath.set(Silian_ref.url, Silian_migrationTarget.repoPath)
       }
 
       return {
-        ...file,
-        content: rewriteDraftTempUrls(file.content, fileUrlToRepoPath),
+        ...Silian_file,
+        content: Silian_rewriteDraftTempUrls(Silian_file.content, Silian_fileUrlToRepoPath),
       }
     })
 
-    for (const file of rewrittenDraftFiles) {
-      if (UPLOAD_PLACEHOLDER_RE.test(file.content)) {
+    for (const Silian_file of Silian_rewrittenDraftFiles) {
+      if (Silian_UPLOAD_PLACEHOLDER_RE.test(Silian_file.content)) {
         throw new Error(
-          `Draft still contains upload placeholder in ${file.filePath}. Finish upload before opening a PR.`
+          `Draft still contains upload placeholder in ${Silian_file.filePath}. Finish upload before opening a PR.`
         )
       }
 
-      const staleRefs = parseDraftTempImageRefs(file.content, tempPrefix)
-      if (staleRefs.length > 0) {
+      const Silian_staleRefs = Silian_parseDraftTempImageRefs(Silian_file.content, Silian_tempPrefix)
+      if (Silian_staleRefs.length > 0) {
         throw new Error(
-          `Stale draft-temp URL remained after rewrite in ${file.filePath}.`
+          `Stale draft-temp URL remained after rewrite in ${Silian_file.filePath}.`
         )
       }
     }
 
-    for (const target of migrationTargetByStoragePath.values()) {
-      const repoPathKey = target.repoPath.toLowerCase()
-      if (!migrationTargetsByRepoPath.has(repoPathKey)) {
-        migrationTargetsByRepoPath.set(repoPathKey, target)
+    for (const Silian_target of Silian_migrationTargetByStoragePath.values()) {
+      const Silian_repoPathKey = Silian_target.repoPath.toLowerCase()
+      if (!Silian_migrationTargetsByRepoPath.has(Silian_repoPathKey)) {
+        Silian_migrationTargetsByRepoPath.set(Silian_repoPathKey, Silian_target)
       }
 
-      if (!migratedAssetsById.has(target.assetId)) {
-        migratedAssetsById.set(target.assetId, {
-          assetId: target.assetId,
-          repoPath: target.repoPath,
+      if (!Silian_migratedAssetsById.has(Silian_target.assetId)) {
+        Silian_migratedAssetsById.set(Silian_target.assetId, {
+          assetId: Silian_target.assetId,
+          repoPath: Silian_target.repoPath,
         })
       }
 
-      allStoragePathsToDownload.add(target.storagePath)
+      Silian_allStoragePathsToDownload.add(Silian_target.storagePath)
     }
 
-    const downloadedAssetByStoragePath = new Map<string, Buffer>()
-    if (allStoragePathsToDownload.size > 0) {
+    const Silian_downloadedAssetByStoragePath = new Map<string, Buffer>()
+    if (Silian_allStoragePathsToDownload.size > 0) {
       await Promise.all(
-        [...allStoragePathsToDownload].map(async (storagePath) => {
-          const downloaded = await downloadDraftAsset(storagePath)
-          downloadedAssetByStoragePath.set(storagePath, downloaded)
+        [...Silian_allStoragePathsToDownload].map(async (Silian_storagePath) => {
+          const Silian_downloaded = await Silian_downloadDraftAsset(Silian_storagePath)
+          Silian_downloadedAssetByStoragePath.set(Silian_storagePath, Silian_downloaded)
         })
       )
     }
 
-    const imageEntries: BranchFileEntry[] = [
-      ...migrationTargetsByRepoPath.values(),
-    ].map((target) => {
-      const content = downloadedAssetByStoragePath.get(target.storagePath)
-      if (!content) {
+    const Silian_imageEntries: BranchFileEntry[] = [
+      ...Silian_migrationTargetsByRepoPath.values(),
+    ].map((Silian_target) => {
+      const Silian_content = Silian_downloadedAssetByStoragePath.get(Silian_target.storagePath)
+      if (!Silian_content) {
         throw new Error(
-          `Missing downloaded draft asset content: ${target.storagePath}`
+          `Missing downloaded draft asset content: ${Silian_target.storagePath}`
         )
       }
 
       return {
-        path: target.repoPath,
-        content,
+        path: Silian_target.repoPath,
+        content: Silian_content,
       }
     })
 
-    const result = await openDraftPullRequest({
-      activeFileId: storedDraftFiles.activeFileId,
-      authorEmail,
-      files: rewrittenDraftFiles,
-      ...(imageEntries.length > 0 ? { imageEntries } : {}),
-      title: existing.title,
-      baseMainSha,
-      authorName,
-      draftId: existing.id,
-      token,
+    const Silian_result = await Silian_openDraftPullRequest({
+      activeFileId: Silian_storedDraftFiles.activeFileId,
+      authorEmail: Silian_authorEmail,
+      files: Silian_rewrittenDraftFiles,
+      ...(Silian_imageEntries.length > 0 ? { imageEntries: Silian_imageEntries } : {}),
+      title: Silian_existing.title,
+      baseMainSha: Silian_baseMainSha,
+      authorName: Silian_authorName,
+      draftId: Silian_existing.id,
+      token: Silian_token,
     })
 
-    const syncedDraftStorage = serializeDraftFilesForStorage({
-      activeFileId: result.activeFileId,
+    const Silian_syncedDraftStorage = Silian_serializeDraftFilesForStorage({
+      activeFileId: Silian_result.activeFileId,
       folders: [],
-      files: result.files,
+      files: Silian_result.files,
     })
 
-    if (migratedAssetsById.size > 0) {
-      const migratedAt = new Date()
+    if (Silian_migratedAssetsById.size > 0) {
+      const Silian_migratedAt = new Date()
       await Promise.all(
-        [...migratedAssetsById.values()].map((target) =>
-          markDraftAssetMigrated(
-            target.assetId,
-            target.repoPath,
-            result.prNumber,
-            migratedAt
+        [...Silian_migratedAssetsById.values()].map((Silian_target) =>
+          Silian_markDraftAssetMigrated(
+            Silian_target.assetId,
+            Silian_target.repoPath,
+            Silian_result.prNumber,
+            Silian_migratedAt
           )
         )
       )
     }
 
-    await prisma.revision.update({
-      where: { id: revisionId },
+    await Silian_prisma.revision.update({
+      where: { id: Silian_revisionId },
       data: {
-        baseMainSha,
-        conflictContent: syncedDraftStorage.conflictContent,
-        content: syncedDraftStorage.content,
-        filePath: syncedDraftStorage.filePath,
-        githubPrNum: result.prNumber,
-        githubPrUrl: result.prUrl,
-        prBranchName: result.branchName,
-        status: result.status,
+        baseMainSha: Silian_baseMainSha,
+        conflictContent: Silian_syncedDraftStorage.conflictContent,
+        content: Silian_syncedDraftStorage.content,
+        filePath: Silian_syncedDraftStorage.filePath,
+        githubPrNum: Silian_result.prNumber,
+        githubPrUrl: Silian_result.prUrl,
+        prBranchName: Silian_result.branchName,
+        status: Silian_result.status,
         submittedAt: new Date(),
-        syncedMainSha: result.syncedMainSha,
+        syncedMainSha: Silian_result.syncedMainSha,
       },
     })
 
-    revalidatePaths(["/draft", "/review"])
-    return { success: true, status: result.status }
-  } catch (error) {
-    await prisma.revision.updateMany({
-      where: { id: revisionId, status: "PENDING" },
+    Silian_revalidatePaths(["/draft", "/review"])
+    return { success: true, status: Silian_result.status }
+  } catch (Silian_error) {
+    await Silian_prisma.revision.updateMany({
+      where: { id: Silian_revisionId, status: "PENDING" },
       data: { status: "DRAFT" },
     })
 
-    const message = error instanceof Error ? error.message : "Unknown error"
-    if (message.includes("Resource not accessible by personal access token")) {
+    const Silian_message = Silian_error instanceof Error ? Silian_error.message : "Unknown error"
+    if (Silian_message.includes("Resource not accessible by personal access token")) {
       throw new Error(
         "Failed to create PR: the configured GitHub token cannot create branches in the Articles repo. Set GITHUB_ARTICLES_WRITE_PAT with repo write access on Vercel."
       )
     }
-    throw error
+    throw Silian_error
   }
 }
 
-export async function deleteDraftAction(revisionId: string) {
-  const session = await requireAuth()
+export async function deleteDraftAction(Silian_revisionId: string) {
+  const Silian_session = await Silian_requireAuth()
 
-  const userId = session.user.id
-  const existing = await prisma.revision.findUnique({
-    where: { id: revisionId },
+  const Silian_userId = Silian_session.user.id
+  const Silian_existing = await Silian_prisma.revision.findUnique({
+    where: { id: Silian_revisionId },
   })
 
-  if (!existing) {
+  if (!Silian_existing) {
     throw new Error("Draft not found")
   }
 
-  if (existing.authorId !== userId) {
+  if (Silian_existing.authorId !== Silian_userId) {
     throw new Error("Unauthorized to delete this draft")
   }
 
   if (
-    existing.githubPrNum ||
-    existing.status === "IN_REVIEW" ||
-    existing.status === "SYNC_CONFLICT"
+    Silian_existing.githubPrNum ||
+    Silian_existing.status === "IN_REVIEW" ||
+    Silian_existing.status === "SYNC_CONFLICT"
   ) {
     throw new Error("Cannot delete a draft after a PR has been opened")
   }
 
-  const draftAssets = await findDraftAssetsByRevision(revisionId)
+  const Silian_draftAssets = await Silian_findDraftAssetsByRevision(Silian_revisionId)
 
-  for (const asset of draftAssets) {
+  for (const Silian_asset of Silian_draftAssets) {
     try {
-      await deleteDraftAsset(asset.storagePath)
-      await markDraftAssetDeleted(asset.id)
-    } catch (error) {
-      await markDraftAssetCleanupFailed(
-        asset.id,
-        error instanceof Error ? error.message : "Unknown error"
+      await Silian_deleteDraftAsset(Silian_asset.storagePath)
+      await Silian_markDraftAssetDeleted(Silian_asset.id)
+    } catch (Silian_error) {
+      await Silian_markDraftAssetCleanupFailed(
+        Silian_asset.id,
+        Silian_error instanceof Error ? Silian_error.message : "Unknown error"
       )
     }
   }
 
-  await prisma.revision.delete({
-    where: { id: revisionId },
+  await Silian_prisma.revision.delete({
+    where: { id: Silian_revisionId },
   })
 
-  revalidatePath("/draft")
+  Silian_revalidatePath("/draft")
   return { success: true }
 }
 
-export async function retryCleanupAction(revisionId: string) {
-  const session = await requireAuth()
+export async function retryCleanupAction(Silian_revisionId: string) {
+  const Silian_session = await Silian_requireAuth()
 
-  if (!revisionId) {
+  if (!Silian_revisionId) {
     throw new Error("Revision ID is required")
   }
 
-  const existing = await prisma.revision.findUnique({
-    where: { id: revisionId },
+  const Silian_existing = await Silian_prisma.revision.findUnique({
+    where: { id: Silian_revisionId },
     select: { authorId: true },
   })
 
-  if (!existing) {
+  if (!Silian_existing) {
     throw new Error("Revision not found")
   }
 
-  if (existing.authorId !== session.user.id) {
+  if (Silian_existing.authorId !== Silian_session.user.id) {
     throw new Error("Unauthorized")
   }
 
-  const failedAssets = await findFailedDraftAssets(revisionId)
+  const Silian_failedAssets = await Silian_findFailedDraftAssets(Silian_revisionId)
 
-  let cleaned = 0
-  let failed = 0
+  let Silian_cleaned = 0
+  let Silian_failed = 0
 
-  for (const asset of failedAssets) {
+  for (const Silian_asset of Silian_failedAssets) {
     try {
-      await deleteDraftAsset(asset.storagePath)
-      await markDraftAssetDeleted(asset.id)
-      cleaned += 1
-    } catch (error) {
-      await markDraftAssetCleanupFailed(
-        asset.id,
-        error instanceof Error ? error.message : "Unknown error"
+      await Silian_deleteDraftAsset(Silian_asset.storagePath)
+      await Silian_markDraftAssetDeleted(Silian_asset.id)
+      Silian_cleaned += 1
+    } catch (Silian_error) {
+      await Silian_markDraftAssetCleanupFailed(
+        Silian_asset.id,
+        Silian_error instanceof Error ? Silian_error.message : "Unknown error"
       )
-      failed += 1
+      Silian_failed += 1
     }
   }
 
-  revalidatePath("/draft")
-  return { success: true, cleaned, failed }
+  Silian_revalidatePath("/draft")
+  return { success: true, cleaned: Silian_cleaned, failed: Silian_failed }
 }

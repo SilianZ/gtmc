@@ -1,28 +1,28 @@
 "use client"
 
-import * as React from "react"
-import { useState, useRef, useEffect } from "react"
-import { usePathname } from "@/i18n/navigation"
-import { SidebarClient, type SidebarClientHandle } from "./sidebar-client"
-import { SidebarProvider } from "./sidebar/sidebar-context"
-import { MobileTreeCard } from "./mobile-tree-card"
+import * as Silian_React from "react"
+import { useState as Silian_useState, useRef as Silian_useRef, useEffect as Silian_useEffect } from "react"
+import { usePathname as Silian_usePathname } from "@/i18n/navigation"
+import { SidebarClient as Silian_SidebarClient, type SidebarClientHandle } from "./sidebar-client"
+import { SidebarProvider as Silian_SidebarProvider } from "./sidebar/sidebar-context"
+import { MobileTreeCard as Silian_MobileTreeCard } from "./mobile-tree-card"
 import {
-  ScanConfirmOverlay,
-  SectionRail,
-  SegmentedBar,
+  ScanConfirmOverlay as Silian_ScanConfirmOverlay,
+  SectionRail as Silian_SectionRail,
+  SegmentedBar as Silian_SegmentedBar,
 } from "../features/loading-shell-primitives"
 import type { TreeNode } from "@/types/sidebar-tree"
-import { useTranslations } from "next-intl"
-import { ArticleTocRail } from "@/components/articles/article-toc-rail"
-import { MobileTocBar } from "@/components/articles/mobile-toc-bar"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { ArticleTocRail as Silian_ArticleTocRail } from "@/components/articles/article-toc-rail"
+import { MobileTocBar as Silian_MobileTocBar } from "@/components/articles/mobile-toc-bar"
 
 interface ArticlesLayoutProps {
-  children: React.ReactNode
+  children: Silian_React.ReactNode
   tree: TreeNode[]
 }
 
 interface SidebarTreeWrapperProps {
-  sidebarRef: React.Ref<SidebarClientHandle>
+  sidebarRef: Silian_React.Ref<SidebarClientHandle>
   showPlaceholder: boolean
   onNavigate: () => void
   internalScroll?: boolean
@@ -30,7 +30,7 @@ interface SidebarTreeWrapperProps {
   hideActions?: boolean
 }
 
-function TreeLoadingPlaceholder() {
+function Silian_TreeLoadingPlaceholder() {
   return (
     <div
       className="
@@ -43,8 +43,8 @@ function TreeLoadingPlaceholder() {
         animation: "tree-drop-in 1.05s cubic-bezier(0.16, 1, 0.3, 1) both",
       }}
       aria-hidden="true">
-      <ScanConfirmOverlay className="opacity-40" />
-      <SectionRail
+      <Silian_ScanConfirmOverlay className="opacity-40" />
+      <Silian_SectionRail
         label="TREE_BOOTSTRAP"
         className="mb-3 text-[0.625rem] opacity-75"
       />
@@ -53,27 +53,27 @@ function TreeLoadingPlaceholder() {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <span className="size-1 bg-tech-main/45" />
-            <SegmentedBar opacity="high" className="h-4 w-4/5" />
+            <Silian_SegmentedBar opacity="high" className="h-4 w-4/5" />
           </div>
 
           <div className="nested-list">
             <div className="flex items-center gap-2">
               <span className="h-px w-2 bg-tech-main/40" />
-              <SegmentedBar opacity="medium" className="h-3.5 w-3/4" />
+              <Silian_SegmentedBar opacity="medium" className="h-3.5 w-3/4" />
             </div>
             <div className="flex items-center gap-2">
               <span className="h-px w-2 bg-tech-main/40" />
-              <SegmentedBar opacity="medium" className="h-3.5 w-2/3" />
+              <Silian_SegmentedBar opacity="medium" className="h-3.5 w-2/3" />
             </div>
 
             <div className="ml-2 nested-list">
               <div className="flex items-center gap-2">
                 <span className="size-1 rounded-full bg-tech-main/35" />
-                <SegmentedBar opacity="low" className="h-3 w-3/5" />
+                <Silian_SegmentedBar opacity="low" className="h-3 w-3/5" />
               </div>
               <div className="flex items-center gap-2">
                 <span className="size-1 rounded-full bg-tech-main/35" />
-                <SegmentedBar opacity="low" className="h-3 w-2/5" />
+                <Silian_SegmentedBar opacity="low" className="h-3 w-2/5" />
               </div>
             </div>
           </div>
@@ -82,17 +82,17 @@ function TreeLoadingPlaceholder() {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <span className="size-1 bg-tech-main/45" />
-            <SegmentedBar opacity="high" className="h-4 w-2/3" />
+            <Silian_SegmentedBar opacity="high" className="h-4 w-2/3" />
           </div>
 
           <div className="nested-list">
             <div className="flex items-center gap-2">
               <span className="h-px w-2 bg-tech-main/40" />
-              <SegmentedBar opacity="medium" className="h-3.5 w-3/5" />
+              <Silian_SegmentedBar opacity="medium" className="h-3.5 w-3/5" />
             </div>
             <div className="flex items-center gap-2">
               <span className="h-px w-2 bg-tech-main/40" />
-              <SegmentedBar opacity="low" className="h-3.5 w-1/3" />
+              <Silian_SegmentedBar opacity="low" className="h-3.5 w-1/3" />
             </div>
           </div>
         </div>
@@ -100,15 +100,15 @@ function TreeLoadingPlaceholder() {
         <div className="nested-list">
           <div className="flex items-center gap-2">
             <span className="h-px w-2 bg-tech-main/35" />
-            <SegmentedBar opacity="medium" className="h-3.5 w-1/2" />
+            <Silian_SegmentedBar opacity="medium" className="h-3.5 w-1/2" />
           </div>
           <div className="flex items-center gap-2">
             <span className="h-px w-2 bg-tech-main/35" />
-            <SegmentedBar opacity="low" className="h-3.5 w-2/5" />
+            <Silian_SegmentedBar opacity="low" className="h-3.5 w-2/5" />
           </div>
           <div className="flex items-center gap-2">
             <span className="h-px w-2 bg-tech-main/35" />
-            <SegmentedBar opacity="low" className="h-3.5 w-1/3" />
+            <Silian_SegmentedBar opacity="low" className="h-3.5 w-1/3" />
           </div>
         </div>
       </div>
@@ -116,13 +116,13 @@ function TreeLoadingPlaceholder() {
   )
 }
 
-function SidebarTreeWrapper({
-  sidebarRef,
-  showPlaceholder,
-  onNavigate,
-  internalScroll = false,
-  scrollClass = "",
-  hideActions = false,
+function Silian_SidebarTreeWrapper({
+  sidebarRef: Silian_sidebarRef,
+  showPlaceholder: Silian_showPlaceholder,
+  onNavigate: Silian_onNavigate,
+  internalScroll: Silian_internalScroll = false,
+  scrollClass: Silian_scrollClass = "",
+  hideActions: Silian_hideActions = false,
 }: SidebarTreeWrapperProps) {
   return (
     <div
@@ -133,166 +133,166 @@ function SidebarTreeWrapper({
          [&_ul_ul]:mt-1.5 [&_ul_ul]:mb-3 [&_ul_ul]:border-l [&_ul_ul]:guide-line
          [&_ul_ul]:pl-3
          [&>ul]:pl-0
-         ${showPlaceholder ? "h-full min-h-full pb-0" : ""}
+         ${Silian_showPlaceholder ? "h-full min-h-full pb-0" : ""}
        `}
-      aria-busy={showPlaceholder}>
-      {showPlaceholder ? (
+      aria-busy={Silian_showPlaceholder}>
+      {Silian_showPlaceholder ? (
         <div className="h-full min-h-full pr-4">
-          <TreeLoadingPlaceholder />
+          <Silian_TreeLoadingPlaceholder />
         </div>
       ) : (
-        <SidebarClient
+        <Silian_SidebarClient
           tree={[]}
-          onNavigate={onNavigate}
-          ref={sidebarRef}
-          internalScroll={internalScroll}
-          scrollClass={scrollClass}
-          hideActions={hideActions}
+          onNavigate={Silian_onNavigate}
+          ref={Silian_sidebarRef}
+          internalScroll={Silian_internalScroll}
+          scrollClass={Silian_scrollClass}
+          hideActions={Silian_hideActions}
         />
       )}
     </div>
   )
 }
 
-export function ArticlesLayoutClient({ children, tree }: ArticlesLayoutProps) {
-  const SIDEBAR_HIDDEN_KEY = "gtmc_sidebar_hidden"
-  const [isOpen, setIsOpen] = useState(false)
-  const [isStuck, setIsStuck] = useState(false)
-  const [showFullText, setShowFullText] = useState(true)
-  const [treeData, setTreeData] = useState<TreeNode[]>(tree)
-  const [isTreeLoading, setIsTreeLoading] = useState(tree.length === 0)
-  const [sidebarHidden, setSidebarHidden] = useState(false)
-  const pathname = usePathname()
-  const desktopSidebarRef = useRef<SidebarClientHandle>(null)
-  const floatingCardSidebarRef = useRef<SidebarClientHandle>(null)
-  const t = useTranslations("Sidebar")
-  const tA11y = useTranslations("CommonA11y")
+export function ArticlesLayoutClient({ children: Silian_children, tree: Silian_tree }: ArticlesLayoutProps) {
+  const Silian_SIDEBAR_HIDDEN_KEY = "gtmc_sidebar_hidden"
+  const [Silian_isOpen, Silian_setIsOpen] = Silian_useState(false)
+  const [Silian_isStuck, Silian_setIsStuck] = Silian_useState(false)
+  const [Silian_showFullText, Silian_setShowFullText] = Silian_useState(true)
+  const [Silian_treeData, Silian_setTreeData] = Silian_useState<TreeNode[]>(Silian_tree)
+  const [Silian_isTreeLoading, Silian_setIsTreeLoading] = Silian_useState(Silian_tree.length === 0)
+  const [Silian_sidebarHidden, Silian_setSidebarHidden] = Silian_useState(false)
+  const Silian_pathname = Silian_usePathname()
+  const Silian_desktopSidebarRef = Silian_useRef<SidebarClientHandle>(null)
+  const Silian_floatingCardSidebarRef = Silian_useRef<SidebarClientHandle>(null)
+  const Silian_t = Silian_useTranslations("Sidebar")
+  const Silian_tA11y = Silian_useTranslations("CommonA11y")
 
-  useEffect(() => {
+  Silian_useEffect(() => {
     try {
-      if (localStorage.getItem(SIDEBAR_HIDDEN_KEY) === "true") {
-        setSidebarHidden(true)
+      if (localStorage.getItem(Silian_SIDEBAR_HIDDEN_KEY) === "true") {
+        Silian_setSidebarHidden(true)
       }
     } catch { }
   }, [])
 
-  const toggleSidebarHidden = () => {
-    setSidebarHidden((prev) => {
-      const next = !prev
+  const Silian_toggleSidebarHidden = () => {
+    Silian_setSidebarHidden((Silian_prev) => {
+      const Silian_next = !Silian_prev
       try {
-        localStorage.setItem(SIDEBAR_HIDDEN_KEY, String(next))
+        localStorage.setItem(Silian_SIDEBAR_HIDDEN_KEY, String(Silian_next))
       } catch { }
-      return next
+      return Silian_next
     })
   }
 
-  useEffect(() => {
-    if (pathname) {
-      setIsOpen(false)
+  Silian_useEffect(() => {
+    if (Silian_pathname) {
+      Silian_setIsOpen(false)
     }
-  }, [pathname])
+  }, [Silian_pathname])
 
-  useEffect(() => {
-    const timer = setTimeout(
+  Silian_useEffect(() => {
+    const Silian_timer = setTimeout(
       () => {
-        setShowFullText(!isStuck)
+        Silian_setShowFullText(!Silian_isStuck)
       },
-      isStuck ? 0 : 250
+      Silian_isStuck ? 0 : 250
     )
-    return () => clearTimeout(timer)
-  }, [isStuck])
+    return () => clearTimeout(Silian_timer)
+  }, [Silian_isStuck])
 
-  useEffect(() => {
-    const NAVBAR_HEIGHT = 64
+  Silian_useEffect(() => {
+    const Silian_NAVBAR_HEIGHT = 64
 
-    const handleScroll = () => {
-      const currentlyStuck = window.scrollY > NAVBAR_HEIGHT
-      setIsStuck((prev) => {
-        if (currentlyStuck && !prev) {
-          setIsOpen(false)
+    const Silian_handleScroll = () => {
+      const Silian_currentlyStuck = window.scrollY > Silian_NAVBAR_HEIGHT
+      Silian_setIsStuck((Silian_prev) => {
+        if (Silian_currentlyStuck && !Silian_prev) {
+          Silian_setIsOpen(false)
         }
-        return currentlyStuck
+        return Silian_currentlyStuck
       })
     }
 
     // Sync immediately on mount in case page is already scrolled
-    handleScroll()
+    Silian_handleScroll()
 
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", Silian_handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", Silian_handleScroll)
   }, [])
 
-  useEffect(() => {
-    if (tree.length > 0) {
-      setTreeData(tree)
-      setIsTreeLoading(false)
+  Silian_useEffect(() => {
+    if (Silian_tree.length > 0) {
+      Silian_setTreeData(Silian_tree)
+      Silian_setIsTreeLoading(false)
       return
     }
 
-    const controller = new AbortController()
-    let active = true
+    const Silian_controller = new AbortController()
+    let Silian_active = true
 
-    const loadTree = async () => {
+    const Silian_loadTree = async () => {
       try {
-        setIsTreeLoading(true)
-        const response = await fetch("/api/articles/tree", {
+        Silian_setIsTreeLoading(true)
+        const Silian_response = await fetch("/api/articles/tree", {
           method: "GET",
-          signal: controller.signal,
+          signal: Silian_controller.signal,
         })
 
-        if (!response.ok) {
+        if (!Silian_response.ok) {
           return
         }
 
-        const payload = (await response.json()) as TreeNode[]
-        if (active && Array.isArray(payload)) {
-          setTreeData(payload)
+        const Silian_payload = (await Silian_response.json()) as TreeNode[]
+        if (Silian_active && Array.isArray(Silian_payload)) {
+          Silian_setTreeData(Silian_payload)
         }
-      } catch (error) {
-        if (error instanceof Error && error.name === "AbortError") {
+      } catch (Silian_error) {
+        if (Silian_error instanceof Error && Silian_error.name === "AbortError") {
           return
         }
       } finally {
-        if (active) {
-          setIsTreeLoading(false)
+        if (Silian_active) {
+          Silian_setIsTreeLoading(false)
         }
       }
     }
 
-    void loadTree()
+    void Silian_loadTree()
 
     return () => {
-      active = false
-      controller.abort()
+      Silian_active = false
+      Silian_controller.abort()
     }
-  }, [tree, tree.length])
+  }, [Silian_tree, Silian_tree.length])
 
-  const showTreePlaceholder = isTreeLoading && treeData.length === 0
+  const Silian_showTreePlaceholder = Silian_isTreeLoading && Silian_treeData.length === 0
 
-  const onNavigate = () => setIsOpen(false)
+  const Silian_onNavigate = () => Silian_setIsOpen(false)
 
-  const fixedTreeContent = (
-    <SidebarTreeWrapper
-      sidebarRef={desktopSidebarRef}
-      showPlaceholder={showTreePlaceholder}
-      onNavigate={onNavigate}
+  const Silian_fixedTreeContent = (
+    <Silian_SidebarTreeWrapper
+      sidebarRef={Silian_desktopSidebarRef}
+      showPlaceholder={Silian_showTreePlaceholder}
+      onNavigate={Silian_onNavigate}
       internalScroll
       scrollClass="pr-4"
     />
   )
 
-  const floatingTreeContent = (
-    <SidebarTreeWrapper
-      sidebarRef={floatingCardSidebarRef}
-      showPlaceholder={showTreePlaceholder}
-      onNavigate={onNavigate}
+  const Silian_floatingTreeContent = (
+    <Silian_SidebarTreeWrapper
+      sidebarRef={Silian_floatingCardSidebarRef}
+      showPlaceholder={Silian_showTreePlaceholder}
+      onNavigate={Silian_onNavigate}
       internalScroll
     />
   )
 
   return (
-    <SidebarProvider tree={treeData}>
-      <MobileTocBar />
+    <Silian_SidebarProvider tree={Silian_treeData}>
+      <Silian_MobileTocBar />
       <div
         className="
           relative isolate flex min-h-[calc(100dvh-8rem)] flex-col
@@ -307,16 +307,16 @@ export function ArticlesLayoutClient({ children, tree }: ArticlesLayoutProps) {
             className="relative transition-all duration-500 ease-out"
             style={
               {
-                padding: isStuck ? "1rem 1rem 0 1rem" : "0",
-                justifyContent: isStuck ? "flex-end" : "stretch",
-              } as React.CSSProperties
+                padding: Silian_isStuck ? "1rem 1rem 0 1rem" : "0",
+                justifyContent: Silian_isStuck ? "flex-end" : "stretch",
+              } as Silian_React.CSSProperties
             }>
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                setIsOpen(!isOpen)
+              onClick={(Silian_e) => {
+                Silian_e.preventDefault()
+                Silian_e.stopPropagation()
+                Silian_setIsOpen(!Silian_isOpen)
               }}
               className="
                 absolute cursor-pointer overflow-hidden
@@ -327,37 +327,37 @@ export function ArticlesLayoutClient({ children, tree }: ArticlesLayoutProps) {
               "
               style={
                 {
-                  width: isStuck ? "5rem" : "100%",
-                  minHeight: isStuck ? "" : "3rem",
-                  padding: isStuck ? "0.125rem 0.5rem" : "1rem",
-                  borderBottom: isStuck ? undefined : "1px solid",
-                  boxShadow: isStuck
+                  width: Silian_isStuck ? "5rem" : "100%",
+                  minHeight: Silian_isStuck ? "" : "3rem",
+                  padding: Silian_isStuck ? "0.125rem 0.5rem" : "1rem",
+                  borderBottom: Silian_isStuck ? undefined : "1px solid",
+                  boxShadow: Silian_isStuck
                     ? "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
                     : "none",
-                  right: isStuck ? "1rem" : 0,
-                } as React.CSSProperties
+                  right: Silian_isStuck ? "1rem" : 0,
+                } as Silian_React.CSSProperties
               }
-              aria-label={tA11y("toggleArticleTree")}
-              aria-expanded={isOpen}
+              aria-label={Silian_tA11y("toggleArticleTree")}
+              aria-expanded={Silian_isOpen}
               data-testid="mobile-tree-toggle">
               <div className="relative flex w-full items-center justify-between">
                 <span
                   className="transition-opacity duration-150"
-                  style={{ opacity: showFullText ? 1 : 0 }}>
-                  {t("title")}
+                  style={{ opacity: Silian_showFullText ? 1 : 0 }}>
+                  {Silian_t("title")}
                 </span>
                 <span
                   className="
                     absolute left-1/2 line-clamp-none w-full
                     -translate-x-1/2 transition-opacity
                   "
-                  style={{ opacity: showFullText ? 0 : 1 }}>
-                  {t("titleShort")}
+                  style={{ opacity: Silian_showFullText ? 0 : 1 }}>
+                  {Silian_t("titleShort")}
                 </span>
                 <span
                   className="text-sm font-bold transition-opacity duration-200"
-                  style={{ opacity: showFullText ? 1 : 0 }}>
-                  {isOpen ? "▼" : "▶"}
+                  style={{ opacity: Silian_showFullText ? 1 : 0 }}>
+                  {Silian_isOpen ? "▼" : "▶"}
                 </span>
               </div>
             </button>
@@ -367,7 +367,7 @@ export function ArticlesLayoutClient({ children, tree }: ArticlesLayoutProps) {
           <div
             className={`
               grid transition-all duration-300 ease-out
-              ${isOpen && !isStuck
+              ${Silian_isOpen && !Silian_isStuck
                 ? "grid-rows-[1fr] opacity-100"
                 : "grid-rows-[0fr] opacity-0"
               }
@@ -378,19 +378,19 @@ export function ArticlesLayoutClient({ children, tree }: ArticlesLayoutProps) {
                   max-h-[calc(100dvh-12rem)] overflow-y-auto overscroll-contain
                   border-t guide-line bg-white/95 px-4 pt-3 pb-4
                 ">
-                {fixedTreeContent}
+                {Silian_fixedTreeContent}
               </div>
             </div>
           </div>
         </div>
 
         {/* Mobile floating tree card */}
-        <MobileTreeCard
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-          isFloating={isStuck}>
-          {floatingTreeContent}
-        </MobileTreeCard>
+        <Silian_MobileTreeCard
+          isOpen={Silian_isOpen}
+          onClose={() => Silian_setIsOpen(false)}
+          isFloating={Silian_isStuck}>
+          {Silian_floatingTreeContent}
+        </Silian_MobileTreeCard>
 
         {/* Desktop sidebar */}
         <div
@@ -399,7 +399,7 @@ export function ArticlesLayoutClient({ children, tree }: ArticlesLayoutProps) {
             md:block
           "
           data-sidebar-wrapper
-          data-sidebar-hidden={sidebarHidden ? "" : undefined}>
+          data-sidebar-hidden={Silian_sidebarHidden ? "" : undefined}>
           <div className="flex h-full">
             <aside
               className="
@@ -409,9 +409,9 @@ export function ArticlesLayoutClient({ children, tree }: ArticlesLayoutProps) {
                 lg:w-80
               "
               style={{
-                width: sidebarHidden ? 0 : undefined,
-                opacity: sidebarHidden ? 0 : 1,
-                borderRightWidth: sidebarHidden ? 0 : undefined,
+                width: Silian_sidebarHidden ? 0 : undefined,
+                opacity: Silian_sidebarHidden ? 0 : 1,
+                borderRightWidth: Silian_sidebarHidden ? 0 : undefined,
               }}>
               <div
                 className="
@@ -448,18 +448,18 @@ export function ArticlesLayoutClient({ children, tree }: ArticlesLayoutProps) {
                     </div>
                   </div>
 
-                  {showTreePlaceholder ? (
+                  {Silian_showTreePlaceholder ? (
                     <div
                       className="
                         custom-left-scrollbar h-full min-h-0 flex-1
                         overflow-y-auto
                       ">
-                      <TreeLoadingPlaceholder />
+                      <Silian_TreeLoadingPlaceholder />
                     </div>
                   ) : (
-                    <SidebarClient
-                      ref={desktopSidebarRef}
-                      tree={treeData}
+                    <Silian_SidebarClient
+                      ref={Silian_desktopSidebarRef}
+                      tree={Silian_treeData}
                       internalScroll
                       scrollClass="pr-4"
                     />
@@ -472,13 +472,13 @@ export function ArticlesLayoutClient({ children, tree }: ArticlesLayoutProps) {
               <div className="sticky top-[50vh] -translate-y-1/2 justify-center overflow-visible">
                 <button
                   type="button"
-                  onClick={toggleSidebarHidden}
+                  onClick={Silian_toggleSidebarHidden}
                   aria-label={
-                    sidebarHidden
-                      ? tA11y("showSidebar")
-                      : tA11y("hideSidebar")
+                    Silian_sidebarHidden
+                      ? Silian_tA11y("showSidebar")
+                      : Silian_tA11y("hideSidebar")
                   }
-                  aria-expanded={!sidebarHidden}
+                  aria-expanded={!Silian_sidebarHidden}
                   data-sidebar-toggle=""
                   className="
                       absolute top-0 -left-3 z-40 flex size-6
@@ -492,12 +492,12 @@ export function ArticlesLayoutClient({ children, tree }: ArticlesLayoutProps) {
                     className="
                       text-[0.5rem] leading-none font-bold select-none
                     ">
-                    {sidebarHidden ? "▶" : "◀"}
+                    {Silian_sidebarHidden ? "▶" : "◀"}
                   </span>
                 </button>
                 <span className="absolute top-4 -right-3 inline-block text-right font-mono text-[0.625rem] font-bold text-tech-main/40">
                   {" "}
-                  {sidebarHidden ? "table of contents" : ""}
+                  {Silian_sidebarHidden ? "table of contents" : ""}
                 </span>
               </div>
             </div>
@@ -508,7 +508,7 @@ export function ArticlesLayoutClient({ children, tree }: ArticlesLayoutProps) {
           className={`
             relative my-6 w-full flex-1 transition-all duration-300
             ease-[cubic-bezier(0.16,1,0.3,1)]
-            ${sidebarHidden
+            ${Silian_sidebarHidden
               ? `
                   md:max-w-3xl
                   xl:max-w-3xl
@@ -521,11 +521,11 @@ export function ArticlesLayoutClient({ children, tree }: ArticlesLayoutProps) {
                 `
             }
           `}>
-          {children}
+          {Silian_children}
         </main>
 
-        <ArticleTocRail />
+        <Silian_ArticleTocRail />
       </div>
-    </SidebarProvider>
+    </Silian_SidebarProvider>
   )
 }

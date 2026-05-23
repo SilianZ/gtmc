@@ -1,519 +1,519 @@
 "use server"
 
-import { requireAuth } from "@/lib/auth-helpers"
+import { requireAuth as Silian_requireAuth } from "@/lib/auth-helpers"
 import {
-  getCurrentUserAuthContext,
-  getGithubPatForUser,
-  requireAdmin,
+  getCurrentUserAuthContext as Silian_getCurrentUserAuthContext,
+  getGithubPatForUser as Silian_getGithubPatForUser,
+  requireAdmin as Silian_requireAdmin,
 } from "@/lib/auth-context"
-import { revalidatePath } from "next/cache"
-import { prisma } from "@/lib/prisma"
-import { PATHS } from "@/lib/cache-config"
+import { revalidatePath as Silian_revalidatePath } from "next/cache"
+import { prisma as Silian_prisma } from "@/lib/prisma"
+import { PATHS as Silian_PATHS } from "@/lib/cache-config"
 import {
-  addIssueComment,
-  createIssue,
-  updateIssue,
-  setIssueLabels,
-  setIssueState,
-  parseIssueBody,
-  serializeIssueBody,
-  serializeCommentBody,
-  serializeSystemComment,
-  getGithubLoginByAccountId,
-  getGithubLoginByToken,
-  ensureLabel,
-  tagsToLabels,
-  statusToLabels,
-  labelsToStatus,
-  labelsToTags,
-  getIssue,
-  getGithubEmailVisibility,
-  createMetadataFromSession,
-  parseIssueNumber,
+  addIssueComment as Silian_addIssueComment,
+  createIssue as Silian_createIssue,
+  updateIssue as Silian_updateIssue,
+  setIssueLabels as Silian_setIssueLabels,
+  setIssueState as Silian_setIssueState,
+  parseIssueBody as Silian_parseIssueBody,
+  serializeIssueBody as Silian_serializeIssueBody,
+  serializeCommentBody as Silian_serializeCommentBody,
+  serializeSystemComment as Silian_serializeSystemComment,
+  getGithubLoginByAccountId as Silian_getGithubLoginByAccountId,
+  getGithubLoginByToken as Silian_getGithubLoginByToken,
+  ensureLabel as Silian_ensureLabel,
+  tagsToLabels as Silian_tagsToLabels,
+  statusToLabels as Silian_statusToLabels,
+  labelsToStatus as Silian_labelsToStatus,
+  labelsToTags as Silian_labelsToTags,
+  getIssue as Silian_getIssue,
+  getGithubEmailVisibility as Silian_getGithubEmailVisibility,
+  createMetadataFromSession as Silian_createMetadataFromSession,
+  parseIssueNumber as Silian_parseIssueNumber,
   type IssueMetadata,
 } from "@/lib/github"
 
-async function sendQQBotNotification(payload: {
+async function Silian_sendQQBotNotification(Silian_payload: {
   type?: string
   text: string
   data?: Record<string, unknown>
 }) {
-  const QQ_BOT_WEBHOOK = process.env.QQ_BOT_WEBHOOK || ""
+  const Silian_QQ_BOT_WEBHOOK = process.env.QQ_BOT_WEBHOOK || ""
 
-  if (!QQ_BOT_WEBHOOK) {
-    console.log("[Mock QQ Bot] Would send payload to webhook: ", payload.text)
+  if (!Silian_QQ_BOT_WEBHOOK) {
+    console.log("[Mock QQ Bot] Would send payload to webhook: ", Silian_payload.text)
     return
   }
 
   try {
-    const res = await fetch(QQ_BOT_WEBHOOK, {
+    const Silian_res = await fetch(Silian_QQ_BOT_WEBHOOK, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       // Send a structured payload that AstrBot can easily parse in a custom plugin
-      body: JSON.stringify(payload),
+      body: JSON.stringify(Silian_payload),
     })
 
-    if (!res.ok) {
-      console.error("QQ Bot Webhook returned error HTTP status:", res.status)
+    if (!Silian_res.ok) {
+      console.error("QQ Bot Webhook returned error HTTP status:", Silian_res.status)
     }
-  } catch (error) {
-    console.error("Failed to send QQ Bot Notification:", error)
+  } catch (Silian_error) {
+    console.error("Failed to send QQ Bot Notification:", Silian_error)
   }
 }
 
-async function getFeatureByIssueNumber(issueNumber: number) {
-  const issue = await getIssue(issueNumber)
-  if (!issue) return null
-  const parsed = parseIssueBody(issue.body)
-  return { issue, parsed }
+async function Silian_getFeatureByIssueNumber(Silian_issueNumber: number) {
+  const Silian_issue = await Silian_getIssue(Silian_issueNumber)
+  if (!Silian_issue) return null
+  const Silian_parsed = Silian_parseIssueBody(Silian_issue.body)
+  return { issue: Silian_issue, parsed: Silian_parsed }
 }
 
-async function resolveGithubLoginFromAccount(
-  account: {
+async function Silian_resolveGithubLoginFromAccount(
+  Silian_account: {
     providerAccountId: string
     access_token: string | null
   } | null
 ): Promise<string | null> {
-  if (!account) {
+  if (!Silian_account) {
     return null
   }
 
-  const loginByAccountId = await getGithubLoginByAccountId(
-    account.providerAccountId
+  const Silian_loginByAccountId = await Silian_getGithubLoginByAccountId(
+    Silian_account.providerAccountId
   )
-  if (loginByAccountId) {
-    return loginByAccountId
+  if (Silian_loginByAccountId) {
+    return Silian_loginByAccountId
   }
 
-  if (!account.access_token) {
+  if (!Silian_account.access_token) {
     return null
   }
 
-  return getGithubLoginByToken(account.access_token)
+  return Silian_getGithubLoginByToken(Silian_account.access_token)
 }
 
-async function resolveMentionToken(
-  appUserId: string,
-  displayName: string | null
+async function Silian_resolveMentionToken(
+  Silian_appUserId: string,
+  Silian_displayName: string | null
 ): Promise<string> {
   try {
-    const account = await prisma.account.findFirst({
-      where: { provider: "github", userId: appUserId },
+    const Silian_account = await Silian_prisma.account.findFirst({
+      where: { provider: "github", userId: Silian_appUserId },
     })
-    if (account) {
-      const login = await resolveGithubLoginFromAccount(account)
-      if (login) {
-        return `@${login}`
+    if (Silian_account) {
+      const Silian_login = await Silian_resolveGithubLoginFromAccount(Silian_account)
+      if (Silian_login) {
+        return `@${Silian_login}`
       }
     }
   } catch {
     // fallthrough to plain text
   }
-  return displayName ?? appUserId
+  return Silian_displayName ?? Silian_appUserId
 }
 
-function getMetadataForWrite(
-  metadata: IssueMetadata | null,
-  fallbackAppUserId: string
+function Silian_getMetadataForWrite(
+  Silian_metadata: IssueMetadata | null,
+  Silian_fallbackAppUserId: string
 ): IssueMetadata {
-  if (metadata) {
-    return metadata
+  if (Silian_metadata) {
+    return Silian_metadata
   }
 
   return {
-    appUserId: fallbackAppUserId,
+    appUserId: Silian_fallbackAppUserId,
     authorName: null,
     authorEmail: null,
   }
 }
 
-export async function createFeature(data: {
+export async function createFeature(Silian_data: {
   title: string
   content: string
   tags: string[]
 }) {
-  const session = await requireAuth()
+  const Silian_session = await Silian_requireAuth()
 
-  const metadata = createMetadataFromSession(session)
+  const Silian_metadata = Silian_createMetadataFromSession(Silian_session)
 
-  const body = serializeIssueBody(data.content, metadata, undefined)
+  const Silian_body = Silian_serializeIssueBody(Silian_data.content, Silian_metadata, undefined)
 
   // Ensure all tag labels exist on the repo
-  for (const tag of data.tags) {
-    await ensureLabel(tag)
+  for (const Silian_tag of Silian_data.tags) {
+    await Silian_ensureLabel(Silian_tag)
   }
 
-  const labels = [...tagsToLabels(data.tags), ...statusToLabels("PENDING")]
+  const Silian_labels = [...Silian_tagsToLabels(Silian_data.tags), ...Silian_statusToLabels("PENDING")]
 
-  const created = await createIssue(data.title, body, labels)
+  const Silian_created = await Silian_createIssue(Silian_data.title, Silian_body, Silian_labels)
 
   // Send structured payload for AstrBot
-  await sendQQBotNotification({
+  await Silian_sendQQBotNotification({
     type: "new_feature",
-    text: `New feature report from [${session.user.name || session.user.email}]: ${data.title}\nIssue #${created.number}`,
+    text: `New feature report from [${Silian_session.user.name || Silian_session.user.email}]: ${Silian_data.title}\nIssue #${Silian_created.number}`,
     data: {
-      id: String(created.number),
-      issueNumber: created.number,
-      title: data.title,
-      author: session.user.name || session.user.email,
-      tags: data.tags,
-      url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/features/${created.number}`,
+      id: String(Silian_created.number),
+      issueNumber: Silian_created.number,
+      title: Silian_data.title,
+      author: Silian_session.user.name || Silian_session.user.email,
+      tags: Silian_data.tags,
+      url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/features/${Silian_created.number}`,
     },
   })
 
-  revalidatePath(PATHS.FEATURES)
+  Silian_revalidatePath(Silian_PATHS.FEATURES)
   return {
     success: true,
     feature: {
-      id: String(created.number),
-      title: data.title,
-      content: data.content,
-      tags: data.tags,
+      id: String(Silian_created.number),
+      title: Silian_data.title,
+      content: Silian_data.content,
+      tags: Silian_data.tags,
     },
   }
 }
 
 export async function updateFeature(
-  id: string,
-  data: { title: string; content: string; tags: string[] }
+  Silian_id: string,
+  Silian_data: { title: string; content: string; tags: string[] }
 ) {
-  const session = await requireAuth()
+  const Silian_session = await Silian_requireAuth()
 
-  const issueNumber = parseIssueNumber(id)
+  const Silian_issueNumber = Silian_parseIssueNumber(Silian_id)
 
-  const feature = await getFeatureByIssueNumber(issueNumber)
-  if (!feature) throw new Error("Not found")
+  const Silian_feature = await Silian_getFeatureByIssueNumber(Silian_issueNumber)
+  if (!Silian_feature) throw new Error("Not found")
 
-  if (feature.issue.state === "closed") {
+  if (Silian_feature.issue.state === "closed") {
     throw new Error("Feature is deleted and read-only")
   }
 
-  const { issue, parsed } = feature
-  const authContext = await getCurrentUserAuthContext(session.user.id)
+  const { issue: Silian_issue, parsed: Silian_parsed } = Silian_feature
+  const Silian_authContext = await Silian_getCurrentUserAuthContext(Silian_session.user.id)
 
   if (
-    parsed.metadata?.appUserId !== session.user.id &&
-    authContext.role !== "ADMIN"
+    Silian_parsed.metadata?.appUserId !== Silian_session.user.id &&
+    Silian_authContext.role !== "ADMIN"
   ) {
     throw new Error("Forbidden")
   }
 
-  for (const tag of data.tags) {
-    await ensureLabel(tag)
+  for (const Silian_tag of Silian_data.tags) {
+    await Silian_ensureLabel(Silian_tag)
   }
 
-  const currentStatus = labelsToStatus(issue.labels)
-  const newLabels = [
-    ...tagsToLabels(data.tags),
-    ...statusToLabels(currentStatus),
+  const Silian_currentStatus = Silian_labelsToStatus(Silian_issue.labels)
+  const Silian_newLabels = [
+    ...Silian_tagsToLabels(Silian_data.tags),
+    ...Silian_statusToLabels(Silian_currentStatus),
   ]
 
-  const fallbackMetadata: IssueMetadata = {
+  const Silian_fallbackMetadata: IssueMetadata = {
     appUserId: "",
     authorName: null,
     authorEmail: null,
   }
-  const newBody = serializeIssueBody(
-    data.content,
-    parsed.metadata ?? fallbackMetadata,
-    parsed.explanation ?? undefined
+  const Silian_newBody = Silian_serializeIssueBody(
+    Silian_data.content,
+    Silian_parsed.metadata ?? Silian_fallbackMetadata,
+    Silian_parsed.explanation ?? undefined
   )
 
-  await updateIssue(issue.number, {
-    title: data.title,
-    body: newBody,
-    labels: newLabels,
+  await Silian_updateIssue(Silian_issue.number, {
+    title: Silian_data.title,
+    body: Silian_newBody,
+    labels: Silian_newLabels,
   })
 
-  revalidatePath(PATHS.FEATURES)
-  revalidatePath(PATHS.FEATURE(id))
+  Silian_revalidatePath(Silian_PATHS.FEATURES)
+  Silian_revalidatePath(Silian_PATHS.FEATURE(Silian_id))
   return {
     success: true,
     feature: {
-      id,
-      title: data.title,
-      content: data.content,
-      tags: data.tags,
+      id: Silian_id,
+      title: Silian_data.title,
+      content: Silian_data.content,
+      tags: Silian_data.tags,
     },
   }
 }
 
 export async function updateFeatureExplanation(
-  id: string,
-  explanation: string
+  Silian_id: string,
+  Silian_explanation: string
 ) {
-  const session = await requireAuth()
+  const Silian_session = await Silian_requireAuth()
 
-  const issueNumber = parseIssueNumber(id)
+  const Silian_issueNumber = Silian_parseIssueNumber(Silian_id)
 
-  const feature = await getFeatureByIssueNumber(issueNumber)
-  if (!feature) throw new Error("Not found")
+  const Silian_feature = await Silian_getFeatureByIssueNumber(Silian_issueNumber)
+  if (!Silian_feature) throw new Error("Not found")
 
-  if (feature.issue.state === "closed") {
+  if (Silian_feature.issue.state === "closed") {
     throw new Error("Feature is deleted and read-only")
   }
 
-  const { issue, parsed } = feature
+  const { issue: Silian_issue, parsed: Silian_parsed } = Silian_feature
 
-  const authContext = await getCurrentUserAuthContext(session.user.id)
-  const isAdmin = authContext.role === "ADMIN"
-  const isAssignee = parsed.metadata?.assigneeId === session.user.id
-  if (!isAssignee && !isAdmin) throw new Error("Forbidden")
+  const Silian_authContext = await Silian_getCurrentUserAuthContext(Silian_session.user.id)
+  const Silian_isAdmin = Silian_authContext.role === "ADMIN"
+  const Silian_isAssignee = Silian_parsed.metadata?.assigneeId === Silian_session.user.id
+  if (!Silian_isAssignee && !Silian_isAdmin) throw new Error("Forbidden")
 
-  const newBody = serializeIssueBody(
-    parsed.userContent,
-    parsed.metadata ?? {
+  const Silian_newBody = Silian_serializeIssueBody(
+    Silian_parsed.userContent,
+    Silian_parsed.metadata ?? {
       appUserId: "",
       authorName: null,
       authorEmail: null,
     },
-    explanation || undefined
+    Silian_explanation || undefined
   )
 
-  await updateIssue(issue.number, { body: newBody })
+  await Silian_updateIssue(Silian_issue.number, { body: Silian_newBody })
 
-  revalidatePath(`/features/${id}`)
+  Silian_revalidatePath(`/features/${Silian_id}`)
   return { success: true }
 }
 
-export async function assignFeature(id: string) {
-  const session = await requireAuth()
+export async function assignFeature(Silian_id: string) {
+  const Silian_session = await Silian_requireAuth()
 
-  const issueNumber = parseIssueNumber(id)
+  const Silian_issueNumber = Silian_parseIssueNumber(Silian_id)
 
-  const feature = await getFeatureByIssueNumber(issueNumber)
-  if (!feature) throw new Error("Not found")
+  const Silian_feature = await Silian_getFeatureByIssueNumber(Silian_issueNumber)
+  if (!Silian_feature) throw new Error("Not found")
 
-  if (feature.issue.state === "closed") {
+  if (Silian_feature.issue.state === "closed") {
     throw new Error("Feature is deleted and read-only")
   }
 
-  const { issue, parsed } = feature
-  const metadataForWrite = getMetadataForWrite(
-    parsed.metadata,
-    `legacy-issue-${issue.number}`
+  const { issue: Silian_issue, parsed: Silian_parsed } = Silian_feature
+  const Silian_metadataForWrite = Silian_getMetadataForWrite(
+    Silian_parsed.metadata,
+    `legacy-issue-${Silian_issue.number}`
   )
 
-  const newBodyWithAssignee = serializeIssueBody(
-    parsed.userContent,
+  const Silian_newBodyWithAssignee = Silian_serializeIssueBody(
+    Silian_parsed.userContent,
     {
-      appUserId: metadataForWrite.appUserId,
-      authorName: metadataForWrite.authorName,
-      authorEmail: metadataForWrite.authorEmail,
-      assigneeId: session.user.id,
-      assigneeName: session.user.name ?? null,
-      assigneeEmail: session.user.email ?? null,
+      appUserId: Silian_metadataForWrite.appUserId,
+      authorName: Silian_metadataForWrite.authorName,
+      authorEmail: Silian_metadataForWrite.authorEmail,
+      assigneeId: Silian_session.user.id,
+      assigneeName: Silian_session.user.name ?? null,
+      assigneeEmail: Silian_session.user.email ?? null,
     },
-    parsed.explanation ?? undefined
+    Silian_parsed.explanation ?? undefined
   )
 
-  const tags = labelsToTags(issue.labels)
-  const newLabels = [...tagsToLabels(tags), ...statusToLabels("IN_PROGRESS")]
+  const Silian_tags = Silian_labelsToTags(Silian_issue.labels)
+  const Silian_newLabels = [...Silian_tagsToLabels(Silian_tags), ...Silian_statusToLabels("IN_PROGRESS")]
 
   await Promise.all([
-    setIssueLabels(issue.number, newLabels),
-    updateIssue(issue.number, { body: newBodyWithAssignee }),
+    Silian_setIssueLabels(Silian_issue.number, Silian_newLabels),
+    Silian_updateIssue(Silian_issue.number, { body: Silian_newBodyWithAssignee }),
   ])
 
   // Post claim bot comment (best-effort, does not fail the action)
   try {
-    const mentionToken = await resolveMentionToken(
-      session.user.id,
-      session.user.name ?? null
+    const Silian_mentionToken = await Silian_resolveMentionToken(
+      Silian_session.user.id,
+      Silian_session.user.name ?? null
     )
 
     // Query GitHub Account and check email visibility
-    const token = await getGithubPatForUser(session.user.id)
-    const visibility = await getGithubEmailVisibility(token || "")
-    const assigneeEmail =
-      visibility === "private"
+    const Silian_token = await Silian_getGithubPatForUser(Silian_session.user.id)
+    const Silian_visibility = await Silian_getGithubEmailVisibility(Silian_token || "")
+    const Silian_assigneeEmail =
+      Silian_visibility === "private"
         ? "REDACTED FOR PRIVACY"
-        : (session.user.email ?? "Unknown")
+        : (Silian_session.user.email ?? "Unknown")
 
-    const payload = `[Assignment Notice]
+    const Silian_payload = `[Assignment Notice]
 Action: CLAIMED
-Assignee: ${mentionToken}
-AssigneeId: ${session.user.id}
-AssigneeEmail: ${assigneeEmail}
-By: ${mentionToken}
+Assignee: ${Silian_mentionToken}
+AssigneeId: ${Silian_session.user.id}
+AssigneeEmail: ${Silian_assigneeEmail}
+By: ${Silian_mentionToken}
 At: ${new Date().toISOString()}`
-    await addIssueComment(issue.number, serializeSystemComment(payload))
-  } catch (error) {
-    console.warn("Failed to post claim bot comment:", error)
+    await Silian_addIssueComment(Silian_issue.number, Silian_serializeSystemComment(Silian_payload))
+  } catch (Silian_error) {
+    console.warn("Failed to post claim bot comment:", Silian_error)
   }
 
-  revalidatePath("/features")
-  revalidatePath(`/features/${id}`)
-  return { success: true, feature: { id } }
+  Silian_revalidatePath("/features")
+  Silian_revalidatePath(`/features/${Silian_id}`)
+  return { success: true, feature: { id: Silian_id } }
 }
 
-export async function unassignFeature(id: string) {
-  const session = await requireAuth()
+export async function unassignFeature(Silian_id: string) {
+  const Silian_session = await Silian_requireAuth()
 
-  const issueNumber = parseIssueNumber(id)
+  const Silian_issueNumber = Silian_parseIssueNumber(Silian_id)
 
-  const feature = await getFeatureByIssueNumber(issueNumber)
-  if (!feature) throw new Error("Not found")
+  const Silian_feature = await Silian_getFeatureByIssueNumber(Silian_issueNumber)
+  if (!Silian_feature) throw new Error("Not found")
 
-  if (feature.issue.state === "closed") {
+  if (Silian_feature.issue.state === "closed") {
     throw new Error("Feature is deleted and read-only")
   }
 
-  const { issue, parsed } = feature
-  const authContext = await getCurrentUserAuthContext(session.user.id)
-  const isAdmin = authContext.role === "ADMIN"
-  const isAssignee = parsed.metadata?.assigneeId === session.user.id
-  if (!isAssignee && !isAdmin) throw new Error("Forbidden")
+  const { issue: Silian_issue, parsed: Silian_parsed } = Silian_feature
+  const Silian_authContext = await Silian_getCurrentUserAuthContext(Silian_session.user.id)
+  const Silian_isAdmin = Silian_authContext.role === "ADMIN"
+  const Silian_isAssignee = Silian_parsed.metadata?.assigneeId === Silian_session.user.id
+  if (!Silian_isAssignee && !Silian_isAdmin) throw new Error("Forbidden")
 
-  const metadataForWrite = getMetadataForWrite(
-    parsed.metadata,
-    `legacy-issue-${issue.number}`
+  const Silian_metadataForWrite = Silian_getMetadataForWrite(
+    Silian_parsed.metadata,
+    `legacy-issue-${Silian_issue.number}`
   )
 
-  const newBody = serializeIssueBody(
-    parsed.userContent,
+  const Silian_newBody = Silian_serializeIssueBody(
+    Silian_parsed.userContent,
     {
-      appUserId: metadataForWrite.appUserId,
-      authorName: metadataForWrite.authorName,
-      authorEmail: metadataForWrite.authorEmail,
+      appUserId: Silian_metadataForWrite.appUserId,
+      authorName: Silian_metadataForWrite.authorName,
+      authorEmail: Silian_metadataForWrite.authorEmail,
     },
-    parsed.explanation ?? undefined
+    Silian_parsed.explanation ?? undefined
   )
 
-  const tags = labelsToTags(issue.labels)
-  const newLabels = [...tagsToLabels(tags), ...statusToLabels("PENDING")]
+  const Silian_tags = Silian_labelsToTags(Silian_issue.labels)
+  const Silian_newLabels = [...Silian_tagsToLabels(Silian_tags), ...Silian_statusToLabels("PENDING")]
 
   await Promise.all([
-    setIssueLabels(issue.number, newLabels),
-    updateIssue(issue.number, { body: newBody }),
+    Silian_setIssueLabels(Silian_issue.number, Silian_newLabels),
+    Silian_updateIssue(Silian_issue.number, { body: Silian_newBody }),
   ])
 
   // Post drop bot comment (best-effort, does not fail the action)
   try {
-    const mentionToken = await resolveMentionToken(
-      session.user.id,
-      session.user.name ?? null
+    const Silian_mentionToken = await Silian_resolveMentionToken(
+      Silian_session.user.id,
+      Silian_session.user.name ?? null
     )
-    const prevAssigneeId = parsed.metadata?.assigneeId ?? ""
-    const previousMentionToken = prevAssigneeId
-      ? await resolveMentionToken(
-          prevAssigneeId,
-          parsed.metadata?.assigneeName ?? null
+    const Silian_prevAssigneeId = Silian_parsed.metadata?.assigneeId ?? ""
+    const Silian_previousMentionToken = Silian_prevAssigneeId
+      ? await Silian_resolveMentionToken(
+          Silian_prevAssigneeId,
+          Silian_parsed.metadata?.assigneeName ?? null
         )
       : "N/A"
-    const payload = `[Assignment Notice]
+    const Silian_payload = `[Assignment Notice]
 Action: DROPPED
-PreviousAssignee: ${previousMentionToken}
-PreviousAssigneeId: ${parsed.metadata?.assigneeId ?? "N/A"}
-By: ${mentionToken}
+PreviousAssignee: ${Silian_previousMentionToken}
+PreviousAssigneeId: ${Silian_parsed.metadata?.assigneeId ?? "N/A"}
+By: ${Silian_mentionToken}
 At: ${new Date().toISOString()}`
-    await addIssueComment(issue.number, serializeSystemComment(payload))
-  } catch (error) {
-    console.warn("Failed to post drop bot comment:", error)
+    await Silian_addIssueComment(Silian_issue.number, Silian_serializeSystemComment(Silian_payload))
+  } catch (Silian_error) {
+    console.warn("Failed to post drop bot comment:", Silian_error)
   }
 
-  revalidatePath("/features")
-  revalidatePath(`/features/${id}`)
-  return { success: true, feature: { id } }
+  Silian_revalidatePath("/features")
+  Silian_revalidatePath(`/features/${Silian_id}`)
+  return { success: true, feature: { id: Silian_id } }
 }
 
-export async function resolveFeature(id: string, resolutionComment?: string) {
-  const session = await requireAuth()
+export async function resolveFeature(Silian_id: string, Silian_resolutionComment?: string) {
+  const Silian_session = await Silian_requireAuth()
 
-  const issueNumber = parseIssueNumber(id)
+  const Silian_issueNumber = Silian_parseIssueNumber(Silian_id)
 
-  await requireAdmin(session.user.id)
+  await Silian_requireAdmin(Silian_session.user.id)
 
-  const feature = await getFeatureByIssueNumber(issueNumber)
-  if (!feature) throw new Error("Not found")
+  const Silian_feature = await Silian_getFeatureByIssueNumber(Silian_issueNumber)
+  if (!Silian_feature) throw new Error("Not found")
 
-  if (feature.issue.state === "closed") {
+  if (Silian_feature.issue.state === "closed") {
     throw new Error("Feature is deleted and read-only")
   }
 
-  const { issue } = feature
+  const { issue: Silian_issue } = Silian_feature
 
-  const tags = labelsToTags(issue.labels)
-  const newLabels = [...tagsToLabels(tags), ...statusToLabels("RESOLVED")]
+  const Silian_tags = Silian_labelsToTags(Silian_issue.labels)
+  const Silian_newLabels = [...Silian_tagsToLabels(Silian_tags), ...Silian_statusToLabels("RESOLVED")]
 
-  await setIssueLabels(issue.number, newLabels)
-  await setIssueState(issue.number, "closed")
+  await Silian_setIssueLabels(Silian_issue.number, Silian_newLabels)
+  await Silian_setIssueState(Silian_issue.number, "closed")
 
-  if (resolutionComment) {
-    await addIssueComment(
-      issue.number,
-      serializeCommentBody(
-        `[Resolution]: ${resolutionComment}`,
-        createMetadataFromSession(session)
+  if (Silian_resolutionComment) {
+    await Silian_addIssueComment(
+      Silian_issue.number,
+      Silian_serializeCommentBody(
+        `[Resolution]: ${Silian_resolutionComment}`,
+        Silian_createMetadataFromSession(Silian_session)
       )
     )
   }
 
-  revalidatePath("/features")
-  revalidatePath(`/features/${id}`)
-  return { success: true, feature: { id } }
+  Silian_revalidatePath("/features")
+  Silian_revalidatePath(`/features/${Silian_id}`)
+  return { success: true, feature: { id: Silian_id } }
 }
 
-export async function addFeatureComment(id: string, content: string) {
-  const session = await requireAuth()
+export async function addFeatureComment(Silian_id: string, Silian_content: string) {
+  const Silian_session = await Silian_requireAuth()
 
-  const issueNumber = parseIssueNumber(id)
+  const Silian_issueNumber = Silian_parseIssueNumber(Silian_id)
 
-  const feature = await getFeatureByIssueNumber(issueNumber)
-  if (!feature) throw new Error("Not found")
+  const Silian_feature = await Silian_getFeatureByIssueNumber(Silian_issueNumber)
+  if (!Silian_feature) throw new Error("Not found")
 
-  if (feature.issue.state === "closed") {
+  if (Silian_feature.issue.state === "closed") {
     throw new Error("Feature is deleted and read-only")
   }
 
   // Query GitHub Account and check email visibility
-  const account = await prisma.account.findFirst({
+  const Silian_account = await Silian_prisma.account.findFirst({
     where: {
       provider: "github",
-      userId: session.user.id,
+      userId: Silian_session.user.id,
     },
   })
 
-  const token = await getGithubPatForUser(session.user.id)
-  const visibility = await getGithubEmailVisibility(token || "")
-  const isPrivate = visibility === "private"
+  const Silian_token = await Silian_getGithubPatForUser(Silian_session.user.id)
+  const Silian_visibility = await Silian_getGithubEmailVisibility(Silian_token || "")
+  const Silian_isPrivate = Silian_visibility === "private"
 
-  const githubLogin = await resolveGithubLoginFromAccount(account)
-  const fallbackAuthorLabel =
-    session.user.name ?? session.user.email ?? session.user.id
-  const mentionToken = githubLogin ? `@${githubLogin}` : fallbackAuthorLabel
-  const authorLine = githubLogin
-    ? `> **\[BY\]** ${mentionToken} (${fallbackAuthorLabel})`
-    : `> **\[BY\]** ${mentionToken}`
+  const Silian_githubLogin = await Silian_resolveGithubLoginFromAccount(Silian_account)
+  const Silian_fallbackAuthorLabel =
+    Silian_session.user.name ?? Silian_session.user.email ?? Silian_session.user.id
+  const Silian_mentionToken = Silian_githubLogin ? `@${Silian_githubLogin}` : Silian_fallbackAuthorLabel
+  const Silian_authorLine = Silian_githubLogin
+    ? `> **\[BY\]** ${Silian_mentionToken} (${Silian_fallbackAuthorLabel})`
+    : `> **\[BY\]** ${Silian_mentionToken}`
 
-  const authorEmail = isPrivate ? null : (session.user.email ?? null)
-  const emailRedacted = isPrivate
+  const Silian_authorEmail = Silian_isPrivate ? null : (Silian_session.user.email ?? null)
+  const Silian_emailRedacted = Silian_isPrivate
 
-  const commentBody = serializeCommentBody(
-    `<!-- GTMC_COMMENT_AUTHOR_LINE -->\n${authorLine}\n\n${content}`,
+  const Silian_commentBody = Silian_serializeCommentBody(
+    `<!-- GTMC_COMMENT_AUTHOR_LINE -->\n${Silian_authorLine}\n\n${Silian_content}`,
     {
-      ...createMetadataFromSession(session),
-      authorEmail,
-      emailRedacted,
+      ...Silian_createMetadataFromSession(Silian_session),
+      authorEmail: Silian_authorEmail,
+      emailRedacted: Silian_emailRedacted,
     }
   )
 
-  const ghComment = await addIssueComment(feature.issue.number, commentBody)
+  const Silian_ghComment = await Silian_addIssueComment(Silian_feature.issue.number, Silian_commentBody)
 
-  revalidatePath(`/features/${id}`)
+  Silian_revalidatePath(`/features/${Silian_id}`)
 
   return {
     success: true,
     comment: {
-      id: String(ghComment.id),
-      content,
-      createdAt: new Date(ghComment.createdAt),
+      id: String(Silian_ghComment.id),
+      content: Silian_content,
+      createdAt: new Date(Silian_ghComment.createdAt),
       author: {
-        name: session.user.name ?? null,
-        email: authorEmail,
-        image: (session.user as { image?: string | null }).image ?? null,
+        name: Silian_session.user.name ?? null,
+        email: Silian_authorEmail,
+        image: (Silian_session.user as { image?: string | null }).image ?? null,
       },
-      emailRedacted,
+      emailRedacted: Silian_emailRedacted,
     },
   }
 }

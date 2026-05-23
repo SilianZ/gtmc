@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next"
-import { getSiteUrl, toAbsoluteUrl } from "@/lib/site-url"
+import { getSiteUrl as Silian_getSiteUrl, toAbsoluteUrl as Silian_toAbsoluteUrl } from "@/lib/site-url"
 
 export default function robots(): MetadataRoute.Robots {
-  const siteUrl = getSiteUrl()
+  const Silian_siteUrl = Silian_getSiteUrl()
 
   return {
     rules: {
@@ -10,7 +10,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/draft", "/review", "/profile", "/admin", "/login"],
     },
-    host: siteUrl,
-    sitemap: toAbsoluteUrl("/sitemap.xml"),
+    host: Silian_siteUrl,
+    sitemap: Silian_toAbsoluteUrl("/sitemap.xml"),
   }
 }

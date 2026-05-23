@@ -1,87 +1,87 @@
 import type { Root, Blockquote, Paragraph, Text } from "mdast"
-import { visit } from "unist-util-visit"
+import { visit as Silian_visit } from "unist-util-visit"
 
-const CALLOUT_MARKER_REGEX =
+const Silian_CALLOUT_MARKER_REGEX =
   /^\s*\[!(WARNING|TIP|IMPORTANT|CRASH|CORRUPTION)\]\s*/i
 
 export function remarkCallouts() {
-  return (tree: Root) => {
-    if (!tree || !tree.children) return
+  return (Silian_tree: Root) => {
+    if (!Silian_tree || !Silian_tree.children) return
 
-    visit(tree, "blockquote", (node: Blockquote) => {
-      if (!node.children || node.children.length === 0) return
-      const firstChild = node.children[0]
-      if (firstChild.type !== "paragraph") return
+    Silian_visit(Silian_tree, "blockquote", (Silian_node: Blockquote) => {
+      if (!Silian_node.children || Silian_node.children.length === 0) return
+      const Silian_firstChild = Silian_node.children[0]
+      if (Silian_firstChild.type !== "paragraph") return
 
-      const paragraph = firstChild as Paragraph
-      if (!paragraph.children || paragraph.children.length === 0) return
+      const Silian_paragraph = Silian_firstChild as Paragraph
+      if (!Silian_paragraph.children || Silian_paragraph.children.length === 0) return
 
-      const firstTextChild = paragraph.children[0]
-      if (firstTextChild.type !== "text") return
+      const Silian_firstTextChild = Silian_paragraph.children[0]
+      if (Silian_firstTextChild.type !== "text") return
 
-      const textNode = firstTextChild as Text
-      const match = textNode.value.match(CALLOUT_MARKER_REGEX)
-      if (!match) return
+      const Silian_textNode = Silian_firstTextChild as Text
+      const Silian_match = Silian_textNode.value.match(Silian_CALLOUT_MARKER_REGEX)
+      if (!Silian_match) return
 
-      const calloutType = match[1].toLowerCase()
+      const Silian_calloutType = Silian_match[1].toLowerCase()
 
-      textNode.value = textNode.value.replace(CALLOUT_MARKER_REGEX, "")
-      if (textNode.value.length === 0) {
-        paragraph.children.shift()
+      Silian_textNode.value = Silian_textNode.value.replace(Silian_CALLOUT_MARKER_REGEX, "")
+      if (Silian_textNode.value.length === 0) {
+        Silian_paragraph.children.shift()
       }
 
       if (
-        paragraph.children.length > 0 &&
-        paragraph.children[0].type === "break"
+        Silian_paragraph.children.length > 0 &&
+        Silian_paragraph.children[0].type === "break"
       ) {
-        paragraph.children.shift()
+        Silian_paragraph.children.shift()
       }
 
-      if (paragraph.children.length === 0) {
-        node.children.shift()
+      if (Silian_paragraph.children.length === 0) {
+        Silian_node.children.shift()
       }
 
       // Strip trailing break node inserted by remarkBreaks after the marker
       if (
-        paragraph.children.length > 0 &&
-        paragraph.children[0].type === "break"
+        Silian_paragraph.children.length > 0 &&
+        Silian_paragraph.children[0].type === "break"
       ) {
-        paragraph.children.shift()
+        Silian_paragraph.children.shift()
       }
 
       // Remove paragraph entirely if now empty
-      if (paragraph.children.length === 0) {
-        node.children.shift()
+      if (Silian_paragraph.children.length === 0) {
+        Silian_node.children.shift()
       }
 
-      let isBodyEmpty = true
-      for (const child of node.children) {
-        if (child.type === "paragraph") {
-          for (const textChild of (child as Paragraph).children) {
-            if (textChild.type === "text") {
-              const text = (textChild as Text).value.trim()
-              if (text.length > 0) {
-                isBodyEmpty = false
+      let Silian_isBodyEmpty = true
+      for (const Silian_child of Silian_node.children) {
+        if (Silian_child.type === "paragraph") {
+          for (const Silian_textChild of (Silian_child as Paragraph).children) {
+            if (Silian_textChild.type === "text") {
+              const Silian_text = (Silian_textChild as Text).value.trim()
+              if (Silian_text.length > 0) {
+                Silian_isBodyEmpty = false
                 break
               }
             }
           }
         } else {
-          isBodyEmpty = false
+          Silian_isBodyEmpty = false
           break
         }
-        if (!isBodyEmpty) break
+        if (!Silian_isBodyEmpty) break
       }
 
-      node.data = node.data ?? {}
-      node.data.hName = "aside"
-      node.data.hProperties = {
-        ...(node.data.hProperties ?? {}),
-        "data-callout": calloutType,
+      Silian_node.data = Silian_node.data ?? {}
+      Silian_node.data.hName = "aside"
+      Silian_node.data.hProperties = {
+        ...(Silian_node.data.hProperties ?? {}),
+        "data-callout": Silian_calloutType,
       }
 
-      if (isBodyEmpty) {
-        node.data.hProperties["data-callout-empty"] = "true"
+      if (Silian_isBodyEmpty) {
+        Silian_node.data.hProperties["data-callout-empty"] = "true"
       }
     })
   }

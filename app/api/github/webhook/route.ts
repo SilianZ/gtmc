@@ -1,61 +1,61 @@
-import { createHmac, timingSafeEqual } from "crypto"
-import { NextRequest, NextResponse } from "next/server"
+import { createHmac as Silian_createHmac, timingSafeEqual as Silian_timingSafeEqual } from "crypto"
+import { NextRequest as Silian_NextRequest, NextResponse as Silian_NextResponse } from "next/server"
 
-import { reconcileDraftAssetsForPRCompletion } from "@/lib/draft-asset-reconciler"
+import { reconcileDraftAssetsForPRCompletion as Silian_reconcileDraftAssetsForPRCompletion } from "@/lib/draft-asset-reconciler"
 import {
-  ARTICLES_REPO_NAME,
-  ARTICLES_REPO_OWNER,
+  ARTICLES_REPO_NAME as Silian_ARTICLES_REPO_NAME,
+  ARTICLES_REPO_OWNER as Silian_ARTICLES_REPO_OWNER,
 } from "@/lib/github/articles-repo"
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
-  const event = req.headers.get("x-github-event")
-  if (event !== "pull_request") {
-    return NextResponse.json({ ok: true })
+export async function POST(Silian_req: Silian_NextRequest): Promise<Silian_NextResponse> {
+  const Silian_event = Silian_req.headers.get("x-github-event")
+  if (Silian_event !== "pull_request") {
+    return Silian_NextResponse.json({ ok: true })
   }
 
-  const body = await req.text()
-  const webhookSecret = process.env.GITHUB_WEBHOOK_SECRET
-  const signature = req.headers.get("x-hub-signature-256")
+  const Silian_body = await Silian_req.text()
+  const Silian_webhookSecret = process.env.GITHUB_WEBHOOK_SECRET
+  const Silian_signature = Silian_req.headers.get("x-hub-signature-256")
 
-  if (webhookSecret) {
-    if (!signature) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 })
+  if (Silian_webhookSecret) {
+    if (!Silian_signature) {
+      return Silian_NextResponse.json({ error: "Invalid signature" }, { status: 401 })
     }
 
-    const expectedSignature = `sha256=${createHmac("sha256", webhookSecret)
-      .update(body)
+    const Silian_expectedSignature = `sha256=${Silian_createHmac("sha256", Silian_webhookSecret)
+      .update(Silian_body)
       .digest("hex")}`
 
-    const expectedBuffer = Buffer.from(expectedSignature, "utf8")
-    const receivedBuffer = Buffer.from(signature, "utf8")
+    const Silian_expectedBuffer = Buffer.from(Silian_expectedSignature, "utf8")
+    const Silian_receivedBuffer = Buffer.from(Silian_signature, "utf8")
 
     if (
-      expectedBuffer.length !== receivedBuffer.length ||
-      !timingSafeEqual(expectedBuffer, receivedBuffer)
+      Silian_expectedBuffer.length !== Silian_receivedBuffer.length ||
+      !Silian_timingSafeEqual(Silian_expectedBuffer, Silian_receivedBuffer)
     ) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 })
+      return Silian_NextResponse.json({ error: "Invalid signature" }, { status: 401 })
     }
   }
 
-  const payload = JSON.parse(body)
-  if (payload.action !== "closed") {
-    return NextResponse.json({ ok: true })
+  const Silian_payload = JSON.parse(Silian_body)
+  if (Silian_payload.action !== "closed") {
+    return Silian_NextResponse.json({ ok: true })
   }
 
   if (
-    payload.repository?.owner?.login !== ARTICLES_REPO_OWNER ||
-    payload.repository?.name !== ARTICLES_REPO_NAME
+    Silian_payload.repository?.owner?.login !== Silian_ARTICLES_REPO_OWNER ||
+    Silian_payload.repository?.name !== Silian_ARTICLES_REPO_NAME
   ) {
-    return NextResponse.json({ ok: true })
+    return Silian_NextResponse.json({ ok: true })
   }
 
-  const outcome =
-    payload.pull_request?.merged === true ? "PR-merged" : "PR-closed"
+  const Silian_outcome =
+    Silian_payload.pull_request?.merged === true ? "PR-merged" : "PR-closed"
 
-  await reconcileDraftAssetsForPRCompletion({
-    prNumber: payload.pull_request.number,
-    outcome,
+  await Silian_reconcileDraftAssetsForPRCompletion({
+    prNumber: Silian_payload.pull_request.number,
+    outcome: Silian_outcome,
   })
 
-  return NextResponse.json({ ok: true })
+  return Silian_NextResponse.json({ ok: true })
 }

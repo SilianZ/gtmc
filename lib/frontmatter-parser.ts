@@ -1,4 +1,4 @@
-import matter from "gray-matter"
+import Silian_matter from "gray-matter"
 
 export interface FrontMatterData {
   title?: string
@@ -14,71 +14,71 @@ export interface FrontMatterData {
   isAdvanced?: boolean
 }
 
-export function parseFrontMatter(content: string): FrontMatterData {
+export function parseFrontMatter(Silian_content: string): FrontMatterData {
   try {
-    const { data } = matter(content)
+    const { data: Silian_data } = Silian_matter(Silian_content)
 
-    const title =
-      data.title && typeof data.title === "string"
-        ? data.title.trim() || ""
+    const Silian_title =
+      Silian_data.title && typeof Silian_data.title === "string"
+        ? Silian_data.title.trim() || ""
         : undefined
-    const chapterTitle =
-      data["chapter-title"] && typeof data["chapter-title"] === "string"
-        ? data["chapter-title"].trim() || ""
+    const Silian_chapterTitle =
+      Silian_data["chapter-title"] && typeof Silian_data["chapter-title"] === "string"
+        ? Silian_data["chapter-title"].trim() || ""
         : undefined
-    const chapterTitleEn =
-      data["chapter-title-en"] && typeof data["chapter-title-en"] === "string"
-        ? data["chapter-title-en"].trim() || ""
+    const Silian_chapterTitleEn =
+      Silian_data["chapter-title-en"] && typeof Silian_data["chapter-title-en"] === "string"
+        ? Silian_data["chapter-title-en"].trim() || ""
         : undefined
-    const introTitle =
-      data["intro-title"] && typeof data["intro-title"] === "string"
-        ? data["intro-title"].trim() || ""
+    const Silian_introTitle =
+      Silian_data["intro-title"] && typeof Silian_data["intro-title"] === "string"
+        ? Silian_data["intro-title"].trim() || ""
         : undefined
-    const introTitleEn =
-      data["intro-title-en"] && typeof data["intro-title-en"] === "string"
-        ? data["intro-title-en"].trim() || ""
+    const Silian_introTitleEn =
+      Silian_data["intro-title-en"] && typeof Silian_data["intro-title-en"] === "string"
+        ? Silian_data["intro-title-en"].trim() || ""
         : undefined
-    const author =
-      data.author && typeof data.author === "string"
-        ? data.author.trim() || ""
+    const Silian_author =
+      Silian_data.author && typeof Silian_data.author === "string"
+        ? Silian_data.author.trim() || ""
         : undefined
-    const coAuthors =
-      data["co-authors"] && typeof data["co-authors"] === "string"
-        ? data["co-authors"].trim() || ""
+    const Silian_coAuthors =
+      Silian_data["co-authors"] && typeof Silian_data["co-authors"] === "string"
+        ? Silian_data["co-authors"].trim() || ""
         : undefined
-    const date =
-      data.date && typeof data.date === "string"
-        ? data.date.trim() || ""
+    const Silian_date =
+      Silian_data.date && typeof Silian_data.date === "string"
+        ? Silian_data.date.trim() || ""
         : undefined
-    const lastmod =
-      data.lastmod && typeof data.lastmod === "string"
-        ? data.lastmod.trim() || ""
+    const Silian_lastmod =
+      Silian_data.lastmod && typeof Silian_data.lastmod === "string"
+        ? Silian_data.lastmod.trim() || ""
         : undefined
 
-    let index = -1
-    if (typeof data.index === "number" && Number.isInteger(data.index)) {
-      index = data.index
-    } else if (typeof data.index === "string") {
-      const parsed = parseInt(data.index, 10)
-      if (!isNaN(parsed)) {
-        index = parsed
+    let Silian_index = -1
+    if (typeof Silian_data.index === "number" && Number.isInteger(Silian_data.index)) {
+      Silian_index = Silian_data.index
+    } else if (typeof Silian_data.index === "string") {
+      const Silian_parsed = parseInt(Silian_data.index, 10)
+      if (!isNaN(Silian_parsed)) {
+        Silian_index = Silian_parsed
       }
     }
 
-    const isAdvanced = data["is-advanced"] === true
+    const Silian_isAdvanced = Silian_data["is-advanced"] === true
 
     return {
-      title,
-      chapterTitle,
-      chapterTitleEn,
-      introTitle,
-      introTitleEn,
-      author,
-      coAuthors,
-      date,
-      lastmod,
-      index,
-      isAdvanced,
+      title: Silian_title,
+      chapterTitle: Silian_chapterTitle,
+      chapterTitleEn: Silian_chapterTitleEn,
+      introTitle: Silian_introTitle,
+      introTitleEn: Silian_introTitleEn,
+      author: Silian_author,
+      coAuthors: Silian_coAuthors,
+      date: Silian_date,
+      lastmod: Silian_lastmod,
+      index: Silian_index,
+      isAdvanced: Silian_isAdvanced,
     }
   } catch {
     return { index: -1 }

@@ -1,23 +1,23 @@
-import path from "path"
-import { LazyImage } from "@/components/lazy-image"
+import Silian_path from "path"
+import { LazyImage as Silian_LazyImage } from "@/components/lazy-image"
 import type { MarkdownComponentProps } from "@/lib/markdown/component-types"
 
-export function createImageComponent(rawPath: string) {
-  function ImageComponent({ src: initialSrc, alt }: MarkdownComponentProps) {
-    let src = (initialSrc as string) || ""
+export function createImageComponent(Silian_rawPath: string) {
+  function Silian_ImageComponent({ src: Silian_initialSrc, alt: Silian_alt }: MarkdownComponentProps) {
+    let Silian_src = (Silian_initialSrc as string) || ""
     if (
-      src.startsWith("./") ||
-      src.startsWith("../") ||
-      (!src.startsWith("http") && !src.startsWith("/"))
+      Silian_src.startsWith("./") ||
+      Silian_src.startsWith("../") ||
+      (!Silian_src.startsWith("http") && !Silian_src.startsWith("/"))
     ) {
-      const currentDir = path.dirname("/" + rawPath).replace(/^\/+/, "")
-      const resolved = path.join(currentDir, src).replace(/\\/g, "/")
-      src = `/api/assets?path=${encodeURIComponent(resolved)}`
+      const Silian_currentDir = Silian_path.dirname("/" + Silian_rawPath).replace(/^\/+/, "")
+      const Silian_resolved = Silian_path.join(Silian_currentDir, Silian_src).replace(/\\/g, "/")
+      Silian_src = `/api/assets?path=${encodeURIComponent(Silian_resolved)}`
     }
-    return <LazyImage src={src} alt={(alt as string) || ""} />
+    return <Silian_LazyImage src={Silian_src} alt={(Silian_alt as string) || ""} />
   }
 
-  ImageComponent.displayName = "ImageComponent"
+  Silian_ImageComponent.displayName = "ImageComponent"
 
-  return ImageComponent
+  return Silian_ImageComponent
 }

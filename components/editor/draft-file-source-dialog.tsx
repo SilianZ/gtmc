@@ -1,11 +1,11 @@
 "use client"
 
-import * as React from "react"
-import { useTranslations } from "next-intl"
+import * as Silian_React from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 
-import { TechButton } from "@/components/ui/tech-button"
-import { InputBox } from "@/components/ui/input-box"
-import { normalizeDraftFilePath } from "@/lib/draft-files"
+import { TechButton as Silian_TechButton } from "@/components/ui/tech-button"
+import { InputBox as Silian_InputBox } from "@/components/ui/input-box"
+import { normalizeDraftFilePath as Silian_normalizeDraftFilePath } from "@/lib/draft-files"
 
 interface DraftRepoTreeNode {
   id: string
@@ -29,7 +29,7 @@ interface DraftFileSourceDialogProps {
 
 export type SourceMode = "folder" | "repo" | "upload" | "new"
 
-const ROOT_NODE: DraftRepoTreeNode = {
+const Silian_ROOT_NODE: DraftRepoTreeNode = {
   id: "root",
   title: "ROOT",
   path: "",
@@ -38,213 +38,213 @@ const ROOT_NODE: DraftRepoTreeNode = {
 }
 
 export function DraftFileSourceDialog({
-  isOpen,
-  initialFolderPath,
-  initialMode = "new",
-  onClose,
-  onCreateFolder,
-  onCreate,
+  isOpen: Silian_isOpen,
+  initialFolderPath: Silian_initialFolderPath,
+  initialMode: Silian_initialMode = "new",
+  onClose: Silian_onClose,
+  onCreateFolder: Silian_onCreateFolder,
+  onCreate: Silian_onCreate,
 }: DraftFileSourceDialogProps) {
-  const t = useTranslations("DraftFiles")
-  const [mode, setMode] = React.useState<SourceMode>(initialMode)
-  const [tree, setTree] = React.useState<DraftRepoTreeNode[]>([])
-  const [isLoadingTree, setIsLoadingTree] = React.useState(false)
-  const [treeError, setTreeError] = React.useState<string | null>(null)
-  const [expandedPaths, setExpandedPaths] = React.useState<Set<string>>(
-    () => new Set(["", initialFolderPath || ""])
+  const Silian_t = Silian_useTranslations("DraftFiles")
+  const [Silian_mode, Silian_setMode] = Silian_React.useState<SourceMode>(Silian_initialMode)
+  const [Silian_tree, Silian_setTree] = Silian_React.useState<DraftRepoTreeNode[]>([])
+  const [Silian_isLoadingTree, Silian_setIsLoadingTree] = Silian_React.useState(false)
+  const [Silian_treeError, Silian_setTreeError] = Silian_React.useState<string | null>(null)
+  const [Silian_expandedPaths, Silian_setExpandedPaths] = Silian_React.useState<Set<string>>(
+    () => new Set(["", Silian_initialFolderPath || ""])
   )
-  const [selectedRepoFilePath, setSelectedRepoFilePath] = React.useState("")
-  const [selectedFolderPath, setSelectedFolderPath] = React.useState(
-    initialFolderPath || ""
+  const [Silian_selectedRepoFilePath, Silian_setSelectedRepoFilePath] = Silian_React.useState("")
+  const [Silian_selectedFolderPath, Silian_setSelectedFolderPath] = Silian_React.useState(
+    Silian_initialFolderPath || ""
   )
-  const [newFileName, setNewFileName] = React.useState("")
-  const [newFolderName, setNewFolderName] = React.useState("")
-  const [localFile, setLocalFile] = React.useState<File | null>(null)
-  const [customUploadName, setCustomUploadName] = React.useState("")
-  const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [Silian_newFileName, Silian_setNewFileName] = Silian_React.useState("")
+  const [Silian_newFolderName, Silian_setNewFolderName] = Silian_React.useState("")
+  const [Silian_localFile, Silian_setLocalFile] = Silian_React.useState<File | null>(null)
+  const [Silian_customUploadName, Silian_setCustomUploadName] = Silian_React.useState("")
+  const [Silian_isSubmitting, Silian_setIsSubmitting] = Silian_React.useState(false)
 
-  React.useEffect(() => {
-    if (!isOpen) {
+  Silian_React.useEffect(() => {
+    if (!Silian_isOpen) {
       return
     }
 
-    let disposed = false
+    let Silian_disposed = false
 
-    const loadTree = async () => {
-      setIsLoadingTree(true)
-      setTreeError(null)
+    const Silian_loadTree = async () => {
+      Silian_setIsLoadingTree(true)
+      Silian_setTreeError(null)
 
       try {
-        const response = await fetch("/api/draft/repo-tree", {
+        const Silian_response = await fetch("/api/draft/repo-tree", {
           cache: "no-store",
         })
-        const data = (await response.json()) as {
+        const Silian_data = (await Silian_response.json()) as {
           error?: string
           tree?: DraftRepoTreeNode[]
         }
 
-        if (!response.ok) {
-          throw new Error(data.error || t("repoError"))
+        if (!Silian_response.ok) {
+          throw new Error(Silian_data.error || Silian_t("repoError"))
         }
 
-        if (!disposed) {
-          setTree(data.tree || [])
+        if (!Silian_disposed) {
+          Silian_setTree(Silian_data.tree || [])
         }
-      } catch (error) {
-        if (!disposed) {
-          setTreeError(error instanceof Error ? error.message : t("repoError"))
+      } catch (Silian_error) {
+        if (!Silian_disposed) {
+          Silian_setTreeError(Silian_error instanceof Error ? Silian_error.message : Silian_t("repoError"))
         }
       } finally {
-        if (!disposed) {
-          setIsLoadingTree(false)
+        if (!Silian_disposed) {
+          Silian_setIsLoadingTree(false)
         }
       }
     }
 
-    loadTree()
+    Silian_loadTree()
 
     return () => {
-      disposed = true
+      Silian_disposed = true
     }
-  }, [isOpen, t])
+  }, [Silian_isOpen, Silian_t])
 
-  React.useEffect(() => {
-    if (!isOpen) {
-      setMode(initialMode)
-      setSelectedRepoFilePath("")
-      setSelectedFolderPath(initialFolderPath || "")
-      setNewFileName("")
-      setNewFolderName("")
-      setLocalFile(null)
-      setCustomUploadName("")
-      setTreeError(null)
-      setIsSubmitting(false)
-      setExpandedPaths(new Set(["", initialFolderPath || ""]))
+  Silian_React.useEffect(() => {
+    if (!Silian_isOpen) {
+      Silian_setMode(Silian_initialMode)
+      Silian_setSelectedRepoFilePath("")
+      Silian_setSelectedFolderPath(Silian_initialFolderPath || "")
+      Silian_setNewFileName("")
+      Silian_setNewFolderName("")
+      Silian_setLocalFile(null)
+      Silian_setCustomUploadName("")
+      Silian_setTreeError(null)
+      Silian_setIsSubmitting(false)
+      Silian_setExpandedPaths(new Set(["", Silian_initialFolderPath || ""]))
     }
-  }, [initialFolderPath, initialMode, isOpen])
+  }, [Silian_initialFolderPath, Silian_initialMode, Silian_isOpen])
 
-  if (!isOpen) {
+  if (!Silian_isOpen) {
     return null
   }
 
-  const treeRoots = [{ ...ROOT_NODE, children: tree }]
+  const Silian_treeRoots = [{ ...Silian_ROOT_NODE, children: Silian_tree }]
 
-  const handleTogglePath = (path: string) => {
-    setExpandedPaths((current) => {
-      const next = new Set(current)
-      if (next.has(path)) {
-        next.delete(path)
+  const Silian_handleTogglePath = (Silian_path: string) => {
+    Silian_setExpandedPaths((Silian_current) => {
+      const Silian_next = new Set(Silian_current)
+      if (Silian_next.has(Silian_path)) {
+        Silian_next.delete(Silian_path)
       } else {
-        next.add(path)
+        Silian_next.add(Silian_path)
       }
-      return next
+      return Silian_next
     })
   }
 
-  const handleAddRepoFile = async () => {
-    if (!selectedRepoFilePath) {
+  const Silian_handleAddRepoFile = async () => {
+    if (!Silian_selectedRepoFilePath) {
       return
     }
 
-    setIsSubmitting(true)
+    Silian_setIsSubmitting(true)
     try {
-      const response = await fetch(
-        `/api/draft/repo-file?path=${encodeURIComponent(selectedRepoFilePath)}`,
+      const Silian_response = await fetch(
+        `/api/draft/repo-file?path=${encodeURIComponent(Silian_selectedRepoFilePath)}`,
         { cache: "no-store" }
       )
-      const data = (await response.json()) as {
+      const Silian_data = (await Silian_response.json()) as {
         content?: string
         error?: string
         filePath?: string
       }
 
-      if (!response.ok || typeof data.content !== "string") {
-        throw new Error(data.error || t("repoError"))
+      if (!Silian_response.ok || typeof Silian_data.content !== "string") {
+        throw new Error(Silian_data.error || Silian_t("repoError"))
       }
 
-      const created = await onCreate({
-        content: data.content,
-        filePath: data.filePath || selectedRepoFilePath,
+      const Silian_created = await Silian_onCreate({
+        content: Silian_data.content,
+        filePath: Silian_data.filePath || Silian_selectedRepoFilePath,
       })
-      if (created !== false) {
-        onClose()
+      if (Silian_created !== false) {
+        Silian_onClose()
       }
-    } catch (error) {
-      setTreeError(error instanceof Error ? error.message : t("repoError"))
+    } catch (Silian_error) {
+      Silian_setTreeError(Silian_error instanceof Error ? Silian_error.message : Silian_t("repoError"))
     } finally {
-      setIsSubmitting(false)
+      Silian_setIsSubmitting(false)
     }
   }
 
-  const handleCreateNewFile = () => {
-    const filePath = buildDraftFilePath(selectedFolderPath, newFileName)
-    if (!filePath) {
-      setTreeError(t("fileNameValidationError"))
+  const Silian_handleCreateNewFile = () => {
+    const Silian_filePath = Silian_buildDraftFilePath(Silian_selectedFolderPath, Silian_newFileName)
+    if (!Silian_filePath) {
+      Silian_setTreeError(Silian_t("fileNameValidationError"))
       return
     }
 
-    Promise.resolve(onCreate({ content: "", filePath })).then((created) => {
-      if (created !== false) {
-        onClose()
+    Promise.resolve(Silian_onCreate({ content: "", filePath: Silian_filePath })).then((Silian_created) => {
+      if (Silian_created !== false) {
+        Silian_onClose()
       }
     })
   }
 
-  const handleCreateNewFolder = () => {
-    const normalizedFolderName = normalizeDraftFilePath(newFolderName)
+  const Silian_handleCreateNewFolder = () => {
+    const Silian_normalizedFolderName = Silian_normalizeDraftFilePath(Silian_newFolderName)
       .split("/")
       .filter(Boolean)
       .at(-1)
 
-    if (!normalizedFolderName || !onCreateFolder) {
-      setTreeError(t("fileNameValidationError"))
+    if (!Silian_normalizedFolderName || !Silian_onCreateFolder) {
+      Silian_setTreeError(Silian_t("fileNameValidationError"))
       return
     }
 
-    const folderPath = [selectedFolderPath, normalizedFolderName]
+    const Silian_folderPath = [Silian_selectedFolderPath, Silian_normalizedFolderName]
       .filter(Boolean)
       .join("/")
 
-    Promise.resolve(onCreateFolder(folderPath)).then((created) => {
-      if (created !== false) {
-        onClose()
+    Promise.resolve(Silian_onCreateFolder(Silian_folderPath)).then((Silian_created) => {
+      if (Silian_created !== false) {
+        Silian_onClose()
       }
     })
   }
 
-  const handleImportLocalFile = async () => {
-    if (!localFile) {
-      setTreeError(t("fileNameValidationError"))
+  const Silian_handleImportLocalFile = async () => {
+    if (!Silian_localFile) {
+      Silian_setTreeError(Silian_t("fileNameValidationError"))
       return
     }
 
-    setIsSubmitting(true)
+    Silian_setIsSubmitting(true)
 
     try {
-      const content = await localFile.text()
-      const fallbackName = customUploadName.trim() || localFile.name
-      const filePath = buildDraftFilePath(selectedFolderPath, fallbackName)
+      const Silian_content = await Silian_localFile.text()
+      const Silian_fallbackName = Silian_customUploadName.trim() || Silian_localFile.name
+      const Silian_filePath = Silian_buildDraftFilePath(Silian_selectedFolderPath, Silian_fallbackName)
 
-      if (!filePath) {
-        throw new Error(t("fileNameValidationError"))
+      if (!Silian_filePath) {
+        throw new Error(Silian_t("fileNameValidationError"))
       }
 
-      const created = await onCreate({ content, filePath })
-      if (created !== false) {
-        onClose()
+      const Silian_created = await Silian_onCreate({ content: Silian_content, filePath: Silian_filePath })
+      if (Silian_created !== false) {
+        Silian_onClose()
       }
-    } catch (error) {
-      setTreeError(error instanceof Error ? error.message : t("repoError"))
+    } catch (Silian_error) {
+      Silian_setTreeError(Silian_error instanceof Error ? Silian_error.message : Silian_t("repoError"))
     } finally {
-      setIsSubmitting(false)
+      Silian_setIsSubmitting(false)
     }
   }
 
-  const canSubmitRepo = Boolean(selectedRepoFilePath) && !isSubmitting
-  const canSubmitNew = Boolean(
-    buildDraftFilePath(selectedFolderPath, newFileName)
+  const Silian_canSubmitRepo = Boolean(Silian_selectedRepoFilePath) && !Silian_isSubmitting
+  const Silian_canSubmitNew = Boolean(
+    Silian_buildDraftFilePath(Silian_selectedFolderPath, Silian_newFileName)
   )
-  const canSubmitUpload = Boolean(localFile) && !isSubmitting
+  const Silian_canSubmitUpload = Boolean(Silian_localFile) && !Silian_isSubmitting
 
   return (
     <div
@@ -267,15 +267,15 @@ export function DraftFileSourceDialog({
               className="
                 font-mono text-sm tracking-widest text-tech-main uppercase
               ">
-              {t("dialogTitle")}
+              {Silian_t("dialogTitle")}
             </p>
             <p className="mt-1 font-mono text-xs text-tech-main/60 uppercase">
-              {t("dialogSubtitle")}
+              {Silian_t("dialogSubtitle")}
             </p>
           </div>
-          <TechButton type="button" variant="ghost" size="sm" onClick={onClose}>
-            {t("close")}
-          </TechButton>
+          <Silian_TechButton type="button" variant="ghost" size="sm" onClick={Silian_onClose}>
+            {Silian_t("close")}
+          </Silian_TechButton>
         </div>
 
         <div
@@ -289,27 +289,27 @@ export function DraftFileSourceDialog({
                 shrink-0 border-b guide-line px-4 py-3 font-mono text-xs
                 tracking-widest text-tech-main uppercase
               ">
-              {t("destinationTree")}
+              {Silian_t("destinationTree")}
             </div>
 
             <div className="flex-1 overflow-y-auto p-3">
-              {isLoadingTree ? (
+              {Silian_isLoadingTree ? (
                 <p className="font-mono text-xs text-tech-main/60">
-                  {t("loadingRepo")}
+                  {Silian_t("loadingRepo")}
                 </p>
               ) : (
                 <div className="space-y-1">
-                  {treeRoots.map((node) => (
-                    <TreeNode
-                      key={node.id}
-                      expandedPaths={expandedPaths}
-                      mode={mode}
-                      node={node}
-                      onSelectFile={setSelectedRepoFilePath}
-                      onSelectFolder={setSelectedFolderPath}
-                      onTogglePath={handleTogglePath}
-                      selectedFilePath={selectedRepoFilePath}
-                      selectedFolderPath={selectedFolderPath}
+                  {Silian_treeRoots.map((Silian_node) => (
+                    <Silian_TreeNode
+                      key={Silian_node.id}
+                      expandedPaths={Silian_expandedPaths}
+                      mode={Silian_mode}
+                      node={Silian_node}
+                      onSelectFile={Silian_setSelectedRepoFilePath}
+                      onSelectFolder={Silian_setSelectedFolderPath}
+                      onTogglePath={Silian_handleTogglePath}
+                      selectedFilePath={Silian_selectedRepoFilePath}
+                      selectedFolderPath={Silian_selectedFolderPath}
                     />
                   ))}
                 </div>
@@ -319,167 +319,167 @@ export function DraftFileSourceDialog({
 
           <div className="min-h-0 overflow-y-auto p-5">
             <div className="mb-5 flex flex-wrap gap-2">
-              <ModeButton
-                label={t("modeRepo")}
+              <Silian_ModeButton
+                label={Silian_t("modeRepo")}
                 mode="repo"
-                value={mode}
-                onChange={setMode}
+                value={Silian_mode}
+                onChange={Silian_setMode}
               />
-              <ModeButton
-                label={t("modeLocal")}
+              <Silian_ModeButton
+                label={Silian_t("modeLocal")}
                 mode="upload"
-                value={mode}
-                onChange={setMode}
+                value={Silian_mode}
+                onChange={Silian_setMode}
               />
-              <ModeButton
-                label={t("modeNew")}
+              <Silian_ModeButton
+                label={Silian_t("modeNew")}
                 mode="new"
-                value={mode}
-                onChange={setMode}
+                value={Silian_mode}
+                onChange={Silian_setMode}
               />
-              <ModeButton
+              <Silian_ModeButton
                 label="新建文件夹"
                 mode="folder"
-                value={mode}
-                onChange={setMode}
+                value={Silian_mode}
+                onChange={Silian_setMode}
               />
             </div>
 
-            {treeError ? (
+            {Silian_treeError ? (
               <div
                 className="
                   mb-4 border border-red-500/30 bg-red-500/10 px-4 py-3
                   font-mono text-xs text-red-700
                 ">
-                {treeError}
+                {Silian_treeError}
               </div>
             ) : null}
 
-            {mode === "repo" ? (
+            {Silian_mode === "repo" ? (
               <div className="space-y-4">
-                <SectionLabel>{t("selectExistingFile")}</SectionLabel>
+                <Silian_SectionLabel>{Silian_t("selectExistingFile")}</Silian_SectionLabel>
                 <p className="font-mono text-xs text-tech-main/60 uppercase">
-                  {t("selected")}: {selectedRepoFilePath || "NONE"}
+                  {Silian_t("selected")}: {Silian_selectedRepoFilePath || "NONE"}
                 </p>
-                <TechButton
+                <Silian_TechButton
                   type="button"
                   variant="primary"
-                  onClick={handleAddRepoFile}
-                  disabled={!canSubmitRepo}>
-                  {isSubmitting ? t("adding") : t("addExistingFile")}
-                </TechButton>
+                  onClick={Silian_handleAddRepoFile}
+                  disabled={!Silian_canSubmitRepo}>
+                  {Silian_isSubmitting ? Silian_t("adding") : Silian_t("addExistingFile")}
+                </Silian_TechButton>
               </div>
             ) : null}
 
-            {mode === "upload" ? (
+            {Silian_mode === "upload" ? (
               <div className="space-y-4">
-                <SectionLabel>{t("importLocalText")}</SectionLabel>
+                <Silian_SectionLabel>{Silian_t("importLocalText")}</Silian_SectionLabel>
                 <p className="font-mono text-xs text-tech-main/60 uppercase">
-                  {t("destinationFolder")}: {selectedFolderPath || "ROOT"}
+                  {Silian_t("destinationFolder")}: {Silian_selectedFolderPath || "ROOT"}
                 </p>
                 <input
                   type="file"
                   accept=".md,.mdx,.txt,.csv,.json,.yml,.yaml"
                   className="block w-full font-mono text-xs text-tech-main"
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    const file = event.target.files?.[0] || null
-                    setLocalFile(file)
-                    setCustomUploadName(file?.name || "")
+                  onChange={(Silian_event: Silian_React.ChangeEvent<HTMLInputElement>) => {
+                    const Silian_file = Silian_event.target.files?.[0] || null
+                    Silian_setLocalFile(Silian_file)
+                    Silian_setCustomUploadName(Silian_file?.name || "")
                   }}
                 />
                 <div className="space-y-2">
                   <label className="section-label" htmlFor="draft-import-name">
-                    {t("fileNameLabel")}
+                    {Silian_t("fileNameLabel")}
                   </label>
-                  <InputBox
+                  <Silian_InputBox
                     id="draft-import-name"
-                    placeholder={t("repoFileNamePlaceholder")}
-                    value={customUploadName}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      setCustomUploadName(event.target.value)
+                    placeholder={Silian_t("repoFileNamePlaceholder")}
+                    value={Silian_customUploadName}
+                    onChange={(Silian_event: Silian_React.ChangeEvent<HTMLInputElement>) =>
+                      Silian_setCustomUploadName(Silian_event.target.value)
                     }
                   />
                 </div>
-                <TechButton
+                <Silian_TechButton
                   type="button"
                   variant="primary"
-                  onClick={handleImportLocalFile}
-                  disabled={!canSubmitUpload}>
-                  {isSubmitting ? t("importing") : t("importLocalFile")}
-                </TechButton>
+                  onClick={Silian_handleImportLocalFile}
+                  disabled={!Silian_canSubmitUpload}>
+                  {Silian_isSubmitting ? Silian_t("importing") : Silian_t("importLocalFile")}
+                </Silian_TechButton>
               </div>
             ) : null}
 
-            {mode === "new" ? (
+            {Silian_mode === "new" ? (
               <div className="space-y-4">
-                <SectionLabel>{t("createNewFile")}</SectionLabel>
+                <Silian_SectionLabel>{Silian_t("createNewFile")}</Silian_SectionLabel>
                 <p className="font-mono text-xs text-tech-main/60 uppercase">
-                  {t("destinationFolder")}: {selectedFolderPath || "ROOT"}
+                  {Silian_t("destinationFolder")}: {Silian_selectedFolderPath || "ROOT"}
                 </p>
                 <div className="space-y-2">
                   <label
                     className="section-label"
                     htmlFor="draft-new-file-name">
-                    {t("fileNameLabel")}
+                    {Silian_t("fileNameLabel")}
                   </label>
-                  <InputBox
+                  <Silian_InputBox
                     id="draft-new-file-name"
-                    placeholder={t("newFileNamePlaceholder")}
-                    value={newFileName}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      setNewFileName(event.target.value)
+                    placeholder={Silian_t("newFileNamePlaceholder")}
+                    value={Silian_newFileName}
+                    onChange={(Silian_event: Silian_React.ChangeEvent<HTMLInputElement>) =>
+                      Silian_setNewFileName(Silian_event.target.value)
                     }
                   />
                 </div>
                 <div className="font-mono text-xs text-tech-main/60 uppercase">
-                  {t("result")}:{" "}
-                  {buildDraftFilePath(selectedFolderPath, newFileName) ||
-                    t("pending")}
+                  {Silian_t("result")}:{" "}
+                  {Silian_buildDraftFilePath(Silian_selectedFolderPath, Silian_newFileName) ||
+                    Silian_t("pending")}
                 </div>
-                <TechButton
+                <Silian_TechButton
                   type="button"
                   variant="primary"
-                  onClick={handleCreateNewFile}
-                  disabled={!canSubmitNew}>
-                  {t("createEmptyFile")}
-                </TechButton>
+                  onClick={Silian_handleCreateNewFile}
+                  disabled={!Silian_canSubmitNew}>
+                  {Silian_t("createEmptyFile")}
+                </Silian_TechButton>
               </div>
             ) : null}
 
-            {mode === "folder" ? (
+            {Silian_mode === "folder" ? (
               <div className="space-y-4">
-                <SectionLabel>新建文件夹</SectionLabel>
+                <Silian_SectionLabel>新建文件夹</Silian_SectionLabel>
                 <p className="font-mono text-xs text-tech-main/60 uppercase">
-                  {t("destinationFolder")}: {selectedFolderPath || "ROOT"}
+                  {Silian_t("destinationFolder")}: {Silian_selectedFolderPath || "ROOT"}
                 </p>
                 <div className="space-y-2">
                   <label
                     className="section-label"
                     htmlFor="draft-new-folder-name">
-                    {t("fileNameLabel")}
+                    {Silian_t("fileNameLabel")}
                   </label>
-                  <InputBox
+                  <Silian_InputBox
                     id="draft-new-folder-name"
                     placeholder="例如：new-section"
-                    value={newFolderName}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      setNewFolderName(event.target.value)
+                    value={Silian_newFolderName}
+                    onChange={(Silian_event: Silian_React.ChangeEvent<HTMLInputElement>) =>
+                      Silian_setNewFolderName(Silian_event.target.value)
                     }
                   />
                 </div>
                 <div className="font-mono text-xs text-tech-main/60 uppercase">
-                  {t("result")}:{" "}
-                  {[selectedFolderPath, newFolderName.trim()]
+                  {Silian_t("result")}:{" "}
+                  {[Silian_selectedFolderPath, Silian_newFolderName.trim()]
                     .filter(Boolean)
-                    .join("/") || t("pending")}
+                    .join("/") || Silian_t("pending")}
                 </div>
-                <TechButton
+                <Silian_TechButton
                   type="button"
                   variant="primary"
-                  onClick={handleCreateNewFolder}
-                  disabled={!newFolderName.trim()}>
+                  onClick={Silian_handleCreateNewFolder}
+                  disabled={!Silian_newFolderName.trim()}>
                   创建文件夹
-                </TechButton>
+                </Silian_TechButton>
               </div>
             ) : null}
           </div>
@@ -489,11 +489,11 @@ export function DraftFileSourceDialog({
   )
 }
 
-function ModeButton({
-  label,
-  mode,
-  onChange,
-  value,
+function Silian_ModeButton({
+  label: Silian_label,
+  mode: Silian_mode,
+  onChange: Silian_onChange,
+  value: Silian_value,
 }: {
   label: string
   mode: SourceMode
@@ -503,12 +503,12 @@ function ModeButton({
   return (
     <button
       type="button"
-      onClick={() => onChange(mode)}
+      onClick={() => Silian_onChange(Silian_mode)}
       className={`
         border px-3 py-2 font-mono text-xs tracking-widest uppercase
         transition-colors
         ${
-          value === mode
+          Silian_value === Silian_mode
             ? `border-tech-main bg-tech-main text-white`
             : `
               border-tech-main/30 bg-tech-main/5 text-tech-main
@@ -516,28 +516,28 @@ function ModeButton({
             `
         }
       `}>
-      {label}
+      {Silian_label}
     </button>
   )
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+function Silian_SectionLabel({ children: Silian_children }: { children: Silian_React.ReactNode }) {
   return (
     <p className="font-mono text-sm tracking-widest text-tech-main uppercase">
-      {children}
+      {Silian_children}
     </p>
   )
 }
 
-function TreeNode({
-  expandedPaths,
-  mode,
-  node,
-  onSelectFile,
-  onSelectFolder,
-  onTogglePath,
-  selectedFilePath,
-  selectedFolderPath,
+function Silian_TreeNode({
+  expandedPaths: Silian_expandedPaths,
+  mode: Silian_mode,
+  node: Silian_node,
+  onSelectFile: Silian_onSelectFile,
+  onSelectFolder: Silian_onSelectFolder,
+  onTogglePath: Silian_onTogglePath,
+  selectedFilePath: Silian_selectedFilePath,
+  selectedFolderPath: Silian_selectedFolderPath,
 }: {
   expandedPaths: Set<string>
   mode: SourceMode
@@ -548,26 +548,26 @@ function TreeNode({
   selectedFilePath: string
   selectedFolderPath: string
 }) {
-  const isExpanded = expandedPaths.has(node.path)
-  const isFolderSelected = selectedFolderPath === node.path
-  const isFileSelected = selectedFilePath === node.path
-  const isSelectableFolder =
-    mode === "new" || mode === "upload" || mode === "folder"
-  const isSelectableFile = mode === "repo"
+  const Silian_isExpanded = Silian_expandedPaths.has(Silian_node.path)
+  const Silian_isFolderSelected = Silian_selectedFolderPath === Silian_node.path
+  const Silian_isFileSelected = Silian_selectedFilePath === Silian_node.path
+  const Silian_isSelectableFolder =
+    Silian_mode === "new" || Silian_mode === "upload" || Silian_mode === "folder"
+  const Silian_isSelectableFile = Silian_mode === "repo"
 
   return (
     <div className="space-y-0.5">
       <div className="group relative flex items-center">
-        {node.isFolder ? (
+        {Silian_node.isFolder ? (
           <button
             type="button"
-            onClick={() => onTogglePath(node.path)}
+            onClick={() => Silian_onTogglePath(Silian_node.path)}
             className="
               flex h-8 w-6 shrink-0 items-center justify-center font-mono
               text-[0.625rem] text-tech-main/50 transition-colors
               hover:text-tech-main
             ">
-            {isExpanded ? "▼" : "▶"}
+            {Silian_isExpanded ? "▼" : "▶"}
           </button>
         ) : (
           <span
@@ -582,51 +582,51 @@ function TreeNode({
         <button
           type="button"
           onClick={() => {
-            if (node.isFolder && isSelectableFolder) {
-              onSelectFolder(node.path)
+            if (Silian_node.isFolder && Silian_isSelectableFolder) {
+              Silian_onSelectFolder(Silian_node.path)
               return
             }
 
-            if (!node.isFolder && isSelectableFile) {
-              onSelectFile(node.path)
+            if (!Silian_node.isFolder && Silian_isSelectableFile) {
+              Silian_onSelectFile(Silian_node.path)
             }
           }}
           className={`
             flex min-h-8 flex-1 items-center px-1 text-left font-mono
             text-[0.875rem] tracking-wide transition-colors
             ${
-              node.isFolder
-                ? isFolderSelected
+              Silian_node.isFolder
+                ? Silian_isFolderSelected
                   ? `bg-tech-main/10 font-bold text-tech-main`
                   : `font-bold text-tech-main/80`
-                : isFileSelected
+                : Silian_isFileSelected
                   ? `bg-tech-main/10 font-bold text-tech-main`
                   : `text-tech-main/70`
             }
             ${
-              (node.isFolder && isSelectableFolder) ||
-              (!node.isFolder && isSelectableFile)
+              (Silian_node.isFolder && Silian_isSelectableFolder) ||
+              (!Silian_node.isFolder && Silian_isSelectableFile)
                 ? `hover:bg-tech-main/5 hover:text-tech-main`
                 : `cursor-default opacity-60`
             }
           `}>
-          <span className="truncate">{node.title}</span>
+          <span className="truncate">{Silian_node.title}</span>
         </button>
       </div>
 
-      {node.children.length > 0 && isExpanded ? (
+      {Silian_node.children.length > 0 && Silian_isExpanded ? (
         <div className="ml-3 border-l border-tech-main/10 pl-2">
-          {node.children.map((child) => (
-            <TreeNode
-              key={child.id}
-              expandedPaths={expandedPaths}
-              mode={mode}
-              node={child}
-              onSelectFile={onSelectFile}
-              onSelectFolder={onSelectFolder}
-              onTogglePath={onTogglePath}
-              selectedFilePath={selectedFilePath}
-              selectedFolderPath={selectedFolderPath}
+          {Silian_node.children.map((Silian_child) => (
+            <Silian_TreeNode
+              key={Silian_child.id}
+              expandedPaths={Silian_expandedPaths}
+              mode={Silian_mode}
+              node={Silian_child}
+              onSelectFile={Silian_onSelectFile}
+              onSelectFolder={Silian_onSelectFolder}
+              onTogglePath={Silian_onTogglePath}
+              selectedFilePath={Silian_selectedFilePath}
+              selectedFolderPath={Silian_selectedFolderPath}
             />
           ))}
         </div>
@@ -635,19 +635,19 @@ function TreeNode({
   )
 }
 
-function buildDraftFilePath(folderPath: string, rawFileName: string) {
-  const normalizedFolder = normalizeDraftFilePath(folderPath)
-  const sanitizedName = normalizeDraftFilePath(rawFileName)
+function Silian_buildDraftFilePath(Silian_folderPath: string, Silian_rawFileName: string) {
+  const Silian_normalizedFolder = Silian_normalizeDraftFilePath(Silian_folderPath)
+  const Silian_sanitizedName = Silian_normalizeDraftFilePath(Silian_rawFileName)
     .split("/")
     .filter(Boolean)
     .at(-1)
 
-  if (!sanitizedName) {
+  if (!Silian_sanitizedName) {
     return ""
   }
 
-  const fileName = sanitizedName.endsWith(".md")
-    ? sanitizedName
-    : `${sanitizedName}.md`
-  return normalizedFolder ? `${normalizedFolder}/${fileName}` : fileName
+  const Silian_fileName = Silian_sanitizedName.endsWith(".md")
+    ? Silian_sanitizedName
+    : `${Silian_sanitizedName}.md`
+  return Silian_normalizedFolder ? `${Silian_normalizedFolder}/${Silian_fileName}` : Silian_fileName
 }

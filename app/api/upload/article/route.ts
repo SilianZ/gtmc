@@ -1,78 +1,78 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest as Silian_NextRequest, NextResponse as Silian_NextResponse } from "next/server"
 
-import { auth } from "@/lib/auth"
-import { getGithubPatForUser } from "@/lib/auth-context"
-import { classifyFile, sanitizeFilename } from "@/lib/file-upload"
+import { auth as Silian_auth } from "@/lib/auth"
+import { getGithubPatForUser as Silian_getGithubPatForUser } from "@/lib/auth-context"
+import { classifyFile as Silian_classifyFile, sanitizeFilename as Silian_sanitizeFilename } from "@/lib/file-upload"
 import {
-  uploadArticleAssetToGithub,
-  ArticleAssetUploadError,
+  uploadArticleAssetToGithub as Silian_uploadArticleAssetToGithub,
+  ArticleAssetUploadError as Silian_ArticleAssetUploadError,
 } from "@/lib/github/articles-assets"
 
-export async function POST(req: NextRequest) {
-  const session = await auth()
+export async function POST(Silian_req: Silian_NextRequest) {
+  const Silian_session = await Silian_auth()
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!Silian_session?.user?.id) {
+    return Silian_NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   try {
-    const formData = await req.formData()
-    const file = formData.get("file") as File | null
+    const Silian_formData = await Silian_req.formData()
+    const Silian_file = Silian_formData.get("file") as File | null
 
-    if (!file) {
-      return NextResponse.json({ error: "No file provided." }, { status: 400 })
+    if (!Silian_file) {
+      return Silian_NextResponse.json({ error: "No file provided." }, { status: 400 })
     }
 
-    const classification = classifyFile(file.type)
-    if (!classification) {
-      return NextResponse.json(
+    const Silian_classification = Silian_classifyFile(Silian_file.type)
+    if (!Silian_classification) {
+      return Silian_NextResponse.json(
         { error: "File type not allowed." },
         { status: 400 }
       )
     }
 
-    const arrayBuffer = await file.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
+    const Silian_arrayBuffer = await Silian_file.arrayBuffer()
+    const Silian_buffer = Buffer.from(Silian_arrayBuffer)
 
-    if (buffer.length > classification.maxBytes) {
-      const maxMB = Math.round(classification.maxBytes / (1024 * 1024))
-      return NextResponse.json(
-        { error: `File too large (max ${maxMB}MB).` },
+    if (Silian_buffer.length > Silian_classification.maxBytes) {
+      const Silian_maxMB = Math.round(Silian_classification.maxBytes / (1024 * 1024))
+      return Silian_NextResponse.json(
+        { error: `File too large (max ${Silian_maxMB}MB).` },
         { status: 400 }
       )
     }
 
-    const filename = sanitizeFilename(file.name, file.type)
-    const url = await uploadArticleAssetToGithub({
-      buffer,
-      category: classification.category,
-      filename,
-      token: (await getGithubPatForUser(session.user.id)) ?? null,
+    const Silian_filename = Silian_sanitizeFilename(Silian_file.name, Silian_file.type)
+    const Silian_url = await Silian_uploadArticleAssetToGithub({
+      buffer: Silian_buffer,
+      category: Silian_classification.category,
+      filename: Silian_filename,
+      token: (await Silian_getGithubPatForUser(Silian_session.user.id)) ?? null,
     })
 
-    return NextResponse.json({
+    return Silian_NextResponse.json({
       success: true,
-      url,
-      filename,
-      mimeType: file.type,
-      fileSize: buffer.length,
-      category: classification.category,
-      proxyable: classification.proxyable,
+      url: Silian_url,
+      filename: Silian_filename,
+      mimeType: Silian_file.type,
+      fileSize: Silian_buffer.length,
+      category: Silian_classification.category,
+      proxyable: Silian_classification.proxyable,
     })
-  } catch (error) {
-    if (error instanceof ArticleAssetUploadError) {
-      if (error.code === "CONFIG_MISSING") {
-        return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (Silian_error) {
+    if (Silian_error instanceof Silian_ArticleAssetUploadError) {
+      if (Silian_error.code === "CONFIG_MISSING") {
+        return Silian_NextResponse.json({ error: Silian_error.message }, { status: 500 })
       }
 
-      if (error.code === "AUTH_FAILED") {
-        return NextResponse.json({ error: error.message }, { status: 403 })
+      if (Silian_error.code === "AUTH_FAILED") {
+        return Silian_NextResponse.json({ error: Silian_error.message }, { status: 403 })
       }
 
-      return NextResponse.json({ error: error.message }, { status: 502 })
+      return Silian_NextResponse.json({ error: Silian_error.message }, { status: 502 })
     }
 
-    console.error("Article upload error:", error)
-    return NextResponse.json({ error: "Upload failed." }, { status: 500 })
+    console.error("Article upload error:", Silian_error)
+    return Silian_NextResponse.json({ error: "Upload failed." }, { status: 500 })
   }
 }

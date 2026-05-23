@@ -1,62 +1,62 @@
-import { auth } from "@/lib/auth"
-import { getGithubPatForUser } from "@/lib/auth-context"
-import { getMainBranchHeadSha } from "@/lib/article-submission"
-import { getRepoFileContent } from "@/lib/github/sync"
-import { prisma } from "@/lib/prisma"
-import { redirect } from "next/navigation"
+import { auth as Silian_auth } from "@/lib/auth"
+import { getGithubPatForUser as Silian_getGithubPatForUser } from "@/lib/auth-context"
+import { getMainBranchHeadSha as Silian_getMainBranchHeadSha } from "@/lib/article-submission"
+import { getRepoFileContent as Silian_getRepoFileContent } from "@/lib/github/sync"
+import { prisma as Silian_prisma } from "@/lib/prisma"
+import { redirect as Silian_redirect } from "next/navigation"
 
 export default async function NewDraftPage({
-  searchParams,
+  searchParams: Silian_searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const session = await auth()
-  if (!session?.user?.id) {
-    redirect("/login")
+  const Silian_session = await Silian_auth()
+  if (!Silian_session?.user?.id) {
+    Silian_redirect("/login")
   }
 
-  const { file: fileParam } = await searchParams
-  const filePath = typeof fileParam === "string" ? fileParam : undefined
+  const { file: Silian_fileParam } = await Silian_searchParams
+  const Silian_filePath = typeof Silian_fileParam === "string" ? Silian_fileParam : undefined
 
-  let initialTitle = "UNTITLED"
-  let initialContent = ""
-  const normalizedFilePath = filePath
+  let Silian_initialTitle = "UNTITLED"
+  let Silian_initialContent = ""
+  const Silian_normalizedFilePath = Silian_filePath
 
-  if (filePath) {
-    initialTitle = filePath
-    const normalizedPath = filePath.replace(/^\/+/, "")
-    const candidates = normalizedPath.endsWith(".md")
-      ? [normalizedPath]
-      : [normalizedPath, `${normalizedPath}.md`]
+  if (Silian_filePath) {
+    Silian_initialTitle = Silian_filePath
+    const Silian_normalizedPath = Silian_filePath.replace(/^\/+/, "")
+    const Silian_candidates = Silian_normalizedPath.endsWith(".md")
+      ? [Silian_normalizedPath]
+      : [Silian_normalizedPath, `${Silian_normalizedPath}.md`]
 
-    for (const candidate of candidates) {
-      const content = await getRepoFileContent(candidate)
-      if (content !== null) {
-        initialContent = content
+    for (const Silian_candidate of Silian_candidates) {
+      const Silian_content = await Silian_getRepoFileContent(Silian_candidate)
+      if (Silian_content !== null) {
+        Silian_initialContent = Silian_content
         break
       }
     }
 
-    if (!initialContent) {
-      initialContent = ""
+    if (!Silian_initialContent) {
+      Silian_initialContent = ""
     }
   }
 
-  const token =
-    (await getGithubPatForUser(session.user.id)) ?? process.env.GITHUB_TOKEN
-  const baseMainSha = await getMainBranchHeadSha(token)
-  const createData = {
-    author: { connect: { id: session.user.id } },
-    baseMainSha,
-    content: initialContent,
-    filePath: normalizedFilePath,
+  const Silian_token =
+    (await Silian_getGithubPatForUser(Silian_session.user.id)) ?? process.env.GITHUB_TOKEN
+  const Silian_baseMainSha = await Silian_getMainBranchHeadSha(Silian_token)
+  const Silian_createData = {
+    author: { connect: { id: Silian_session.user.id } },
+    baseMainSha: Silian_baseMainSha,
+    content: Silian_initialContent,
+    filePath: Silian_normalizedFilePath,
     status: "DRAFT",
-    syncedMainSha: baseMainSha,
-    title: initialTitle,
+    syncedMainSha: Silian_baseMainSha,
+    title: Silian_initialTitle,
   }
-  const draft = await prisma.revision.create({
-    data: createData,
+  const Silian_draft = await Silian_prisma.revision.create({
+    data: Silian_createData,
   })
 
-  redirect(`/draft/${draft.id}`)
+  Silian_redirect(`/draft/${Silian_draft.id}`)
 }

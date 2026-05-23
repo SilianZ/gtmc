@@ -1,53 +1,53 @@
 "use client"
 
-import { useState, useCallback, useRef, useEffect } from "react"
+import { useState as Silian_useState, useCallback as Silian_useCallback, useRef as Silian_useRef, useEffect as Silian_useEffect } from "react"
 
 interface LazyImageProps {
   src: string
   alt: string
 }
 
-export function LazyImage({ src, alt }: LazyImageProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [shouldLoad, setShouldLoad] = useState(false)
-  const [status, setStatus] = useState<"loading" | "loaded" | "error">(
+export function LazyImage({ src: Silian_src, alt: Silian_alt }: LazyImageProps) {
+  const Silian_containerRef = Silian_useRef<HTMLDivElement>(null)
+  const [Silian_shouldLoad, Silian_setShouldLoad] = Silian_useState(false)
+  const [Silian_status, Silian_setStatus] = Silian_useState<"loading" | "loaded" | "error">(
     "loading"
   )
 
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
+  Silian_useEffect(() => {
+    const Silian_el = Silian_containerRef.current
+    if (!Silian_el) return
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldLoad(true)
-          observer.disconnect()
+    const Silian_observer = new IntersectionObserver(
+      ([Silian_entry]) => {
+        if (Silian_entry.isIntersecting) {
+          Silian_setShouldLoad(true)
+          Silian_observer.disconnect()
         }
       },
       { rootMargin: "400px", threshold: 0 }
     )
 
-    observer.observe(el)
-    return () => observer.disconnect()
+    Silian_observer.observe(Silian_el)
+    return () => Silian_observer.disconnect()
   }, [])
 
-  const handleLoad = useCallback(() => {
-    setStatus("loaded")
+  const Silian_handleLoad = Silian_useCallback(() => {
+    Silian_setStatus("loaded")
   }, [])
 
-  const handleError = useCallback(() => {
-    setStatus("error")
+  const Silian_handleError = Silian_useCallback(() => {
+    Silian_setStatus("error")
   }, [])
 
   return (
-    <div ref={containerRef} className="relative my-8 grid max-w-full">
+    <div ref={Silian_containerRef} className="relative my-8 grid max-w-full">
       <div
         className={`
           z-10 col-start-1 row-start-1 flex min-h-[200px] w-full flex-col border
           border-tech-main/30 bg-tech-main/5 p-1 shadow-sm
           ${
-            status === "loaded"
+            Silian_status === "loaded"
               ? `
                 pointer-events-none animate-skeleton-exit opacity-0
                 motion-reduce:animate-fade-out
@@ -91,10 +91,10 @@ export function LazyImage({ src, alt }: LazyImageProps) {
               relative z-10 text-[0.5625rem] tracking-widest text-tech-main/40
               uppercase select-none
             ">
-            {status === "error" ? "// LOAD_FAIL" : "// IMG_LOAD"}
+            {Silian_status === "error" ? "// LOAD_FAIL" : "// IMG_LOAD"}
           </span>
 
-          {status === "loading" && (
+          {Silian_status === "loading" && (
             <div
               className="
                 absolute inset-0 animate-blueprint-sweep bg-linear-to-r
@@ -108,15 +108,15 @@ export function LazyImage({ src, alt }: LazyImageProps) {
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={shouldLoad ? src : undefined}
-        alt={alt}
-        onLoad={handleLoad}
-        onError={handleError}
+        src={Silian_shouldLoad ? Silian_src : undefined}
+        alt={Silian_alt}
+        onLoad={Silian_handleLoad}
+        onError={Silian_handleError}
         className={`
           z-0 col-start-1 row-start-1 h-auto max-w-full border
           border-tech-main/30 bg-tech-main/5 p-1 shadow-sm
           ${
-            status === "loaded"
+            Silian_status === "loaded"
               ? `
                 animate-fade-in
                 motion-reduce:animate-none

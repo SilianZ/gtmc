@@ -1,88 +1,88 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState as Silian_useState, useEffect as Silian_useEffect, useRef as Silian_useRef } from "react"
 import type { TocItem } from "./use-toc"
 
-function computeInitialActiveHeading(toc: TocItem[]): string | null {
-  if (!toc || toc.length === 0) return null
+function Silian_computeInitialActiveHeading(Silian_toc: TocItem[]): string | null {
+  if (!Silian_toc || Silian_toc.length === 0) return null
 
-  const headingIds = toc.map((item) => item.id)
-  const headingElements = headingIds
-    .map((id) => {
-      const escapedId = CSS.escape(id)
-      return document.querySelector(`main h2#${escapedId}`)
+  const Silian_headingIds = Silian_toc.map((Silian_item) => Silian_item.id)
+  const Silian_headingElements = Silian_headingIds
+    .map((Silian_id) => {
+      const Silian_escapedId = CSS.escape(Silian_id)
+      return document.querySelector(`main h2#${Silian_escapedId}`)
     })
-    .filter((el) => el !== null) as Element[]
+    .filter((Silian_el) => Silian_el !== null) as Element[]
 
-  if (headingElements.length === 0) return null
+  if (Silian_headingElements.length === 0) return null
 
-  const threshold =
+  const Silian_threshold =
     typeof window !== "undefined" ? window.innerHeight * 0.25 : 0
-  let activeId: string | null = headingIds[0] || null
-  for (let i = 0; i < headingElements.length; i++) {
-    const rect = headingElements[i].getBoundingClientRect()
-    if (rect.top <= threshold) {
-      activeId = headingIds[i]
+  let Silian_activeId: string | null = Silian_headingIds[0] || null
+  for (let Silian_i = 0; Silian_i < Silian_headingElements.length; Silian_i++) {
+    const Silian_rect = Silian_headingElements[Silian_i].getBoundingClientRect()
+    if (Silian_rect.top <= Silian_threshold) {
+      Silian_activeId = Silian_headingIds[Silian_i]
     } else {
       break
     }
   }
-  return activeId
+  return Silian_activeId
 }
 
 export function useActiveHeading(
-  toc: TocItem[],
-  pathname: string
+  Silian_toc: TocItem[],
+  Silian_pathname: string
 ): string | null {
-  const [activeHeadingId, setActiveHeadingId] = useState<string | null>(() =>
-    computeInitialActiveHeading(toc)
+  const [Silian_activeHeadingId, Silian_setActiveHeadingId] = Silian_useState<string | null>(() =>
+    Silian_computeInitialActiveHeading(Silian_toc)
   )
-  const pathnameRef = useRef(pathname)
+  const Silian_pathnameRef = Silian_useRef(Silian_pathname)
 
-  useEffect(() => {
-    if (pathnameRef.current !== pathname) {
-      pathnameRef.current = pathname
+  Silian_useEffect(() => {
+    if (Silian_pathnameRef.current !== Silian_pathname) {
+      Silian_pathnameRef.current = Silian_pathname
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setActiveHeadingId(computeInitialActiveHeading(toc))
+      Silian_setActiveHeadingId(Silian_computeInitialActiveHeading(Silian_toc))
     }
-  }, [pathname, toc])
+  }, [Silian_pathname, Silian_toc])
 
-  useEffect(() => {
-    if (!toc || toc.length === 0) {
+  Silian_useEffect(() => {
+    if (!Silian_toc || Silian_toc.length === 0) {
       return
     }
 
-    const headingIds = toc.map((item) => item.id)
+    const Silian_headingIds = Silian_toc.map((Silian_item) => Silian_item.id)
 
-    const getActiveId = (): string | null => {
-      const threshold = window.innerHeight * 0.25
-      let activeId: string | null = headingIds[0] || null
+    const Silian_getActiveId = (): string | null => {
+      const Silian_threshold = window.innerHeight * 0.25
+      let Silian_activeId: string | null = Silian_headingIds[0] || null
 
-      for (let i = 0; i < headingIds.length; i++) {
-        const escapedId = CSS.escape(headingIds[i])
-        const el = document.querySelector(`main h2#${escapedId}`)
-        if (el) {
-          const rect = el.getBoundingClientRect()
-          if (rect.top <= threshold) {
-            activeId = headingIds[i]
+      for (let Silian_i = 0; Silian_i < Silian_headingIds.length; Silian_i++) {
+        const Silian_escapedId = CSS.escape(Silian_headingIds[Silian_i])
+        const Silian_el = document.querySelector(`main h2#${Silian_escapedId}`)
+        if (Silian_el) {
+          const Silian_rect = Silian_el.getBoundingClientRect()
+          if (Silian_rect.top <= Silian_threshold) {
+            Silian_activeId = Silian_headingIds[Silian_i]
           } else {
             break
           }
         }
       }
-      return activeId
+      return Silian_activeId
     }
 
-    const onScroll = () => {
-      setActiveHeadingId(getActiveId())
+    const Silian_onScroll = () => {
+      Silian_setActiveHeadingId(Silian_getActiveId())
     }
 
-    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("scroll", Silian_onScroll, { passive: true })
 
     return () => {
-      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("scroll", Silian_onScroll)
     }
-  }, [toc])
+  }, [Silian_toc])
 
-  return activeHeadingId
+  return Silian_activeHeadingId
 }

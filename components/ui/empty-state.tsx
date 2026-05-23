@@ -1,17 +1,17 @@
-import * as React from "react"
+import * as Silian_React from "react"
 
 interface EmptyStateProps {
   message: string
   colSpanFull?: boolean
 }
 
-export function EmptyState({ message, colSpanFull = false }: EmptyStateProps) {
+export function EmptyState({ message: Silian_message, colSpanFull: Silian_colSpanFull = false }: EmptyStateProps) {
   return (
     <div
       className={`
         group relative border border-dashed border-tech-main/40 bg-white/30
         py-16 text-center backdrop-blur-sm
-        ${colSpanFull ? `col-span-full` : ``}
+        ${Silian_colSpanFull ? `col-span-full` : ``}
       `}>
       <div
         className="
@@ -24,7 +24,7 @@ export function EmptyState({ message, colSpanFull = false }: EmptyStateProps) {
           relative z-10 font-mono text-lg tracking-widest text-tech-main/50
           uppercase
         ">
-        {message}
+        {Silian_message}
       </h2>
     </div>
   )
