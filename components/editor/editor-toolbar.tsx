@@ -1,26 +1,26 @@
 "use client"
 
-import * as React from "react"
-import { useTranslations } from "next-intl"
+import * as Silian_React from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 
 interface EditorToolbarProps {
   onInsert: (prefix: string, suffix?: string) => void
   disabled?: boolean
-  fileUploadSlot?: React.ReactNode
+  fileUploadSlot?: Silian_React.ReactNode
   lineWrap?: boolean
   onWrapToggle?: () => void
 }
 
 export function EditorToolbar({
-  onInsert,
-  disabled = false,
-  fileUploadSlot,
-  lineWrap,
-  onWrapToggle,
+  onInsert: Silian_onInsert,
+  disabled: Silian_disabled = false,
+  fileUploadSlot: Silian_fileUploadSlot,
+  lineWrap: Silian_lineWrap,
+  onWrapToggle: Silian_onWrapToggle,
 }: EditorToolbarProps) {
-  const t = useTranslations("Editor")
-  const btnClass = `relative h-8 min-w-[32px] flex items-center justify-center border border-transparent px-3 text-[10px] tracking-widest uppercase transition-all duration-200 select-none hover:border-tech-accent/40 hover:bg-tech-accent/10 hover:text-white hover:shadow-[0_0_10px_rgba(196,208,223,0.1)] sm:h-auto sm:min-w-0 sm:flex-none sm:py-1.5 ${!disabled ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}`
-  const smBtnClass = `relative hidden h-8 items-center justify-center border border-transparent px-3 py-1 text-[10px] tracking-widest uppercase transition-all duration-200 select-none hover:border-tech-accent/40 hover:bg-tech-accent/10 hover:text-white hover:shadow-[0_0_10px_rgba(196,208,223,0.1)] sm:flex ${!disabled ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}`
+  const Silian_t = Silian_useTranslations("Editor")
+  const Silian_btnClass = `relative h-8 min-w-[32px] flex items-center justify-center border border-transparent px-3 text-[10px] tracking-widest uppercase transition-all duration-200 select-none hover:border-tech-accent/40 hover:bg-tech-accent/10 hover:text-white hover:shadow-[0_0_10px_rgba(196,208,223,0.1)] sm:h-auto sm:min-w-0 sm:flex-none sm:py-1.5 ${!Silian_disabled ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}`
+  const Silian_smBtnClass = `relative hidden h-8 items-center justify-center border border-transparent px-3 py-1 text-[10px] tracking-widest uppercase transition-all duration-200 select-none hover:border-tech-accent/40 hover:bg-tech-accent/10 hover:text-white hover:shadow-[0_0_10px_rgba(196,208,223,0.1)] sm:flex ${!Silian_disabled ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}`
 
   return (
     <div
@@ -35,28 +35,28 @@ export function EditorToolbar({
 
       <button
         type="button"
-        onClick={() => onInsert("**", "**")}
-        disabled={disabled}
-        className={btnClass}>
+        onClick={() => Silian_onInsert("**", "**")}
+        disabled={Silian_disabled}
+        className={Silian_btnClass}>
         <b className="font-sans text-xs">B</b>
       </button>
       <button
         type="button"
-        onClick={() => onInsert("*", "*")}
-        disabled={disabled}
-        className={btnClass}>
+        onClick={() => Silian_onInsert("*", "*")}
+        disabled={Silian_disabled}
+        className={Silian_btnClass}>
         <i className="font-sans text-xs">I</i>
       </button>
       <div className="mx-1 h-4 w-px bg-white/10" />
       <button
         type="button"
-        onClick={() => onInsert("[", "](url)")}
-        disabled={disabled}
-        className={btnClass}
-        title={t("toolbarLink")}>
+        onClick={() => Silian_onInsert("[", "](url)")}
+        disabled={Silian_disabled}
+        className={Silian_btnClass}
+        title={Silian_t("toolbarLink")}>
         LINK
       </button>
-      {fileUploadSlot}
+      {Silian_fileUploadSlot}
       <div
         className="
           mx-1 hidden h-4 w-px bg-white/10
@@ -65,25 +65,25 @@ export function EditorToolbar({
       />
       <button
         type="button"
-        onClick={() => onInsert("### ")}
-        disabled={disabled}
-        className={smBtnClass}>
+        onClick={() => Silian_onInsert("### ")}
+        disabled={Silian_disabled}
+        className={Silian_smBtnClass}>
         H3
       </button>
       <button
         type="button"
-        onClick={() => onInsert("`", "`")}
-        disabled={disabled}
-        className={smBtnClass}
-        title={t("toolbarCode")}>
+        onClick={() => Silian_onInsert("`", "`")}
+        disabled={Silian_disabled}
+        className={Silian_smBtnClass}
+        title={Silian_t("toolbarCode")}>
         CODE
       </button>
       <button
         type="button"
-        onClick={() => onInsert("```\n", "\n```")}
-        disabled={disabled}
-        className={smBtnClass}
-        title={t("toolbarBlock")}>
+        onClick={() => Silian_onInsert("```\n", "\n```")}
+        disabled={Silian_disabled}
+        className={Silian_smBtnClass}
+        title={Silian_t("toolbarBlock")}>
         BLOCK
       </button>
       <span
@@ -94,19 +94,19 @@ export function EditorToolbar({
         <span className="size-1.5 animate-pulse rounded-full bg-tech-accent/40" />
         MD_SYNTAX_READY
       </span>
-      {onWrapToggle !== undefined && (
+      {Silian_onWrapToggle !== undefined && (
         <>
           <div className="mx-2 hidden h-4 w-px bg-white/10 sm:block" />
           <button
             type="button"
-            onClick={onWrapToggle}
+            onClick={Silian_onWrapToggle}
             className={`hidden border px-3 py-1 font-mono text-[9px] tracking-widest uppercase transition-all duration-200 select-none sm:block ${
-              lineWrap
+              Silian_lineWrap
                 ? "border-tech-accent bg-tech-accent/20 text-white shadow-[0_0_8px_rgba(196,208,223,0.2)]"
                 : "border-transparent text-white/50 hover:border-tech-accent/30 hover:bg-tech-accent/10 hover:text-white"
             }`}
-            aria-pressed={lineWrap}>
-            {t("toolbarWrap")} {lineWrap ? "[ON]" : "[OFF]"}
+            aria-pressed={Silian_lineWrap}>
+            {Silian_t("toolbarWrap")} {Silian_lineWrap ? "[ON]" : "[OFF]"}
           </button>
         </>
       )}

@@ -1,15 +1,15 @@
 import {
-  isGithubRateLimitedResponse,
-  parseGithubErrorMessage,
+  isGithubRateLimitedResponse as Silian_isGithubRateLimitedResponse,
+  parseGithubErrorMessage as Silian_parseGithubErrorMessage,
 } from "@/lib/github/rate-limit"
 import {
-  resolveGithubFeaturesIssuesToken,
-  resolveGithubFeaturesWriteToken,
+  resolveGithubFeaturesIssuesToken as Silian_resolveGithubFeaturesIssuesToken,
+  resolveGithubFeaturesWriteToken as Silian_resolveGithubFeaturesWriteToken,
 } from "@/lib/github/tokens"
-import { executeWithRetry } from "@/lib/github/retry-fetch"
+import { executeWithRetry as Silian_executeWithRetry } from "@/lib/github/retry-fetch"
 
-const GITHUB_API_BASE = "https://api.github.com"
-const GITHUB_ACCEPT_HEADER = "application/vnd.github.v3+json"
+const Silian_GITHUB_API_BASE = "https://api.github.com"
+const Silian_GITHUB_ACCEPT_HEADER = "application/vnd.github.v3+json"
 
 export interface GithubIssue {
   number: number
@@ -53,12 +53,12 @@ export class GithubFeaturesError
   status?: number
   details?: unknown
 
-  constructor(params: GithubFeaturesErrorObject) {
-    super(params.message)
+  constructor(Silian_params: GithubFeaturesErrorObject) {
+    super(Silian_params.message)
     this.name = "GithubFeaturesError"
-    this.code = params.code
-    this.status = params.status
-    this.details = params.details
+    this.code = Silian_params.code
+    this.status = Silian_params.status
+    this.details = Silian_params.details
   }
 }
 
@@ -76,11 +76,11 @@ interface GithubEmailRecord {
 }
 
 export function getGithubRepoConfig(): GithubRepoConfig {
-  const owner = process.env.GITHUB_REPO_OWNER
-  const repo = process.env.GITHUB_REPO_NAME
-  const token = resolveGithubFeaturesIssuesToken()
+  const Silian_owner = process.env.GITHUB_REPO_OWNER
+  const Silian_repo = process.env.GITHUB_REPO_NAME
+  const Silian_token = Silian_resolveGithubFeaturesIssuesToken()
 
-  if (!owner || !repo || !token) {
+  if (!Silian_owner || !Silian_repo || !Silian_token) {
     throw new GithubFeaturesError({
       code: "CONFIG_MISSING",
       message:
@@ -88,56 +88,56 @@ export function getGithubRepoConfig(): GithubRepoConfig {
     })
   }
 
-  return { owner, repo, token }
+  return { owner: Silian_owner, repo: Silian_repo, token: Silian_token }
 }
 
 export function getGithubWriteToken(): string {
-  const token = resolveGithubFeaturesWriteToken()
-  if (!token) {
+  const Silian_token = Silian_resolveGithubFeaturesWriteToken()
+  if (!Silian_token) {
     throw new GithubFeaturesError({
       code: "CONFIG_MISSING",
       message:
         "Missing GitHub write configuration. Required env var: GITHUB_FEATURES_WRITE_PAT.",
     })
   }
-  return token
+  return Silian_token
 }
 
-export function getRepoIssuesBaseUrl(config: GithubRepoConfig): string {
-  return `${GITHUB_API_BASE}/repos/${config.owner}/${config.repo}/issues`
+export function getRepoIssuesBaseUrl(Silian_config: GithubRepoConfig): string {
+  return `${Silian_GITHUB_API_BASE}/repos/${Silian_config.owner}/${Silian_config.repo}/issues`
 }
 
-export function parseJsonSafely(text: string): unknown {
-  if (!text) {
+export function parseJsonSafely(Silian_text: string): unknown {
+  if (!Silian_text) {
     return null
   }
 
   try {
-    return JSON.parse(text)
+    return JSON.parse(Silian_text)
   } catch {
-    return text
+    return Silian_text
   }
 }
 
-export function parseErrorMessage(details: unknown): string | undefined {
-  return parseGithubErrorMessage(details)
+export function parseErrorMessage(Silian_details: unknown): string | undefined {
+  return Silian_parseGithubErrorMessage(Silian_details)
 }
 
-export function isRateLimited(response: Response, details: unknown): boolean {
-  return isGithubRateLimitedResponse(response, details)
+export function isRateLimited(Silian_response: Response, Silian_details: unknown): boolean {
+  return Silian_isGithubRateLimitedResponse(Silian_response, Silian_details)
 }
 
-export function parseNextLink(linkHeader: string | null): string | null {
-  if (!linkHeader) {
+export function parseNextLink(Silian_linkHeader: string | null): string | null {
+  if (!Silian_linkHeader) {
     return null
   }
 
-  const parts = linkHeader.split(",")
-  for (const part of parts) {
-    const trimmed = part.trim()
-    const match = trimmed.match(/<([^>]+)>;\s*rel="([^"]+)"/)
-    if (match && match[2] === "next") {
-      return match[1]
+  const Silian_parts = Silian_linkHeader.split(",")
+  for (const Silian_part of Silian_parts) {
+    const Silian_trimmed = Silian_part.trim()
+    const Silian_match = Silian_trimmed.match(/<([^>]+)>;\s*rel="([^"]+)"/)
+    if (Silian_match && Silian_match[2] === "next") {
+      return Silian_match[1]
     }
   }
 
@@ -145,113 +145,113 @@ export function parseNextLink(linkHeader: string | null): string | null {
 }
 
 export async function requestGithub<T>(
-  url: string,
-  init: RequestInit,
-  options?: { allow404?: boolean },
-  tokenOverride?: string
+  Silian_url: string,
+  Silian_init: RequestInit,
+  Silian_options?: { allow404?: boolean },
+  Silian_tokenOverride?: string
 ): Promise<{ data: T | null; response: Response }> {
-  const config = getGithubRepoConfig()
+  const Silian_config = getGithubRepoConfig()
 
-  const response = await executeWithRetry<Response>({
+  const Silian_response = await Silian_executeWithRetry<Response>({
     retries: 1,
     operation: async () => {
-      return await fetch(url, {
-        ...init,
+      return await fetch(Silian_url, {
+        ...Silian_init,
         headers: {
-          Accept: GITHUB_ACCEPT_HEADER,
-          Authorization: `token ${tokenOverride ?? config.token}`,
+          Accept: Silian_GITHUB_ACCEPT_HEADER,
+          Authorization: `token ${Silian_tokenOverride ?? Silian_config.token}`,
           "Content-Type": "application/json",
-          ...(init.headers ?? {}),
+          ...(Silian_init.headers ?? {}),
         },
       })
     },
-    onError: (error) => {
+    onError: (Silian_error) => {
       return {
         type: "throw",
         error: new GithubFeaturesError({
           code: "NETWORK_ERROR",
           message: "GitHub API request failed due to a network error.",
-          details: error,
+          details: Silian_error,
         }),
       }
     },
   })
 
-  const text = await response.text()
-  const parsed = parseJsonSafely(text)
+  const Silian_text = await Silian_response.text()
+  const Silian_parsed = parseJsonSafely(Silian_text)
 
-  if (options?.allow404 && response.status === 404) {
-    return { data: null, response }
+  if (Silian_options?.allow404 && Silian_response.status === 404) {
+    return { data: null, response: Silian_response }
   }
 
-  if (response.status === 401 || response.status === 403) {
-    if (isRateLimited(response, parsed)) {
+  if (Silian_response.status === 401 || Silian_response.status === 403) {
+    if (isRateLimited(Silian_response, Silian_parsed)) {
       throw new GithubFeaturesError({
         code: "RATE_LIMITED",
         message: "GitHub rate limit exceeded",
-        status: response.status,
-        details: parsed,
+        status: Silian_response.status,
+        details: Silian_parsed,
       })
     }
 
     throw new GithubFeaturesError({
       code: "AUTH_FAILED",
       message: "GitHub API authorization failed",
-      status: response.status,
-      details: parsed,
+      status: Silian_response.status,
+      details: Silian_parsed,
     })
   }
 
-  if (isRateLimited(response, parsed)) {
+  if (isRateLimited(Silian_response, Silian_parsed)) {
     throw new GithubFeaturesError({
       code: "RATE_LIMITED",
       message: "GitHub rate limit exceeded",
-      status: response.status,
-      details: parsed,
+      status: Silian_response.status,
+      details: Silian_parsed,
     })
   }
 
-  if (!response.ok) {
-    const apiMessage = parseErrorMessage(parsed)
+  if (!Silian_response.ok) {
+    const Silian_apiMessage = parseErrorMessage(Silian_parsed)
     throw new GithubFeaturesError({
       code: "API_ERROR",
-      message: `GitHub API request failed with status ${response.status}${apiMessage ? `: ${apiMessage}` : ""}`,
-      status: response.status,
-      details: parsed,
+      message: `GitHub API request failed with status ${Silian_response.status}${Silian_apiMessage ? `: ${Silian_apiMessage}` : ""}`,
+      status: Silian_response.status,
+      details: Silian_parsed,
     })
   }
 
-  return { data: parsed as T, response }
+  return { data: Silian_parsed as T, response: Silian_response }
 }
 
 export async function getGithubEmailVisibility(
-  token: string
+  Silian_token: string
 ): Promise<"private" | "public"> {
-  if (!token) {
+  if (!Silian_token) {
     return "private"
   }
 
   try {
-    const { data } = await requestGithub<GithubEmailRecord[]>(
-      `${GITHUB_API_BASE}/user/emails`,
+    const { data: Silian_data } = await requestGithub<GithubEmailRecord[]>(
+      `${Silian_GITHUB_API_BASE}/user/emails`,
       { method: "GET" },
       undefined,
-      token
+      Silian_token
     )
 
-    if (!data || !Array.isArray(data)) {
+    if (!Silian_data || !Array.isArray(Silian_data)) {
       return "private"
     }
 
-    const primaryEmail = data.find((email) => email.primary)
-    if (!primaryEmail) {
+    const Silian_primaryEmail = Silian_data.find((Silian_email) => Silian_email.primary)
+    if (!Silian_primaryEmail) {
       return "private"
     }
 
-    return primaryEmail.visibility === "public" ? "public" : "private"
+    return Silian_primaryEmail.visibility === "public" ? "public" : "private"
   } catch {
     return "private"
   }
 }
 
-export { GITHUB_API_BASE }
+export { Silian_GITHUB_API_BASE as GITHUB_API_BASE }

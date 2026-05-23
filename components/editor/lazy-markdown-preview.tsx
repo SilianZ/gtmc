@@ -1,14 +1,14 @@
-import dynamic from "next/dynamic"
+import Silian_dynamic from "next/dynamic"
 
 interface LazyMarkdownPreviewProps {
   content: string
   rawPath?: string
 }
 
-export const LazyMarkdownPreview = dynamic<LazyMarkdownPreviewProps>(
+export const LazyMarkdownPreview = Silian_dynamic<LazyMarkdownPreviewProps>(
   () =>
     import("@/components/editor/markdown-preview").then(
-      (mod) => mod.MarkdownPreview
+      (Silian_mod) => Silian_mod.MarkdownPreview
     ),
   {
     ssr: false,

@@ -1,6 +1,6 @@
-import { auth } from "@/lib/auth"
+import { auth as Silian_auth } from "@/lib/auth"
 import type { Session } from "next-auth"
-import { requireAdmin } from "@/lib/auth-context"
+import { requireAdmin as Silian_requireAdmin } from "@/lib/auth-context"
 import type { AuthContext } from "@/lib/auth-context"
 
 type AuthenticatedSession = Session & {
@@ -13,13 +13,13 @@ type AuthenticatedSession = Session & {
  * Returns the session with guaranteed user object.
  */
 export async function requireAuth(
-  message = "Unauthorized"
+  Silian_message = "Unauthorized"
 ): Promise<AuthenticatedSession> {
-  const session = await auth()
-  if (!session?.user?.id) {
-    throw new Error(message)
+  const Silian_session = await Silian_auth()
+  if (!Silian_session?.user?.id) {
+    throw new Error(Silian_message)
   }
-  return session as AuthenticatedSession
+  return Silian_session as AuthenticatedSession
 }
 
 /**
@@ -27,9 +27,9 @@ export async function requireAuth(
  * Returns both the session and the fresh auth context.
  */
 export async function requireAuthWithRole(
-  message = "Unauthorized"
+  Silian_message = "Unauthorized"
 ): Promise<{ session: AuthenticatedSession; ctx: AuthContext }> {
-  const session = await requireAuth(message)
-  const ctx = await requireAdmin(session.user.id)
-  return { session, ctx }
+  const Silian_session = await requireAuth(Silian_message)
+  const Silian_ctx = await Silian_requireAdmin(Silian_session.user.id)
+  return { session: Silian_session, ctx: Silian_ctx }
 }

@@ -1,25 +1,25 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState as Silian_useState, useMemo as Silian_useMemo } from "react"
 import type { RebaseState } from "@/types/rebase"
 
-import { resolveConflictAction, abortRebaseAction } from "@/actions/review"
-import { getReauthLoginUrl, isReauthRequiredError } from "@/lib/admin-reauth"
-import { TechButton } from "@/components/ui/tech-button"
+import { resolveConflictAction as Silian_resolveConflictAction, abortRebaseAction as Silian_abortRebaseAction } from "@/actions/review"
+import { getReauthLoginUrl as Silian_getReauthLoginUrl, isReauthRequiredError as Silian_isReauthRequiredError } from "@/lib/admin-reauth"
+import { TechButton as Silian_TechButton } from "@/components/ui/tech-button"
 import {
-  getActiveDraftFile,
-  normalizeDraftFileCollection,
-  serializeDraftFilesPayload,
+  getActiveDraftFile as Silian_getActiveDraftFile,
+  normalizeDraftFileCollection as Silian_normalizeDraftFileCollection,
+  serializeDraftFilesPayload as Silian_serializeDraftFilesPayload,
   type DraftFileCollection,
 } from "@/lib/draft-files"
 
 export default function ConflictResolver({
-  activeFileId,
-  files,
-  prNumber,
-  rebaseState,
-  revisionId,
-  conflictType = "CONFLICT",
+  activeFileId: Silian_activeFileId,
+  files: Silian_files,
+  prNumber: Silian_prNumber,
+  rebaseState: Silian_rebaseState,
+  revisionId: Silian_revisionId,
+  conflictType: Silian_conflictType = "CONFLICT",
 }: {
   activeFileId: string
   files: DraftFileCollection["files"]
@@ -29,92 +29,92 @@ export default function ConflictResolver({
   conflictType?: "CONFLICT" | "FILE_DELETED"
 }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _conflictType = conflictType
-  const [draftCollection, setDraftCollection] = useState<DraftFileCollection>(
+  const Silian__conflictType = Silian_conflictType
+  const [Silian_draftCollection, Silian_setDraftCollection] = Silian_useState<DraftFileCollection>(
     () =>
-      normalizeDraftFileCollection({
-        activeFileId,
-        files: files.map((file) => ({
-          ...file,
-          content: file.conflictContent ?? file.content,
+      Silian_normalizeDraftFileCollection({
+        activeFileId: Silian_activeFileId,
+        files: Silian_files.map((Silian_file) => ({
+          ...Silian_file,
+          content: Silian_file.conflictContent ?? Silian_file.content,
           conflictContent: undefined,
         })),
       })
   )
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isAborting, setIsAborting] = useState(false)
-  const activeFile = getActiveDraftFile(draftCollection)
-  const content = activeFile.content
+  const [Silian_isSubmitting, Silian_setIsSubmitting] = Silian_useState(false)
+  const [Silian_isAborting, Silian_setIsAborting] = Silian_useState(false)
+  const Silian_activeFile = Silian_getActiveDraftFile(Silian_draftCollection)
+  const Silian_content = Silian_activeFile.content
 
   type ConflictBlock =
     | { type: "ok"; content: string; id: string }
     | { type: "conflict"; ours: string; theirs: string; id: string }
 
-  const blocks = useMemo<ConflictBlock[]>(() => {
-    const regex = /<<<<<<< draft\n([\s\S]*?)=======\n([\s\S]*?)>>>>>>> main\n/g
-    const result: ConflictBlock[] = []
-    let lastIndex = 0
-    let match: RegExpExecArray | null = regex.exec(content)
+  const Silian_blocks = Silian_useMemo<ConflictBlock[]>(() => {
+    const Silian_regex = /<<<<<<< draft\n([\s\S]*?)=======\n([\s\S]*?)>>>>>>> main\n/g
+    const Silian_result: ConflictBlock[] = []
+    let Silian_lastIndex = 0
+    let Silian_match: RegExpExecArray | null = Silian_regex.exec(Silian_content)
 
-    while (match !== null) {
-      if (match.index > lastIndex) {
-        result.push({
+    while (Silian_match !== null) {
+      if (Silian_match.index > Silian_lastIndex) {
+        Silian_result.push({
           type: "ok",
-          content: content.substring(lastIndex, match.index),
-          id: `ok-${lastIndex}`,
+          content: Silian_content.substring(Silian_lastIndex, Silian_match.index),
+          id: `ok-${Silian_lastIndex}`,
         })
       }
-      result.push({
+      Silian_result.push({
         type: "conflict",
-        ours: match[1],
-        theirs: match[2],
-        id: `conflict-${match.index}`,
+        ours: Silian_match[1],
+        theirs: Silian_match[2],
+        id: `conflict-${Silian_match.index}`,
       })
-      lastIndex = regex.lastIndex
-      match = regex.exec(content)
+      Silian_lastIndex = Silian_regex.lastIndex
+      Silian_match = Silian_regex.exec(Silian_content)
     }
 
-    if (lastIndex < content.length) {
-      result.push({
+    if (Silian_lastIndex < Silian_content.length) {
+      Silian_result.push({
         type: "ok",
-        content: content.substring(lastIndex),
-        id: `ok-${lastIndex}`,
+        content: Silian_content.substring(Silian_lastIndex),
+        id: `ok-${Silian_lastIndex}`,
       })
     }
 
-    return result.length > 0 ? result : [{ type: "ok", content, id: "ok-0" }]
-  }, [content])
+    return Silian_result.length > 0 ? Silian_result : [{ type: "ok", content: Silian_content, id: "ok-0" }]
+  }, [Silian_content])
 
-  function updateActiveFileContent(nextContent: string) {
-    setDraftCollection((current) =>
-      normalizeDraftFileCollection({
-        ...current,
-        files: current.files.map((file) =>
-          file.id === current.activeFileId
-            ? { ...file, content: nextContent }
-            : file
+  function Silian_updateActiveFileContent(Silian_nextContent: string) {
+    Silian_setDraftCollection((Silian_current) =>
+      Silian_normalizeDraftFileCollection({
+        ...Silian_current,
+        files: Silian_current.files.map((Silian_file) =>
+          Silian_file.id === Silian_current.activeFileId
+            ? { ...Silian_file, content: Silian_nextContent }
+            : Silian_file
         ),
       })
     )
   }
 
-  function handleAcceptBlock(id: string, text: string) {
-    const newContent = blocks
-      .map((b) => {
-        if (b.id === id) {
-          return text
+  function Silian_handleAcceptBlock(Silian_id: string, Silian_text: string) {
+    const Silian_newContent = Silian_blocks
+      .map((Silian_b) => {
+        if (Silian_b.id === Silian_id) {
+          return Silian_text
         }
-        if (b.type === "conflict") {
-          return `<<<<<<< draft\n${b.ours}=======\n${b.theirs}>>>>>>> main\n`
+        if (Silian_b.type === "conflict") {
+          return `<<<<<<< draft\n${Silian_b.ours}=======\n${Silian_b.theirs}>>>>>>> main\n`
         }
-        return b.content
+        return Silian_b.content
       })
       .join("")
-    updateActiveFileContent(newContent)
+    Silian_updateActiveFileContent(Silian_newContent)
   }
 
-  async function handleAbort() {
-    if (!revisionId) return
+  async function Silian_handleAbort() {
+    if (!Silian_revisionId) return
     if (
       !confirm(
         "Are you sure you want to abort this rebase? All progress will be lost."
@@ -122,41 +122,41 @@ export default function ConflictResolver({
     )
       return
 
-    setIsAborting(true)
+    Silian_setIsAborting(true)
     try {
-      await abortRebaseAction(revisionId)
+      await Silian_abortRebaseAction(Silian_revisionId)
       window.location.reload()
-    } catch (error) {
-      if (isReauthRequiredError(error)) {
-        window.location.href = getReauthLoginUrl(
+    } catch (Silian_error) {
+      if (Silian_isReauthRequiredError(Silian_error)) {
+        window.location.href = Silian_getReauthLoginUrl(
           `${window.location.pathname}${window.location.search}`
         )
         return
       }
       alert(
-        `Failed to abort rebase: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to abort rebase: ${Silian_error instanceof Error ? Silian_error.message : String(Silian_error)}`
       )
-      setIsAborting(false)
+      Silian_setIsAborting(false)
     }
   }
 
-  async function handleResolve(formData: FormData) {
-    setIsSubmitting(true)
+  async function Silian_handleResolve(Silian_formData: FormData) {
+    Silian_setIsSubmitting(true)
     try {
-      await resolveConflictAction(prNumber, formData)
+      await Silian_resolveConflictAction(Silian_prNumber, Silian_formData)
       window.location.reload()
-    } catch (error) {
-      if (isReauthRequiredError(error)) {
-        window.location.href = getReauthLoginUrl(
+    } catch (Silian_error) {
+      if (Silian_isReauthRequiredError(Silian_error)) {
+        window.location.href = Silian_getReauthLoginUrl(
           `${window.location.pathname}${window.location.search}`
         )
         return
       }
       alert(
-        `Failed to resolve conflict: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to resolve conflict: ${Silian_error instanceof Error ? Silian_error.message : String(Silian_error)}`
       )
     } finally {
-      setIsSubmitting(false)
+      Silian_setIsSubmitting(false)
     }
   }
 
@@ -173,40 +173,40 @@ export default function ConflictResolver({
             Admin Resolution Required
           </p>
           <p className="text-sm">
-            {rebaseState?.status === "CONFLICT"
-              ? `Resolving commit ${rebaseState.currentCommitIndex + 1} of ${rebaseState.commitShas.length}`
+            {Silian_rebaseState?.status === "CONFLICT"
+              ? `Resolving commit ${Silian_rebaseState.currentCommitIndex + 1} of ${Silian_rebaseState.commitShas.length}`
               : "Edit the merged result below, then update the PR branch with the resolved content."}
           </p>
-          {rebaseState?.status === "CONFLICT" &&
-            rebaseState.commitInfos[rebaseState.currentCommitIndex] && (
+          {Silian_rebaseState?.status === "CONFLICT" &&
+            Silian_rebaseState.commitInfos[Silian_rebaseState.currentCommitIndex] && (
               <p className="mt-1 text-xs opacity-80">
                 Conflict in:{" "}
                 <span className="font-mono">
                   {
-                    rebaseState.commitInfos[rebaseState.currentCommitIndex]
+                    Silian_rebaseState.commitInfos[Silian_rebaseState.currentCommitIndex]
                       .message
                   }
                 </span>{" "}
                 (
-                {rebaseState.commitInfos[rebaseState.currentCommitIndex].author}
+                {Silian_rebaseState.commitInfos[Silian_rebaseState.currentCommitIndex].author}
                 )
               </p>
             )}
         </div>
-        {rebaseState &&
-          (rebaseState.status === "CONFLICT" ||
-            rebaseState.status === "IN_PROGRESS") && (
-            <TechButton
+        {Silian_rebaseState &&
+          (Silian_rebaseState.status === "CONFLICT" ||
+            Silian_rebaseState.status === "IN_PROGRESS") && (
+            <Silian_TechButton
               variant="secondary"
               size="sm"
-              onClick={handleAbort}
-              disabled={isAborting}
+              onClick={Silian_handleAbort}
+              disabled={Silian_isAborting}
               className="
                 shrink-0 border-red-600 text-red-600
                 hover:bg-red-600 hover:text-white
               ">
-              {isAborting ? "ABORTING..." : "ABORT REBASE"}
-            </TechButton>
+              {Silian_isAborting ? "ABORTING..." : "ABORT REBASE"}
+            </Silian_TechButton>
           )}
       </div>
 
@@ -215,36 +215,36 @@ export default function ConflictResolver({
           grid gap-4
           lg:grid-cols-[18rem_minmax(0,1fr)]
         ">
-        {draftCollection.files.length > 1 ? (
+        {Silian_draftCollection.files.length > 1 ? (
           <aside className="border border-tech-main/30 bg-tech-main/5 p-2">
             <div
               className="
                 p-2 font-mono text-xs tracking-widest text-tech-main uppercase
               ">
-              CONFLICT_FILES_[{draftCollection.files.length}]
+              CONFLICT_FILES_[{Silian_draftCollection.files.length}]
             </div>
             <div className="space-y-2">
-              {draftCollection.files.map((file, index) => {
-                const isActive = file.id === draftCollection.activeFileId
-                const fileLabel =
-                  file.filePath.split("/").filter(Boolean).at(-1) ||
-                  `UNTITLED_FILE_${index + 1}`
+              {Silian_draftCollection.files.map((Silian_file, Silian_index) => {
+                const Silian_isActive = Silian_file.id === Silian_draftCollection.activeFileId
+                const Silian_fileLabel =
+                  Silian_file.filePath.split("/").filter(Boolean).at(-1) ||
+                  `UNTITLED_FILE_${Silian_index + 1}`
 
                 return (
                   <button
-                    key={file.id}
+                    key={Silian_file.id}
                     type="button"
                     onClick={() =>
-                      setDraftCollection((current) => ({
-                        ...current,
-                        activeFileId: file.id,
+                      Silian_setDraftCollection((Silian_current) => ({
+                        ...Silian_current,
+                        activeFileId: Silian_file.id,
                       }))
                     }
                     className={`
                       flex min-h-11 w-full flex-col items-start gap-1 border
                       px-3 py-2 text-left transition-colors
                       ${
-                        isActive
+                        Silian_isActive
                           ? `border-tech-main bg-tech-main/10`
                           : `
                             guide-line bg-white/70
@@ -257,13 +257,13 @@ export default function ConflictResolver({
                         truncate font-mono text-xs tracking-widest
                         text-tech-main uppercase
                       ">
-                      {fileLabel}
+                      {Silian_fileLabel}
                     </span>
                     <span
                       className="
                         truncate font-mono text-[0.6875rem] text-tech-main/60
                       ">
-                      {file.filePath || "PATH_NOT_SET"}
+                      {Silian_file.filePath || "PATH_NOT_SET"}
                     </span>
                   </button>
                 )
@@ -281,7 +281,7 @@ export default function ConflictResolver({
               ACTIVE_FILE_
             </p>
             <p className="mt-1 font-mono text-sm text-tech-main-dark">
-              {activeFile.filePath || "PATH_NOT_SET"}
+              {Silian_activeFile.filePath || "PATH_NOT_SET"}
             </p>
           </div>
 
@@ -289,15 +289,15 @@ export default function ConflictResolver({
             className="
               mb-8 space-y-2 border border-tech-main/30 bg-tech-main/5 p-2
             ">
-            {blocks.map((block) => (
-              <div key={block.id}>
-                {block.type === "ok" ? (
+            {Silian_blocks.map((Silian_block) => (
+              <div key={Silian_block.id}>
+                {Silian_block.type === "ok" ? (
                   <pre
                     className="
                       p-4 font-mono text-sm whitespace-pre-wrap
                       text-tech-main-dark opacity-70
                     ">
-                    {block.content}
+                    {Silian_block.content}
                   </pre>
                 ) : (
                   <div className="my-4 flex flex-col border border-red-500/50">
@@ -326,14 +326,14 @@ export default function ConflictResolver({
                             overflow-x-auto p-4 font-mono text-sm
                             whitespace-pre-wrap
                           ">
-                          {block.ours}
+                          {Silian_block.ours}
                         </pre>
                         <div
                           className="
                             mt-auto border-t border-amber-500/20 bg-amber-500/5
                             p-2
                           ">
-                          <TechButton
+                          <Silian_TechButton
                             type="button"
                             variant="secondary"
                             size="sm"
@@ -342,10 +342,10 @@ export default function ConflictResolver({
                               hover:bg-amber-500 hover:text-amber-900
                             "
                             onClick={() =>
-                              handleAcceptBlock(block.id, block.ours)
+                              Silian_handleAcceptBlock(Silian_block.id, Silian_block.ours)
                             }>
                             ACCEPT OURS
-                          </TechButton>
+                          </Silian_TechButton>
                         </div>
                       </div>
                       <div className="flex flex-1 flex-col bg-blue-500/5">
@@ -361,14 +361,14 @@ export default function ConflictResolver({
                             overflow-x-auto p-4 font-mono text-sm
                             whitespace-pre-wrap
                           ">
-                          {block.theirs}
+                          {Silian_block.theirs}
                         </pre>
                         <div
                           className="
                             mt-auto border-t border-blue-500/20 bg-blue-500/5
                             p-2
                           ">
-                          <TechButton
+                          <Silian_TechButton
                             type="button"
                             variant="secondary"
                             size="sm"
@@ -377,10 +377,10 @@ export default function ConflictResolver({
                               hover:bg-blue-500 hover:text-blue-900
                             "
                             onClick={() =>
-                              handleAcceptBlock(block.id, block.theirs)
+                              Silian_handleAcceptBlock(Silian_block.id, Silian_block.theirs)
                             }>
                             ACCEPT THEIRS
-                          </TechButton>
+                          </Silian_TechButton>
                         </div>
                       </div>
                     </div>
@@ -391,17 +391,17 @@ export default function ConflictResolver({
           </div>
 
           <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              void handleResolve(new FormData(e.currentTarget))
+            onSubmit={(Silian_e) => {
+              Silian_e.preventDefault()
+              void Silian_handleResolve(new FormData(Silian_e.currentTarget))
             }}
             className="space-y-4">
             <input
               type="hidden"
               name="draftFiles"
-              value={serializeDraftFilesPayload(draftCollection)}
+              value={Silian_serializeDraftFilesPayload(Silian_draftCollection)}
             />
-            <input type="hidden" name="content" value={content} />
+            <input type="hidden" name="content" value={Silian_content} />
 
             <div className="mt-8 border-t border-tech-main/30 pt-4">
               <h3
@@ -417,9 +417,9 @@ export default function ConflictResolver({
                 ">
                 <textarea
                   name="content"
-                  value={content}
-                  onChange={(event) =>
-                    updateActiveFileContent(event.target.value)
+                  value={Silian_content}
+                  onChange={(Silian_event) =>
+                    Silian_updateActiveFileContent(Silian_event.target.value)
                   }
                   className="
                     min-h-[300px] w-full resize-y bg-transparent p-4 font-mono
@@ -429,9 +429,9 @@ export default function ConflictResolver({
               </div>
             </div>
 
-            <TechButton type="submit" variant="primary" disabled={isSubmitting}>
-              {isSubmitting ? "RESOLVING..." : "RESOLVE & UPDATE PR"}
-            </TechButton>
+            <Silian_TechButton type="submit" variant="primary" disabled={Silian_isSubmitting}>
+              {Silian_isSubmitting ? "RESOLVING..." : "RESOLVE & UPDATE PR"}
+            </Silian_TechButton>
           </form>
         </div>
       </div>

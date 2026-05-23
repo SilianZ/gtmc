@@ -1,28 +1,28 @@
 import type { Metadata } from "next"
-import { TechCard } from "@/components/ui/tech-card"
-import { TechButton } from "@/components/ui/tech-button"
-import { Link } from "@/i18n/navigation"
-import { prisma } from "@/lib/prisma"
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { deleteDraftAction } from "@/actions/article"
-import { getPR } from "@/lib/github/pr-manager"
-import { PageHeader } from "@/components/ui/page-header"
-import { EmptyState } from "@/components/ui/empty-state"
-import { DraftStatusBadge } from "@/components/ui/status-badge"
-import { CornerBrackets } from "@/components/ui/corner-brackets"
-import { SectionTitle } from "@/components/ui/section-title"
-import { decodeStoredDraftFiles } from "@/lib/draft-files"
-import { countCleanupFailedByRevision } from "@/lib/draft-asset-db"
+import { TechCard as Silian_TechCard } from "@/components/ui/tech-card"
+import { TechButton as Silian_TechButton } from "@/components/ui/tech-button"
+import { Link as Silian_Link } from "@/i18n/navigation"
+import { prisma as Silian_prisma } from "@/lib/prisma"
+import { auth as Silian_auth } from "@/lib/auth"
+import { redirect as Silian_redirect } from "next/navigation"
+import { deleteDraftAction as Silian_deleteDraftAction } from "@/actions/article"
+import { getPR as Silian_getPR } from "@/lib/github/pr-manager"
+import { PageHeader as Silian_PageHeader } from "@/components/ui/page-header"
+import { EmptyState as Silian_EmptyState } from "@/components/ui/empty-state"
+import { DraftStatusBadge as Silian_DraftStatusBadge } from "@/components/ui/status-badge"
+import { CornerBrackets as Silian_CornerBrackets } from "@/components/ui/corner-brackets"
+import { SectionTitle as Silian_SectionTitle } from "@/components/ui/section-title"
+import { decodeStoredDraftFiles as Silian_decodeStoredDraftFiles } from "@/lib/draft-files"
+import { countCleanupFailedByRevision as Silian_countCleanupFailedByRevision } from "@/lib/draft-asset-db"
 
-const ARCHIVED_DRAFT_STATUSES = new Set([
+const Silian_ARCHIVED_DRAFT_STATUSES = new Set([
   "APPROVED",
   "ARCHIVED",
   "MERGED",
   "CLOSED",
 ])
 
-const NON_DELETABLE_DRAFT_STATUSES = new Set([
+const Silian_NON_DELETABLE_DRAFT_STATUSES = new Set([
   "PENDING",
   "APPROVED",
   "IN_REVIEW",
@@ -36,68 +36,68 @@ export const metadata: Metadata = {
 }
 
 export default async function DraftDashboardPage() {
-  const session = await auth()
-  if (!session?.user) {
-    redirect("/login")
+  const Silian_session = await Silian_auth()
+  if (!Silian_session?.user) {
+    Silian_redirect("/login")
   }
 
-  const allDraftsRaw = await prisma.revision.findMany({
+  const Silian_allDraftsRaw = await Silian_prisma.revision.findMany({
     where: {
-      authorId: session.user.id,
+      authorId: Silian_session.user.id,
     },
     orderBy: {
       updatedAt: "desc",
     },
   })
 
-  const cleanupFailedByRevisionId = new Map<string, number>()
-  if (allDraftsRaw.length > 0) {
-    const counts = await countCleanupFailedByRevision(
-      allDraftsRaw.map((draft) => draft.id)
+  const Silian_cleanupFailedByRevisionId = new Map<string, number>()
+  if (Silian_allDraftsRaw.length > 0) {
+    const Silian_counts = await Silian_countCleanupFailedByRevision(
+      Silian_allDraftsRaw.map((Silian_draft) => Silian_draft.id)
     )
-    for (const [revisionId, count] of counts) {
-      cleanupFailedByRevisionId.set(revisionId, count)
+    for (const [Silian_revisionId, Silian_count] of Silian_counts) {
+      Silian_cleanupFailedByRevisionId.set(Silian_revisionId, Silian_count)
     }
   }
 
-  const allDrafts = await Promise.all(
-    allDraftsRaw.map(async (d) => {
-      let displayStatus = d.status
-      const decodedDraft = decodeStoredDraftFiles({
-        content: d.content,
-        conflictContent: d.conflictContent,
-        filePath: d.filePath,
+  const Silian_allDrafts = await Promise.all(
+    Silian_allDraftsRaw.map(async (Silian_d) => {
+      let Silian_displayStatus = Silian_d.status
+      const Silian_decodedDraft = Silian_decodeStoredDraftFiles({
+        content: Silian_d.content,
+        conflictContent: Silian_d.conflictContent,
+        filePath: Silian_d.filePath,
       })
 
-      if (d.githubPrNum) {
+      if (Silian_d.githubPrNum) {
         try {
-          const pr = await getPR(d.githubPrNum)
-          if (pr.state === "closed") {
-            displayStatus = pr.merged ? "MERGED" : "CLOSED"
+          const Silian_pr = await Silian_getPR(Silian_d.githubPrNum)
+          if (Silian_pr.state === "closed") {
+            Silian_displayStatus = Silian_pr.merged ? "MERGED" : "CLOSED"
           }
-        } catch (e) {
-          console.error(`Failed to fetch PR #${d.githubPrNum}:`, e)
+        } catch (Silian_e) {
+          console.error(`Failed to fetch PR #${Silian_d.githubPrNum}:`, Silian_e)
         }
       }
       return {
-        ...d,
-        cleanupFailedCount: cleanupFailedByRevisionId.get(d.id) ?? 0,
-        displayStatus,
-        fileCount: decodedDraft.files.length,
+        ...Silian_d,
+        cleanupFailedCount: Silian_cleanupFailedByRevisionId.get(Silian_d.id) ?? 0,
+        displayStatus: Silian_displayStatus,
+        fileCount: Silian_decodedDraft.files.length,
       }
     })
   )
 
-  const activeDrafts = allDrafts.filter(
-    (d) => !ARCHIVED_DRAFT_STATUSES.has(d.displayStatus)
+  const Silian_activeDrafts = Silian_allDrafts.filter(
+    (Silian_d) => !Silian_ARCHIVED_DRAFT_STATUSES.has(Silian_d.displayStatus)
   )
-  const archivedDrafts = allDrafts.filter((d) =>
-    ARCHIVED_DRAFT_STATUSES.has(d.displayStatus)
+  const Silian_archivedDrafts = Silian_allDrafts.filter((Silian_d) =>
+    Silian_ARCHIVED_DRAFT_STATUSES.has(Silian_d.displayStatus)
   )
 
-  const renderDraftCard = (draft: (typeof allDrafts)[0]) => (
-    <TechCard
-      key={draft.id}
+  const Silian_renderDraftCard = (Silian_draft: (typeof Silian_allDrafts)[0]) => (
+    <Silian_TechCard
+      key={Silian_draft.id}
       className="
         group relative flex h-auto flex-col justify-between border
         border-tech-main/40 bg-white/80 p-6 backdrop-blur-sm
@@ -105,7 +105,7 @@ export default async function DraftDashboardPage() {
         hover:shadow-[0_0_20px_rgba(96,112,143,0.15)] sm:h-64
       ">
       {/* Corner brackets */}
-      <CornerBrackets variant="hover" />
+      <Silian_CornerBrackets variant="hover" />
 
       {/* Blueprint Grid Background Pattern on Hover */}
       <div className="absolute inset-0 z-0 bg-[url('/bg-grid.svg')] bg-size-[24px_24px] opacity-0 transition-opacity duration-500 group-hover:opacity-[0.03]" />
@@ -116,8 +116,8 @@ export default async function DraftDashboardPage() {
             <div className="flex size-2 items-center justify-center bg-tech-main/20">
               <div className="size-1 bg-tech-main group-hover:animate-target-blink" />
             </div>
-            <DraftStatusBadge status={draft.displayStatus} />
-            {draft.cleanupFailedCount > 0 ? (
+            <Silian_DraftStatusBadge status={Silian_draft.displayStatus} />
+            {Silian_draft.cleanupFailedCount > 0 ? (
               <span className="animate-pulse font-mono text-xs text-red-500 uppercase">
                 ! CLEANUP_FAILED
               </span>
@@ -125,13 +125,13 @@ export default async function DraftDashboardPage() {
           </div>
           <div className="flex flex-col items-end gap-1">
             <span className="font-mono text-[10px] tracking-widest text-tech-main/50 uppercase">
-              LAST_SYNC // {draft.updatedAt.toLocaleDateString()}
+              LAST_SYNC // {Silian_draft.updatedAt.toLocaleDateString()}
             </span>
-            {!NON_DELETABLE_DRAFT_STATUSES.has(draft.displayStatus) && (
+            {!Silian_NON_DELETABLE_DRAFT_STATUSES.has(Silian_draft.displayStatus) && (
               <form
                 action={async () => {
                   "use server"
-                  await deleteDraftAction(draft.id)
+                  await Silian_deleteDraftAction(Silian_draft.id)
                 }}>
                 <button
                   type="submit"
@@ -154,7 +154,7 @@ export default async function DraftDashboardPage() {
               font-bold tracking-tight text-tech-main-dark uppercase
               transition-colors group-hover:border-tech-main
             ">
-            {draft.title || "UNTITLED_DOCUMENT"}
+            {Silian_draft.title || "UNTITLED_DOCUMENT"}
           </h3>
 
           <div className="mt-2 grid grid-cols-2 gap-2 border-t border-tech-main/10 pt-3">
@@ -163,7 +163,7 @@ export default async function DraftDashboardPage() {
                 SYS_REF
               </span>
               <span className="truncate font-mono text-xs text-tech-main/80">
-                {draft.id.split("-")[0]}
+                {Silian_draft.id.split("-")[0]}
               </span>
             </div>
             <div className="flex flex-col">
@@ -171,20 +171,20 @@ export default async function DraftDashboardPage() {
                 FILE_METRICS
               </span>
               <span className="font-mono text-xs text-tech-main/80">
-                {draft.fileCount} NODE(S)
+                {Silian_draft.fileCount} NODE(S)
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      <Link
-        href={`/draft/${draft.id}`}
+      <Silian_Link
+        href={`/draft/${Silian_draft.id}`}
         className="
           relative z-10 mt-6
           sm:mt-auto
         ">
-        <TechButton
+        <Silian_TechButton
           variant="ghost"
           className="
             min-h-11 w-full border guide-line bg-tech-main/5 font-mono
@@ -194,8 +194,8 @@ export default async function DraftDashboardPage() {
           ">
           <span className="flex w-full items-center justify-between px-2">
             <span>
-              {draft.displayStatus === "DRAFT" ||
-              draft.displayStatus === "CLOSED"
+              {Silian_draft.displayStatus === "DRAFT" ||
+              Silian_draft.displayStatus === "CLOSED"
                 ? "INIT_EDIT_SEQUENCE"
                 : "ENGAGE_VIEWER"}
             </span>
@@ -203,24 +203,24 @@ export default async function DraftDashboardPage() {
               {">"}
             </span>
           </span>
-        </TechButton>
-      </Link>
-    </TechCard>
+        </Silian_TechButton>
+      </Silian_Link>
+    </Silian_TechCard>
   )
 
   return (
     <div className="page-container">
-      <PageHeader
+      <Silian_PageHeader
         title="Ops Center"
         subtitle="YOUR DIGITAL WORKSHOP / DRAFTS & REVISIONS"
         action={
-          <Link
+          <Silian_Link
             href="/draft/new"
             className="
               w-full
               md:w-auto
             ">
-            <TechButton
+            <Silian_TechButton
               variant="primary"
               className="
                 flex min-h-11 w-full items-center justify-center px-6 text-xs
@@ -229,38 +229,38 @@ export default async function DraftDashboardPage() {
                 md:w-auto
               ">
               + INITIALIZE SUBMISSION
-            </TechButton>
-          </Link>
+            </Silian_TechButton>
+          </Silian_Link>
         }
       />
 
       <div className="space-y-8">
         <div>
-          <SectionTitle>Active Records</SectionTitle>
+          <Silian_SectionTitle>Active Records</Silian_SectionTitle>
           <div
             className="
               grid grid-cols-1 gap-6
               md:grid-cols-2
               lg:grid-cols-3
             ">
-            {activeDrafts.length === 0 ? (
-              <EmptyState message="NO ACTIVE RECORDS FOUND." colSpanFull />
+            {Silian_activeDrafts.length === 0 ? (
+              <Silian_EmptyState message="NO ACTIVE RECORDS FOUND." colSpanFull />
             ) : (
-              activeDrafts.map(renderDraftCard)
+              Silian_activeDrafts.map(Silian_renderDraftCard)
             )}
           </div>
         </div>
 
-        {archivedDrafts.length > 0 && (
+        {Silian_archivedDrafts.length > 0 && (
           <div>
-            <SectionTitle>Archived / Approved Records</SectionTitle>
+            <Silian_SectionTitle>Archived / Approved Records</Silian_SectionTitle>
             <div
               className="
                 grid grid-cols-1 gap-6
                 md:grid-cols-2
                 lg:grid-cols-3
               ">
-              {archivedDrafts.map(renderDraftCard)}
+              {Silian_archivedDrafts.map(Silian_renderDraftCard)}
             </div>
           </div>
         )}

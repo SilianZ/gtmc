@@ -1,4 +1,4 @@
-import React from "react"
+import Silian_React from "react"
 
 export type BadgeType = "info" | "error" | "progress"
 
@@ -8,44 +8,44 @@ export interface BadgeState {
 }
 
 export function useBadge() {
-  const [badge, setBadge] = React.useState<BadgeState | null>(null)
-  const badgeTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(
+  const [Silian_badge, Silian_setBadge] = Silian_React.useState<BadgeState | null>(null)
+  const Silian_badgeTimeoutRef = Silian_React.useRef<ReturnType<typeof setTimeout> | null>(
     null
   )
 
-  const showBadge = (
-    message: string,
-    type: BadgeType,
-    autoClearMs?: number
+  const Silian_showBadge = (
+    Silian_message: string,
+    Silian_type: BadgeType,
+    Silian_autoClearMs?: number
   ) => {
-    if (badgeTimeoutRef.current) {
-      clearTimeout(badgeTimeoutRef.current)
+    if (Silian_badgeTimeoutRef.current) {
+      clearTimeout(Silian_badgeTimeoutRef.current)
     }
 
-    setBadge({ message, type })
+    Silian_setBadge({ message: Silian_message, type: Silian_type })
 
-    if (autoClearMs) {
-      badgeTimeoutRef.current = setTimeout(() => {
-        setBadge(null)
-      }, autoClearMs)
+    if (Silian_autoClearMs) {
+      Silian_badgeTimeoutRef.current = setTimeout(() => {
+        Silian_setBadge(null)
+      }, Silian_autoClearMs)
     }
   }
 
-  const clearBadge = () => {
-    if (badgeTimeoutRef.current) {
-      clearTimeout(badgeTimeoutRef.current)
+  const Silian_clearBadge = () => {
+    if (Silian_badgeTimeoutRef.current) {
+      clearTimeout(Silian_badgeTimeoutRef.current)
     }
 
-    setBadge(null)
+    Silian_setBadge(null)
   }
 
-  React.useEffect(() => {
+  Silian_React.useEffect(() => {
     return () => {
-      if (badgeTimeoutRef.current) {
-        clearTimeout(badgeTimeoutRef.current)
+      if (Silian_badgeTimeoutRef.current) {
+        clearTimeout(Silian_badgeTimeoutRef.current)
       }
     }
   }, [])
 
-  return { badge, showBadge, clearBadge }
+  return { badge: Silian_badge, showBadge: Silian_showBadge, clearBadge: Silian_clearBadge }
 }

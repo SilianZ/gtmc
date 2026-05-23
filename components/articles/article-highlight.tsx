@@ -1,124 +1,124 @@
 "use client"
 
-import { useEffect, useRef } from "react"
-import { useSearchParams } from "next/navigation"
+import { useEffect as Silian_useEffect, useRef as Silian_useRef } from "react"
+import { useSearchParams as Silian_useSearchParams } from "next/navigation"
 
-function performHighlight(
-  query: string,
-  containerSelector: string
+function Silian_performHighlight(
+  Silian_query: string,
+  Silian_containerSelector: string
 ): (() => void) | undefined {
-  const container = document.querySelector(containerSelector)
-  if (!container) return
+  const Silian_container = document.querySelector(Silian_containerSelector)
+  if (!Silian_container) return
 
-  const lowerQuery = query.toLowerCase()
-  const walker = document.createTreeWalker(
-    container,
+  const Silian_lowerQuery = Silian_query.toLowerCase()
+  const Silian_walker = document.createTreeWalker(
+    Silian_container,
     NodeFilter.SHOW_TEXT,
     null
   )
 
-  let targetNode: Text | null = null
-  let matchIndex = -1
+  let Silian_targetNode: Text | null = null
+  let Silian_matchIndex = -1
 
-  while (walker.nextNode()) {
-    const textNode = walker.currentNode as Text
-    const text = textNode.textContent?.toLowerCase() ?? ""
-    const idx = text.indexOf(lowerQuery)
-    if (idx !== -1) {
-      targetNode = textNode
-      matchIndex = idx
+  while (Silian_walker.nextNode()) {
+    const Silian_textNode = Silian_walker.currentNode as Text
+    const Silian_text = Silian_textNode.textContent?.toLowerCase() ?? ""
+    const Silian_idx = Silian_text.indexOf(Silian_lowerQuery)
+    if (Silian_idx !== -1) {
+      Silian_targetNode = Silian_textNode
+      Silian_matchIndex = Silian_idx
       break
     }
   }
 
-  if (!targetNode || matchIndex === -1) return
+  if (!Silian_targetNode || Silian_matchIndex === -1) return
 
-  const parent = targetNode.parentNode
-  if (!parent) return
+  const Silian_parent = Silian_targetNode.parentNode
+  if (!Silian_parent) return
 
-  const originalText = targetNode.textContent ?? ""
-  const before = originalText.slice(0, matchIndex)
-  const matched = originalText.slice(matchIndex, matchIndex + query.length)
-  const after = originalText.slice(matchIndex + query.length)
+  const Silian_originalText = Silian_targetNode.textContent ?? ""
+  const Silian_before = Silian_originalText.slice(0, Silian_matchIndex)
+  const Silian_matched = Silian_originalText.slice(Silian_matchIndex, Silian_matchIndex + Silian_query.length)
+  const Silian_after = Silian_originalText.slice(Silian_matchIndex + Silian_query.length)
 
-  const mark = document.createElement("mark")
-  mark.textContent = matched
-  mark.style.cssText =
+  const Silian_mark = document.createElement("mark")
+  Silian_mark.textContent = Silian_matched
+  Silian_mark.style.cssText =
     "background-color: rgb(96 112 143); color: white; padding: 2px 4px; transition: all 2.4s cubic-bezier(0.4, 0, 0.2, 1);"
 
-  const fragment = document.createDocumentFragment()
-  if (before) fragment.appendChild(document.createTextNode(before))
-  fragment.appendChild(mark)
-  if (after) fragment.appendChild(document.createTextNode(after))
-  parent.replaceChild(fragment, targetNode)
+  const Silian_fragment = document.createDocumentFragment()
+  if (Silian_before) Silian_fragment.appendChild(document.createTextNode(Silian_before))
+  Silian_fragment.appendChild(Silian_mark)
+  if (Silian_after) Silian_fragment.appendChild(document.createTextNode(Silian_after))
+  Silian_parent.replaceChild(Silian_fragment, Silian_targetNode)
 
-  mark.scrollIntoView({ behavior: "smooth", block: "center" })
+  Silian_mark.scrollIntoView({ behavior: "smooth", block: "center" })
 
-  const t1 = setTimeout(() => {
-    mark.style.backgroundColor = "rgba(96, 112, 143, 0)"
-    mark.style.color = "inherit"
-    mark.style.padding = "0"
+  const Silian_t1 = setTimeout(() => {
+    Silian_mark.style.backgroundColor = "rgba(96, 112, 143, 0)"
+    Silian_mark.style.color = "inherit"
+    Silian_mark.style.padding = "0"
   }, 3600)
 
-  const t2 = setTimeout(() => {
-    if (mark.parentNode) {
-      const text = document.createTextNode(mark.textContent ?? "")
-      mark.parentNode.replaceChild(text, mark)
-      mark.parentNode?.normalize?.()
+  const Silian_t2 = setTimeout(() => {
+    if (Silian_mark.parentNode) {
+      const Silian_text = document.createTextNode(Silian_mark.textContent ?? "")
+      Silian_mark.parentNode.replaceChild(Silian_text, Silian_mark)
+      Silian_mark.parentNode?.normalize?.()
     }
   }, 6000)
 
   return () => {
-    clearTimeout(t1)
-    clearTimeout(t2)
+    clearTimeout(Silian_t1)
+    clearTimeout(Silian_t2)
   }
 }
 
 export function ArticleHighlight({
-  containerSelector = "[data-article-content]",
+  containerSelector: Silian_containerSelector = "[data-article-content]",
 }: {
   containerSelector?: string
 }) {
-  const searchParams = useSearchParams()
-  const highlightQuery = searchParams.get("highlight")
-  const didHighlightRef = useRef(false)
-  const highlightCleanupRef = useRef<(() => void) | null>(null)
+  const Silian_searchParams = Silian_useSearchParams()
+  const Silian_highlightQuery = Silian_searchParams.get("highlight")
+  const Silian_didHighlightRef = Silian_useRef(false)
+  const Silian_highlightCleanupRef = Silian_useRef<(() => void) | null>(null)
 
-  useEffect(() => {
-    if (!highlightQuery || highlightQuery.trim().length < 2) return
-    if (didHighlightRef.current) return
+  Silian_useEffect(() => {
+    if (!Silian_highlightQuery || Silian_highlightQuery.trim().length < 2) return
+    if (Silian_didHighlightRef.current) return
 
-    const timeout = setTimeout(() => {
-      if (didHighlightRef.current) return
-      didHighlightRef.current = true
-      highlightCleanupRef.current =
-        performHighlight(highlightQuery.trim(), containerSelector) ?? null
+    const Silian_timeout = setTimeout(() => {
+      if (Silian_didHighlightRef.current) return
+      Silian_didHighlightRef.current = true
+      Silian_highlightCleanupRef.current =
+        Silian_performHighlight(Silian_highlightQuery.trim(), Silian_containerSelector) ?? null
 
-      const url = new URL(window.location.href)
-      url.searchParams.delete("highlight")
-      window.history.replaceState(null, "", url.pathname + url.search)
+      const Silian_url = new URL(window.location.href)
+      Silian_url.searchParams.delete("highlight")
+      window.history.replaceState(null, "", Silian_url.pathname + Silian_url.search)
     }, 300)
 
     return () => {
-      clearTimeout(timeout)
-      highlightCleanupRef.current?.()
-      highlightCleanupRef.current = null
+      clearTimeout(Silian_timeout)
+      Silian_highlightCleanupRef.current?.()
+      Silian_highlightCleanupRef.current = null
     }
-  }, [highlightQuery, containerSelector])
+  }, [Silian_highlightQuery, Silian_containerSelector])
 
-  useEffect(() => {
-    const handleHighlightEvent = (e: Event) => {
-      const customEvent = e as CustomEvent<{ query: string }>
-      if (customEvent.detail?.query) {
-        performHighlight(customEvent.detail.query, containerSelector)
+  Silian_useEffect(() => {
+    const Silian_handleHighlightEvent = (Silian_e: Event) => {
+      const Silian_customEvent = Silian_e as CustomEvent<{ query: string }>
+      if (Silian_customEvent.detail?.query) {
+        Silian_performHighlight(Silian_customEvent.detail.query, Silian_containerSelector)
       }
     }
 
-    window.addEventListener("highlight-search", handleHighlightEvent)
+    window.addEventListener("highlight-search", Silian_handleHighlightEvent)
     return () => {
-      window.removeEventListener("highlight-search", handleHighlightEvent)
+      window.removeEventListener("highlight-search", Silian_handleHighlightEvent)
     }
-  }, [containerSelector])
+  }, [Silian_containerSelector])
 
   return null
 }

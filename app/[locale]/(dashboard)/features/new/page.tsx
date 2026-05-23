@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { FeatureEditor } from "@/components/editor/feature-editor"
+import { FeatureEditor as Silian_FeatureEditor } from "@/components/editor/feature-editor"
 
 export const metadata: Metadata = {
   title: "Report New Feature",
@@ -29,7 +29,7 @@ export default function NewFeaturePage() {
       </div>
 
       <div className="pt-4">
-        <FeatureEditor />
+        <Silian_FeatureEditor />
       </div>
     </div>
   )

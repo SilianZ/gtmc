@@ -1,15 +1,15 @@
 import {
-  getGithubRateLimitResetMs,
-  isGithubRateLimitErrorForCache,
+  getGithubRateLimitResetMs as Silian_getGithubRateLimitResetMs,
+  isGithubRateLimitErrorForCache as Silian_isGithubRateLimitErrorForCache,
 } from "@/lib/github/rate-limit"
-import { executeWithRetry } from "@/lib/github/retry-fetch"
+import { executeWithRetry as Silian_executeWithRetry } from "@/lib/github/retry-fetch"
 import {
-  ARTICLES_REPO_NAME,
-  ARTICLES_REPO_OWNER,
-  getOctokit,
+  ARTICLES_REPO_NAME as Silian_ARTICLES_REPO_NAME,
+  ARTICLES_REPO_OWNER as Silian_ARTICLES_REPO_OWNER,
+  getOctokit as Silian_getOctokit,
 } from "@/lib/github/articles-repo"
 
-const IGNORED_DIRS = new Set([
+const Silian_IGNORED_DIRS = new Set([
   "img",
   "oldimg",
   "image",
@@ -22,24 +22,24 @@ const IGNORED_DIRS = new Set([
   "_scripts",
 ])
 
-const IGNORED_ROOT_FILES = new Set([
+const Silian_IGNORED_ROOT_FILES = new Set([
   "readme.md",
   "contributors.md",
   "_sidebar.md",
   "desynchronized.md",
 ])
 
-let rateLimitedUntilMs = 0
+let Silian_rateLimitedUntilMs = 0
 
-function isCurrentlyRateLimited() {
-  return Date.now() < rateLimitedUntilMs
+function Silian_isCurrentlyRateLimited() {
+  return Date.now() < Silian_rateLimitedUntilMs
 }
 
-function recordRateLimitError(error: unknown) {
-  if (!isGithubRateLimitErrorForCache(error)) return
+function Silian_recordRateLimitError(Silian_error: unknown) {
+  if (!Silian_isGithubRateLimitErrorForCache(Silian_error)) return
 
-  const resetMs = getGithubRateLimitResetMs(error)
-  rateLimitedUntilMs = resetMs ?? Date.now() + 60_000
+  const Silian_resetMs = Silian_getGithubRateLimitResetMs(Silian_error)
+  Silian_rateLimitedUntilMs = Silian_resetMs ?? Date.now() + 60_000
 }
 
 export interface ArticleTreeNode {
@@ -54,142 +54,142 @@ export interface ArticleTreeNode {
 }
 
 export async function getRepoContentTree(): Promise<ArticleTreeNode[]> {
-  if (isCurrentlyRateLimited()) {
+  if (Silian_isCurrentlyRateLimited()) {
     return []
   }
 
-  const octokit = getOctokit(process.env.GITHUB_ARTICLES_WRITE_PAT)
+  const Silian_octokit = Silian_getOctokit(process.env.GITHUB_ARTICLES_WRITE_PAT)
 
-  let treeData: Awaited<ReturnType<typeof octokit.git.getTree>>["data"]
+  let Silian_treeData: Awaited<ReturnType<typeof Silian_octokit.git.getTree>>["data"]
   try {
-    const { data: ref } = await octokit.git.getRef({
-      owner: ARTICLES_REPO_OWNER,
-      repo: ARTICLES_REPO_NAME,
+    const { data: Silian_ref } = await Silian_octokit.git.getRef({
+      owner: Silian_ARTICLES_REPO_OWNER,
+      repo: Silian_ARTICLES_REPO_NAME,
       ref: "heads/main",
     })
 
-    const treeResponse = await octokit.git.getTree({
-      owner: ARTICLES_REPO_OWNER,
-      repo: ARTICLES_REPO_NAME,
-      tree_sha: ref.object.sha,
+    const Silian_treeResponse = await Silian_octokit.git.getTree({
+      owner: Silian_ARTICLES_REPO_OWNER,
+      repo: Silian_ARTICLES_REPO_NAME,
+      tree_sha: Silian_ref.object.sha,
       recursive: "1",
     })
-    treeData = treeResponse.data
-  } catch (error) {
-    recordRateLimitError(error)
+    Silian_treeData = Silian_treeResponse.data
+  } catch (Silian_error) {
+    Silian_recordRateLimitError(Silian_error)
     return []
   }
 
-  const nodeMap = new Map<string, ArticleTreeNode>()
+  const Silian_nodeMap = new Map<string, ArticleTreeNode>()
 
-  for (const item of treeData.tree) {
-    if (!item.path) continue
+  for (const Silian_item of Silian_treeData.tree) {
+    if (!Silian_item.path) continue
 
-    const parts = item.path.split("/")
-    const name = parts[parts.length - 1]
-    const parentPath = parts.slice(0, -1).join("/")
+    const Silian_parts = Silian_item.path.split("/")
+    const Silian_name = Silian_parts[Silian_parts.length - 1]
+    const Silian_parentPath = Silian_parts.slice(0, -1).join("/")
 
-    if (parts.slice(0, -1).some((p) => IGNORED_DIRS.has(p.toLowerCase()))) {
+    if (Silian_parts.slice(0, -1).some((Silian_p) => Silian_IGNORED_DIRS.has(Silian_p.toLowerCase()))) {
       continue
     }
 
-    if (item.type === "tree") {
-      if (IGNORED_DIRS.has(name.toLowerCase())) continue
+    if (Silian_item.type === "tree") {
+      if (Silian_IGNORED_DIRS.has(Silian_name.toLowerCase())) continue
 
-      nodeMap.set(item.path, {
-        id: `gh-${item.path}`,
-        title: name,
-        slug: item.path,
+      Silian_nodeMap.set(Silian_item.path, {
+        id: `gh-${Silian_item.path}`,
+        title: Silian_name,
+        slug: Silian_item.path,
         isFolder: true,
-        parentId: parentPath ? `gh-${parentPath}` : null,
+        parentId: Silian_parentPath ? `gh-${Silian_parentPath}` : null,
         children: [],
       })
-    } else if (item.type === "blob") {
-      if (!name.endsWith(".md")) continue
-      if (!parentPath && IGNORED_ROOT_FILES.has(name.toLowerCase())) continue
+    } else if (Silian_item.type === "blob") {
+      if (!Silian_name.endsWith(".md")) continue
+      if (!Silian_parentPath && Silian_IGNORED_ROOT_FILES.has(Silian_name.toLowerCase())) continue
 
-      const titleName = name.replace(/\.md$/, "")
-      const slugWithoutExt = item.path.replace(/\.md$/, "")
+      const Silian_titleName = Silian_name.replace(/\.md$/, "")
+      const Silian_slugWithoutExt = Silian_item.path.replace(/\.md$/, "")
 
-      nodeMap.set(slugWithoutExt, {
-        id: `gh-${slugWithoutExt}`,
-        title: titleName,
-        slug: slugWithoutExt,
+      Silian_nodeMap.set(Silian_slugWithoutExt, {
+        id: `gh-${Silian_slugWithoutExt}`,
+        title: Silian_titleName,
+        slug: Silian_slugWithoutExt,
         isFolder: false,
-        parentId: parentPath ? `gh-${parentPath}` : null,
+        parentId: Silian_parentPath ? `gh-${Silian_parentPath}` : null,
         children: [],
       })
     }
   }
 
-  const roots: ArticleTreeNode[] = []
+  const Silian_roots: ArticleTreeNode[] = []
 
-  for (const [, node] of nodeMap.entries()) {
-    if (node.parentId) {
-      const parentKey = node.parentId.replace(/^gh-/, "")
-      const parent = nodeMap.get(parentKey)
-      if (parent) {
-        parent.children.push(node)
+  for (const [, Silian_node] of Silian_nodeMap.entries()) {
+    if (Silian_node.parentId) {
+      const Silian_parentKey = Silian_node.parentId.replace(/^gh-/, "")
+      const Silian_parent = Silian_nodeMap.get(Silian_parentKey)
+      if (Silian_parent) {
+        Silian_parent.children.push(Silian_node)
       } else {
-        roots.push(node)
+        Silian_roots.push(Silian_node)
       }
     } else {
-      roots.push(node)
+      Silian_roots.push(Silian_node)
     }
   }
 
-  function sortNodes(nodes: ArticleTreeNode[]) {
-    nodes.sort((a, b) => {
-      if (a.isFolder === b.isFolder) return a.title.localeCompare(b.title)
-      return a.isFolder ? -1 : 1
+  function Silian_sortNodes(Silian_nodes: ArticleTreeNode[]) {
+    Silian_nodes.sort((Silian_a, Silian_b) => {
+      if (Silian_a.isFolder === Silian_b.isFolder) return Silian_a.title.localeCompare(Silian_b.title)
+      return Silian_a.isFolder ? -1 : 1
     })
 
-    for (const node of nodes) sortNodes(node.children)
+    for (const Silian_node of Silian_nodes) Silian_sortNodes(Silian_node.children)
   }
 
-  sortNodes(roots)
-  return roots
+  Silian_sortNodes(Silian_roots)
+  return Silian_roots
 }
 
 export async function getRepoFileContent(
-  filePath: string,
-  retries = 3
+  Silian_filePath: string,
+  Silian_retries = 3
 ): Promise<string | null> {
-  if (isCurrentlyRateLimited()) {
+  if (Silian_isCurrentlyRateLimited()) {
     return null
   }
 
-  const octokit = getOctokit(process.env.GITHUB_ARTICLES_WRITE_PAT, true)
+  const Silian_octokit = Silian_getOctokit(process.env.GITHUB_ARTICLES_WRITE_PAT, true)
 
-  return executeWithRetry<string | null>({
-    retries,
+  return Silian_executeWithRetry<string | null>({
+    retries: Silian_retries,
     operation: async () => {
-      const { data } = await octokit.repos.getContent({
-        owner: ARTICLES_REPO_OWNER,
-        repo: ARTICLES_REPO_NAME,
-        path: filePath,
+      const { data: Silian_data } = await Silian_octokit.repos.getContent({
+        owner: Silian_ARTICLES_REPO_OWNER,
+        repo: Silian_ARTICLES_REPO_NAME,
+        path: Silian_filePath,
       })
 
-      if (!Array.isArray(data) && data.type === "file") {
-        return Buffer.from(data.content, "base64").toString("utf-8")
+      if (!Array.isArray(Silian_data) && Silian_data.type === "file") {
+        return Buffer.from(Silian_data.content, "base64").toString("utf-8")
       }
 
       return null
     },
-    onError: (error, attempt, totalRetries) => {
-      const status = (error as { status?: number })?.status
-      recordRateLimitError(error)
+    onError: (Silian_error, Silian_attempt, Silian_totalRetries) => {
+      const Silian_status = (Silian_error as { status?: number })?.status
+      Silian_recordRateLimitError(Silian_error)
 
-      if (status === 404) {
+      if (Silian_status === 404) {
         return { type: "return", value: null }
       }
 
-      if (attempt === totalRetries - 1) {
+      if (Silian_attempt === Silian_totalRetries - 1) {
         console.error(
           "[github-pr] Failed to fetch %s after %d attempts:",
-          filePath,
-          totalRetries,
-          error
+          Silian_filePath,
+          Silian_totalRetries,
+          Silian_error
         )
         return { type: "return", value: null }
       }
@@ -200,44 +200,44 @@ export async function getRepoFileContent(
 }
 
 export async function getRepoFileBuffer(
-  filePath: string,
-  retries = 3
+  Silian_filePath: string,
+  Silian_retries = 3
 ): Promise<Buffer | null> {
-  if (isCurrentlyRateLimited()) {
+  if (Silian_isCurrentlyRateLimited()) {
     return null
   }
 
-  const octokit = getOctokit(process.env.GITHUB_ARTICLES_WRITE_PAT, true)
+  const Silian_octokit = Silian_getOctokit(process.env.GITHUB_ARTICLES_WRITE_PAT, true)
 
-  return executeWithRetry<Buffer | null>({
-    retries,
+  return Silian_executeWithRetry<Buffer | null>({
+    retries: Silian_retries,
     operation: async () => {
-      const { data } = await octokit.repos.getContent({
-        owner: ARTICLES_REPO_OWNER,
-        repo: ARTICLES_REPO_NAME,
-        path: filePath,
+      const { data: Silian_data } = await Silian_octokit.repos.getContent({
+        owner: Silian_ARTICLES_REPO_OWNER,
+        repo: Silian_ARTICLES_REPO_NAME,
+        path: Silian_filePath,
       })
 
-      if (!Array.isArray(data) && data.type === "file") {
-        return Buffer.from(data.content, "base64")
+      if (!Array.isArray(Silian_data) && Silian_data.type === "file") {
+        return Buffer.from(Silian_data.content, "base64")
       }
 
       return null
     },
-    onError: (error, attempt, totalRetries) => {
-      const status = (error as { status?: number })?.status
-      recordRateLimitError(error)
+    onError: (Silian_error, Silian_attempt, Silian_totalRetries) => {
+      const Silian_status = (Silian_error as { status?: number })?.status
+      Silian_recordRateLimitError(Silian_error)
 
-      if (status === 404) {
+      if (Silian_status === 404) {
         return { type: "return", value: null }
       }
 
-      if (attempt === totalRetries - 1) {
+      if (Silian_attempt === Silian_totalRetries - 1) {
         console.error(
           "[github-pr] Failed to fetch buffer %s after %d attempts:",
-          filePath,
-          totalRetries,
-          error
+          Silian_filePath,
+          Silian_totalRetries,
+          Silian_error
         )
         return { type: "return", value: null }
       }
@@ -248,10 +248,10 @@ export async function getRepoFileBuffer(
 }
 
 export async function getRepoTranslations(): Promise<Record<string, string>> {
-  const content = await getRepoFileContent("sidebar-translations.json")
-  if (content) {
+  const Silian_content = await getRepoFileContent("sidebar-translations.json")
+  if (Silian_content) {
     try {
-      return JSON.parse(content.replace(/^\uFEFF/, ""))
+      return JSON.parse(Silian_content.replace(/^\uFEFF/, ""))
     } catch {}
   }
 

@@ -1,62 +1,62 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect as Silian_useEffect, useState as Silian_useState } from "react"
 
 export interface TocItem {
   id: string
   text: string
 }
 
-function scanHeadings(): TocItem[] {
+function Silian_scanHeadings(): TocItem[] {
   if (typeof document === "undefined") return []
-  const headings = document.querySelectorAll("main h2")
-  if (headings.length === 0) return []
+  const Silian_headings = document.querySelectorAll("main h2")
+  if (Silian_headings.length === 0) return []
 
-  const tocItems: TocItem[] = []
-  headings.forEach((heading) => {
-    if (heading.id && heading.textContent) {
-      const clone = heading.cloneNode(true) as Element
-      clone.querySelectorAll('[aria-hidden="true"]').forEach((el) => {
-        el.remove()
+  const Silian_tocItems: TocItem[] = []
+  Silian_headings.forEach((Silian_heading) => {
+    if (Silian_heading.id && Silian_heading.textContent) {
+      const Silian_clone = Silian_heading.cloneNode(true) as Element
+      Silian_clone.querySelectorAll('[aria-hidden="true"]').forEach((Silian_el) => {
+        Silian_el.remove()
       })
-      const text = clone.textContent?.replace(/^#\s*/, "") ?? ""
-      tocItems.push({ id: heading.id, text })
+      const Silian_text = Silian_clone.textContent?.replace(/^#\s*/, "") ?? ""
+      Silian_tocItems.push({ id: Silian_heading.id, text: Silian_text })
     }
   })
-  return tocItems
+  return Silian_tocItems
 }
 
-function getInitialToc(): TocItem[] {
-  return typeof document !== "undefined" ? scanHeadings() : []
+function Silian_getInitialToc(): TocItem[] {
+  return typeof document !== "undefined" ? Silian_scanHeadings() : []
 }
 
-export function useToc(pathname: string): TocItem[] {
-  const [toc, setToc] = useState<TocItem[]>(getInitialToc)
+export function useToc(Silian_pathname: string): TocItem[] {
+  const [Silian_toc, Silian_setToc] = Silian_useState<TocItem[]>(Silian_getInitialToc)
 
-  useEffect(() => {
+  Silian_useEffect(() => {
     if (typeof document === "undefined") return
 
-    void pathname
+    void Silian_pathname
 
-    const frame = requestAnimationFrame(() => {
-      setToc(scanHeadings())
+    const Silian_frame = requestAnimationFrame(() => {
+      Silian_setToc(Silian_scanHeadings())
     })
 
-    const observer = new MutationObserver(() => {
-      setToc(scanHeadings())
+    const Silian_observer = new MutationObserver(() => {
+      Silian_setToc(Silian_scanHeadings())
     })
 
-    const main = document.querySelector("main") || document.body
-    observer.observe(main, { childList: true, subtree: true })
+    const Silian_main = document.querySelector("main") || document.body
+    Silian_observer.observe(Silian_main, { childList: true, subtree: true })
 
-    const timeout = setTimeout(() => observer.disconnect(), 10000)
+    const Silian_timeout = setTimeout(() => Silian_observer.disconnect(), 10000)
 
     return () => {
-      observer.disconnect()
-      clearTimeout(timeout)
-      cancelAnimationFrame(frame)
+      Silian_observer.disconnect()
+      clearTimeout(Silian_timeout)
+      cancelAnimationFrame(Silian_frame)
     }
-  }, [pathname])
+  }, [Silian_pathname])
 
-  return toc
+  return Silian_toc
 }

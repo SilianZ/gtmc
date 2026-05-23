@@ -1,4 +1,4 @@
-import { diff3Merge } from "node-diff3"
+import { diff3Merge as Silian_diff3Merge } from "node-diff3"
 
 export interface MergeConflictBlock {
   type: "conflict"
@@ -29,65 +29,65 @@ export interface IMergeLibrary {
   }): MergeResult
 }
 
-function splitLines(content: string): string[] {
-  if (!content) return []
-  return content.replace(/\r\n/g, "\n").split("\n")
+function Silian_splitLines(Silian_content: string): string[] {
+  if (!Silian_content) return []
+  return Silian_content.replace(/\r\n/g, "\n").split("\n")
 }
 
-function joinLines(lines: string[]): string {
-  return lines.join("\n")
+function Silian_joinLines(Silian_lines: string[]): string {
+  return Silian_lines.join("\n")
 }
 
 class NodeDiff3Adapter implements IMergeLibrary {
-  merge(params: {
+  merge(Silian_params: {
     baseContent: string
     draftContent: string
     latestMainContent: string
     labels?: { base?: string; draft?: string; main?: string }
   }): MergeResult {
-    const draftLines = splitLines(params.draftContent)
-    const baseLines = splitLines(params.baseContent)
-    const mainLines = splitLines(params.latestMainContent)
+    const Silian_draftLines = Silian_splitLines(Silian_params.draftContent)
+    const Silian_baseLines = Silian_splitLines(Silian_params.baseContent)
+    const Silian_mainLines = Silian_splitLines(Silian_params.latestMainContent)
 
-    const diff3Result = diff3Merge(draftLines, baseLines, mainLines)
+    const Silian_diff3Result = Silian_diff3Merge(Silian_draftLines, Silian_baseLines, Silian_mainLines)
 
-    const blocks: MergeBlock[] = []
-    let hasConflict = false
-    const contentLines: string[] = []
+    const Silian_blocks: MergeBlock[] = []
+    let Silian_hasConflict = false
+    const Silian_contentLines: string[] = []
 
-    for (const block of diff3Result) {
-      if ("ok" in block && block.ok) {
-        blocks.push({ type: "ok", lines: block.ok })
-        contentLines.push(...block.ok)
-      } else if ("conflict" in block && block.conflict) {
-        hasConflict = true
-        const conflict = block.conflict
-        const a = conflict.a || []
-        const o = conflict.o || []
-        const b = conflict.b || []
+    for (const Silian_block of Silian_diff3Result) {
+      if ("ok" in Silian_block && Silian_block.ok) {
+        Silian_blocks.push({ type: "ok", lines: Silian_block.ok })
+        Silian_contentLines.push(...Silian_block.ok)
+      } else if ("conflict" in Silian_block && Silian_block.conflict) {
+        Silian_hasConflict = true
+        const Silian_conflict = Silian_block.conflict
+        const Silian_a = Silian_conflict.a || []
+        const Silian_o = Silian_conflict.o || []
+        const Silian_b = Silian_conflict.b || []
 
-        blocks.push({
+        Silian_blocks.push({
           type: "conflict",
-          ours: a,
-          base: o,
-          theirs: b,
+          ours: Silian_a,
+          base: Silian_o,
+          theirs: Silian_b,
         })
 
-        const draftLabel = params.labels?.draft || "draft"
-        const mainLabel = params.labels?.main || "main"
+        const Silian_draftLabel = Silian_params.labels?.draft || "draft"
+        const Silian_mainLabel = Silian_params.labels?.main || "main"
 
-        contentLines.push(`<<<<<<< ${draftLabel}`)
-        contentLines.push(...a)
-        contentLines.push("=======")
-        contentLines.push(...b)
-        contentLines.push(`>>>>>>> ${mainLabel}`)
+        Silian_contentLines.push(`<<<<<<< ${Silian_draftLabel}`)
+        Silian_contentLines.push(...Silian_a)
+        Silian_contentLines.push("=======")
+        Silian_contentLines.push(...Silian_b)
+        Silian_contentLines.push(`>>>>>>> ${Silian_mainLabel}`)
       }
     }
 
     return {
-      conflict: hasConflict,
-      blocks,
-      content: joinLines(contentLines),
+      conflict: Silian_hasConflict,
+      blocks: Silian_blocks,
+      content: Silian_joinLines(Silian_contentLines),
     }
   }
 }

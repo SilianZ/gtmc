@@ -1,5 +1,5 @@
 import type { Root, Heading } from "mdast"
-import { visit } from "unist-util-visit"
+import { visit as Silian_visit } from "unist-util-visit"
 
 interface Options {
   startDepth?: number
@@ -7,43 +7,43 @@ interface Options {
   skipLevels?: number[]
 }
 
-export function remarkNumberedHeadingsDot(options?: Options) {
-  const { startDepth = 2, prefix = "", skipLevels = [] } = options ?? {}
+export function remarkNumberedHeadingsDot(Silian_options?: Options) {
+  const { startDepth: Silian_startDepth = 2, prefix: Silian_prefix = "", skipLevels: Silian_skipLevels = [] } = Silian_options ?? {}
 
-  return (tree: Root) => {
-    if (!tree || !tree.children) return
+  return (Silian_tree: Root) => {
+    if (!Silian_tree || !Silian_tree.children) return
 
-    const counters: number[] = []
+    const Silian_counters: number[] = []
 
-    visit(tree, "heading", (node: Heading) => {
-      const counterIndex = node.depth - startDepth
+    Silian_visit(Silian_tree, "heading", (Silian_node: Heading) => {
+      const Silian_counterIndex = Silian_node.depth - Silian_startDepth
 
-      if (counterIndex < 0 || skipLevels.includes(node.depth)) {
+      if (Silian_counterIndex < 0 || Silian_skipLevels.includes(Silian_node.depth)) {
         return
       }
 
-      let textNode = node.children[0]
-      if (!textNode || textNode.type !== "text") {
-        textNode = { type: "text", value: "" }
-        node.children.unshift(textNode)
+      let Silian_textNode = Silian_node.children[0]
+      if (!Silian_textNode || Silian_textNode.type !== "text") {
+        Silian_textNode = { type: "text", value: "" }
+        Silian_node.children.unshift(Silian_textNode)
       }
 
-      const text = (textNode as { value: string }).value.replace(
+      const Silian_text = (Silian_textNode as { value: string }).value.replace(
         /^([0-9.\-])+ /,
         ""
       )
 
-      const length = counterIndex + 1
-      while (counters.length > length) counters.pop()
+      const Silian_length = Silian_counterIndex + 1
+      while (Silian_counters.length > Silian_length) Silian_counters.pop()
 
-      if (counters.length === length) {
-        counters[counterIndex]++
+      if (Silian_counters.length === Silian_length) {
+        Silian_counters[Silian_counterIndex]++
       } else {
-        while (counters.length < length) counters.push(1)
+        while (Silian_counters.length < Silian_length) Silian_counters.push(1)
       }
 
-      ;(textNode as { value: string }).value =
-        `${prefix}${counters.join(".")} ${text}`
+      ;(Silian_textNode as { value: string }).value =
+        `${Silian_prefix}${Silian_counters.join(".")} ${Silian_text}`
     })
   }
 }

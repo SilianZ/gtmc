@@ -1,16 +1,16 @@
 import type { Metadata } from "next"
-import { getTranslations } from "next-intl/server"
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
-import { redirect } from "next/navigation"
-import { InputBox } from "@/components/ui/input-box"
-import { UesrAvatar } from "@/components/ui/user-avatar"
-import { updateProfileAction } from "@/actions/profile"
-import { SignOutButton } from "@/components/ui/sign-out-button"
-import { getGithubEmailVisibility } from "@/lib/github"
-import { FormField } from "./form-field"
-import { MetadataRow } from "../features/[id]/metadata-row"
-import { StatusDot } from "@/components/ui/status-dot"
+import { getTranslations as Silian_getTranslations } from "next-intl/server"
+import { auth as Silian_auth } from "@/lib/auth"
+import { prisma as Silian_prisma } from "@/lib/prisma"
+import { redirect as Silian_redirect } from "next/navigation"
+import { InputBox as Silian_InputBox } from "@/components/ui/input-box"
+import { UesrAvatar as Silian_UesrAvatar } from "@/components/ui/user-avatar"
+import { updateProfileAction as Silian_updateProfileAction } from "@/actions/profile"
+import { SignOutButton as Silian_SignOutButton } from "@/components/ui/sign-out-button"
+import { getGithubEmailVisibility as Silian_getGithubEmailVisibility } from "@/lib/github"
+import { FormField as Silian_FormField } from "./form-field"
+import { MetadataRow as Silian_MetadataRow } from "../features/[id]/metadata-row"
+import { StatusDot as Silian_StatusDot } from "@/components/ui/status-dot"
 
 export const metadata: Metadata = {
   title: "User Profile",
@@ -19,26 +19,26 @@ export const metadata: Metadata = {
 }
 
 export default async function ProfilePage() {
-  const session = await auth()
-  if (!session?.user?.id) {
-    redirect("/login")
+  const Silian_session = await Silian_auth()
+  if (!Silian_session?.user?.id) {
+    Silian_redirect("/login")
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
+  const Silian_user = await Silian_prisma.user.findUnique({
+    where: { id: Silian_session.user.id },
   })
 
-  if (!user) {
-    redirect("/login")
+  if (!Silian_user) {
+    Silian_redirect("/login")
   }
 
-  const t = await getTranslations("Profile")
+  const Silian_t = await Silian_getTranslations("Profile")
 
-  const account = await prisma.account.findFirst({
-    where: { provider: "github", userId: user.id },
+  const Silian_account = await Silian_prisma.account.findFirst({
+    where: { provider: "github", userId: Silian_user.id },
   })
-  const emailVisibility = await getGithubEmailVisibility(
-    account?.access_token || ""
+  const Silian_emailVisibility = await Silian_getGithubEmailVisibility(
+    Silian_account?.access_token || ""
   )
 
   return (
@@ -98,7 +98,7 @@ export default async function ProfilePage() {
               tracking-tech-wide text-tech-main/70
               sm:mt-3 sm:text-sm
             ">
-            <StatusDot size="sm" />
+            <Silian_StatusDot size="sm" />
             {"CONFIG // IDENTITY // TOKENS"}
           </p>
         </div>
@@ -142,7 +142,7 @@ export default async function ProfilePage() {
         />
 
         <form
-          action={updateProfileAction}
+          action={Silian_updateProfileAction}
           className="
             relative z-10 space-y-6 p-4
             sm:space-y-8 sm:p-6
@@ -164,18 +164,18 @@ export default async function ProfilePage() {
               ">
               <div className="absolute -top-1 -left-1 size-2 bg-tech-main" />
               <div className="absolute -right-1 -bottom-1 size-2 bg-tech-main" />
-              <UesrAvatar
-                src={user.image}
-                alt={user.name}
+              <Silian_UesrAvatar
+                src={Silian_user.image}
+                alt={Silian_user.name}
                 size="lg"
                 className="size-full rounded-none"
               />
             </div>
 
-            <FormField label={t("avatarUrlLabel")} className="w-full flex-1">
-              <InputBox
+            <Silian_FormField label={Silian_t("avatarUrlLabel")} className="w-full flex-1">
+              <Silian_InputBox
                 name="image"
-                defaultValue={user.image || ""}
+                defaultValue={Silian_user.image || ""}
                 placeholder="https://..."
                 className="
                   w-full rounded-none border border-tech-main/30 bg-white
@@ -190,9 +190,9 @@ export default async function ProfilePage() {
                   tracking-widest text-tech-main/60 uppercase
                   sm:text-[0.625rem]
                 ">
-                {">"} {t("avatarUrlHint")}
+                {">"} {Silian_t("avatarUrlHint")}
               </p>
-            </FormField>
+            </Silian_FormField>
           </div>
 
           <div
@@ -214,10 +214,10 @@ export default async function ProfilePage() {
               sm:gap-6
               md:gap-8
             ">
-            <FormField label={t("usernameLabel")}>
-              <InputBox
+            <Silian_FormField label={Silian_t("usernameLabel")}>
+              <Silian_InputBox
                 name="name"
-                defaultValue={user.name || ""}
+                defaultValue={Silian_user.name || ""}
                 required
                 className="
                   w-full rounded-none border border-tech-main/30 bg-white
@@ -226,33 +226,33 @@ export default async function ProfilePage() {
                   sm:text-sm
                 "
               />
-            </FormField>
-            <FormField
+            </Silian_FormField>
+            <Silian_FormField
               label={
                 <span className="flex items-center gap-2">
-                  {t("emailLabel")}{" "}
+                  {Silian_t("emailLabel")}{" "}
                   <span
                     className="
                       border border-tech-main/30 bg-tech-main/5 px-1 text-[0.5rem]
                       text-tech-main/60
                       sm:text-[0.5625rem]
                     ">
-                    {t("readOnlyBadge")}
+                    {Silian_t("readOnlyBadge")}
                   </span>
-                  {emailVisibility === "private" && (
+                  {Silian_emailVisibility === "private" && (
                     <span
                       className="
                         border border-amber-400/60 bg-amber-50 px-1 text-[0.5rem]
                         text-amber-600
                         sm:text-[0.5625rem]
                       ">
-                      {t("privateBadge")}
+                      {Silian_t("privateBadge")}
                     </span>
                   )}
                 </span>
               }>
-              <InputBox
-                defaultValue={user.email || ""}
+              <Silian_InputBox
+                defaultValue={Silian_user.email || ""}
                 disabled
                 className="
                   w-full cursor-not-allowed rounded-none border guide-line
@@ -261,17 +261,17 @@ export default async function ProfilePage() {
                   sm:text-sm
                 "
               />
-              {emailVisibility === "private" && (
+              {Silian_emailVisibility === "private" && (
                 <p
                   className="
                     border-l border-amber-400/40 pl-2 font-mono text-[0.5625rem]
                     tracking-widest text-amber-600/70 uppercase
                     sm:text-[0.625rem]
                   ">
-                  {">"} {t("emailPrivateNotice")}
+                  {">"} {Silian_t("emailPrivateNotice")}
                 </p>
               )}
-            </FormField>
+            </Silian_FormField>
           </div>
 
           <div
@@ -281,8 +281,8 @@ export default async function ProfilePage() {
               sm:mt-8 sm:flex-row sm:items-center sm:gap-4 sm:p-4
             ">
             <div className="absolute top-0 right-0 size-2 bg-tech-main/20" />
-            <MetadataRow
-              label={t("assignedRole")}
+            <Silian_MetadataRow
+              label={Silian_t("assignedRole")}
               value={
                 <span
                   className="
@@ -290,7 +290,7 @@ export default async function ProfilePage() {
                     text-tech-main-dark uppercase
                     sm:text-sm
                   ">
-                  [{user.role}]
+                  [{Silian_user.role}]
                 </span>
               }
             />
@@ -323,7 +323,7 @@ export default async function ProfilePage() {
               sm:gap-4
               md:flex-row md:items-center md:gap-6
             ">
-            <SignOutButton
+            <Silian_SignOutButton
               className="
                 relative flex min-h-11 w-full items-center justify-center border
                 border-tech-main/40 bg-tech-main/10 px-4 py-2.5 font-mono
@@ -345,7 +345,7 @@ export default async function ProfilePage() {
                 sm:px-6 sm:py-3
                 md:px-8
               ">
-              {t("saveButton")}
+              {Silian_t("saveButton")}
             </button>
           </div>
         </form>

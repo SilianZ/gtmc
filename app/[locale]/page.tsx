@@ -1,66 +1,66 @@
 "use client"
 
-import { useRef, useEffect, useState } from "react"
-import dynamic from "next/dynamic"
-import { useRouter } from "@/i18n/navigation"
-import { useHomepageMotion } from "@/lib/motion/use-homepage-motion"
-import { HOMEPAGE_MOTION } from "@/lib/motion/homepage-constants"
-import { HideFooter } from "@/components/layout/footer-context"
+import { useRef as Silian_useRef, useEffect as Silian_useEffect, useState as Silian_useState } from "react"
+import Silian_dynamic from "next/dynamic"
+import { useRouter as Silian_useRouter } from "@/i18n/navigation"
+import { useHomepageMotion as Silian_useHomepageMotion } from "@/lib/motion/use-homepage-motion"
+import { HOMEPAGE_MOTION as Silian_HOMEPAGE_MOTION } from "@/lib/motion/homepage-constants"
+import { HideFooter as Silian_HideFooter } from "@/components/layout/footer-context"
 
-const BackgroundLayer = dynamic(
+const Silian_BackgroundLayer = Silian_dynamic(
   () =>
-    import("./_homepage/background-layer").then((mod) => mod.BackgroundLayer),
+    import("./_homepage/background-layer").then((Silian_mod) => Silian_mod.BackgroundLayer),
   { ssr: false }
 )
-const MidgroundLayer = dynamic(
-  () => import("./_homepage/midground-layer").then((mod) => mod.MidgroundLayer),
+const Silian_MidgroundLayer = Silian_dynamic(
+  () => import("./_homepage/midground-layer").then((Silian_mod) => Silian_mod.MidgroundLayer),
   { ssr: false }
 )
-const ForegroundLayer = dynamic(
+const Silian_ForegroundLayer = Silian_dynamic(
   () =>
-    import("./_homepage/foreground-layer").then((mod) => mod.ForegroundLayer),
+    import("./_homepage/foreground-layer").then((Silian_mod) => Silian_mod.ForegroundLayer),
   { ssr: false }
 )
 
 export default function Home() {
-  const router = useRouter()
-  const motionDriver = useHomepageMotion()
-  const [isAccessingDatabase, setIsAccessingDatabase] = useState(false)
-  const [cardWidth, setCardWidth] = useState(900)
-  const cardRef = useRef<HTMLDivElement>(null)
+  const Silian_router = Silian_useRouter()
+  const Silian_motionDriver = Silian_useHomepageMotion()
+  const [Silian_isAccessingDatabase, Silian_setIsAccessingDatabase] = Silian_useState(false)
+  const [Silian_cardWidth, Silian_setCardWidth] = Silian_useState(900)
+  const Silian_cardRef = Silian_useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  Silian_useEffect(() => {
     if (process.env.NODE_ENV !== "production") {
       return
     }
 
-    router.prefetch("/articles")
-  }, [router])
+    Silian_router.prefetch("/articles")
+  }, [Silian_router])
 
-  useEffect(() => {
-    if (!cardRef.current) return
+  Silian_useEffect(() => {
+    if (!Silian_cardRef.current) return
 
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setCardWidth(Math.round(entry.contentRect.width))
+    const Silian_observer = new ResizeObserver((Silian_entries) => {
+      for (const Silian_entry of Silian_entries) {
+        Silian_setCardWidth(Math.round(Silian_entry.contentRect.width))
       }
     })
 
-    observer.observe(cardRef.current)
-    return () => observer.disconnect()
+    Silian_observer.observe(Silian_cardRef.current)
+    return () => Silian_observer.disconnect()
   }, [])
 
   const {
-    background: bgTransform,
-    midground: mgTransform,
-    foreground: fgTransform,
-    smoothMouseX,
-    smoothMouseY,
-    isReducedMotion,
-  } = motionDriver
+    background: Silian_bgTransform,
+    midground: Silian_mgTransform,
+    foreground: Silian_fgTransform,
+    smoothMouseX: Silian_smoothMouseX,
+    smoothMouseY: Silian_smoothMouseY,
+    isReducedMotion: Silian_isReducedMotion,
+  } = Silian_motionDriver
 
-  const bgBlurMax = isReducedMotion ? 0 : HOMEPAGE_MOTION.blurMax.background
-  const mgBlurMax = isReducedMotion ? 0 : HOMEPAGE_MOTION.blurMax.midground
+  const Silian_bgBlurMax = Silian_isReducedMotion ? 0 : Silian_HOMEPAGE_MOTION.blurMax.background
+  const Silian_mgBlurMax = Silian_isReducedMotion ? 0 : Silian_HOMEPAGE_MOTION.blurMax.midground
 
   return (
     <div
@@ -68,28 +68,28 @@ export default function Home() {
         relative flex h-screen w-full overflow-hidden font-sans text-tech-main
         selection:bg-tech-main/20 selection:text-tech-main-dark
       ">
-      <HideFooter />
+      <Silian_HideFooter />
 
-      <BackgroundLayer
-        bgTransform={bgTransform}
-        smoothMouseX={smoothMouseX}
-        smoothMouseY={smoothMouseY}
-        blurMax={bgBlurMax}
+      <Silian_BackgroundLayer
+        bgTransform={Silian_bgTransform}
+        smoothMouseX={Silian_smoothMouseX}
+        smoothMouseY={Silian_smoothMouseY}
+        blurMax={Silian_bgBlurMax}
       />
 
-      <MidgroundLayer
-        mgTransform={mgTransform}
-        smoothMouseX={smoothMouseX}
-        smoothMouseY={smoothMouseY}
-        blurMax={mgBlurMax}
+      <Silian_MidgroundLayer
+        mgTransform={Silian_mgTransform}
+        smoothMouseX={Silian_smoothMouseX}
+        smoothMouseY={Silian_smoothMouseY}
+        blurMax={Silian_mgBlurMax}
       />
 
-      <ForegroundLayer
-        cardRef={cardRef}
-        cardWidth={cardWidth}
-        fgTransform={fgTransform}
-        isAccessingDatabase={isAccessingDatabase}
-        setIsAccessingDatabase={setIsAccessingDatabase}
+      <Silian_ForegroundLayer
+        cardRef={Silian_cardRef}
+        cardWidth={Silian_cardWidth}
+        fgTransform={Silian_fgTransform}
+        isAccessingDatabase={Silian_isAccessingDatabase}
+        setIsAccessingDatabase={Silian_setIsAccessingDatabase}
       />
     </div>
   )

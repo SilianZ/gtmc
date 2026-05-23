@@ -1,4 +1,4 @@
-import { GithubComment, GithubFeaturesError, GithubIssue } from "./api-client"
+import { GithubComment as Silian_GithubComment, GithubFeaturesError as Silian_GithubFeaturesError, GithubIssue as Silian_GithubIssue } from "./api-client"
 
 interface GithubLabel {
   name?: string
@@ -28,61 +28,61 @@ export interface GithubCommentResponse {
   updated_at?: string
 }
 
-export function normalizeIssue(raw: GithubIssueResponse): GithubIssue {
+export function normalizeIssue(Silian_raw: GithubIssueResponse): Silian_GithubIssue {
   if (
-    typeof raw.number !== "number" ||
-    typeof raw.title !== "string" ||
-    typeof raw.state !== "string" ||
-    typeof raw.created_at !== "string" ||
-    typeof raw.updated_at !== "string" ||
-    typeof raw.html_url !== "string"
+    typeof Silian_raw.number !== "number" ||
+    typeof Silian_raw.title !== "string" ||
+    typeof Silian_raw.state !== "string" ||
+    typeof Silian_raw.created_at !== "string" ||
+    typeof Silian_raw.updated_at !== "string" ||
+    typeof Silian_raw.html_url !== "string"
   ) {
-    throw new GithubFeaturesError({
+    throw new Silian_GithubFeaturesError({
       code: "INVALID_RESPONSE",
       message: "GitHub API returned an invalid issue response shape.",
-      details: raw,
+      details: Silian_raw,
     })
   }
 
   return {
-    number: raw.number,
-    title: raw.title,
-    body: raw.body ?? "",
-    state: raw.state === "closed" ? "closed" : "open",
-    labels: (raw.labels ?? [])
-      .map((label) => {
-        if (typeof label === "string") {
-          return label
+    number: Silian_raw.number,
+    title: Silian_raw.title,
+    body: Silian_raw.body ?? "",
+    state: Silian_raw.state === "closed" ? "closed" : "open",
+    labels: (Silian_raw.labels ?? [])
+      .map((Silian_label) => {
+        if (typeof Silian_label === "string") {
+          return Silian_label
         }
-        return label.name ?? ""
+        return Silian_label.name ?? ""
       })
       .filter(Boolean),
-    assignees: (raw.assignees ?? [])
-      .map((assignee) => assignee.login ?? "")
+    assignees: (Silian_raw.assignees ?? [])
+      .map((Silian_assignee) => Silian_assignee.login ?? "")
       .filter(Boolean),
-    createdAt: raw.created_at,
-    updatedAt: raw.updated_at,
-    htmlUrl: raw.html_url,
+    createdAt: Silian_raw.created_at,
+    updatedAt: Silian_raw.updated_at,
+    htmlUrl: Silian_raw.html_url,
   }
 }
 
-export function normalizeComment(raw: GithubCommentResponse): GithubComment {
+export function normalizeComment(Silian_raw: GithubCommentResponse): Silian_GithubComment {
   if (
-    typeof raw.id !== "number" ||
-    typeof raw.created_at !== "string" ||
-    typeof raw.updated_at !== "string"
+    typeof Silian_raw.id !== "number" ||
+    typeof Silian_raw.created_at !== "string" ||
+    typeof Silian_raw.updated_at !== "string"
   ) {
-    throw new GithubFeaturesError({
+    throw new Silian_GithubFeaturesError({
       code: "INVALID_RESPONSE",
       message: "GitHub API returned an invalid comment response shape.",
-      details: raw,
+      details: Silian_raw,
     })
   }
 
   return {
-    id: raw.id,
-    body: raw.body ?? "",
-    createdAt: raw.created_at,
-    updatedAt: raw.updated_at,
+    id: Silian_raw.id,
+    body: Silian_raw.body ?? "",
+    createdAt: Silian_raw.created_at,
+    updatedAt: Silian_raw.updated_at,
   }
 }

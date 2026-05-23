@@ -1,20 +1,20 @@
 "use client"
 
-import { useLocale, useTranslations } from "next-intl"
-import { useRouter, usePathname } from "@/i18n/navigation"
+import { useLocale as Silian_useLocale, useTranslations as Silian_useTranslations } from "next-intl"
+import { useRouter as Silian_useRouter, usePathname as Silian_usePathname } from "@/i18n/navigation"
 
-const LOCALES = ["zh", "en"] as const
-type Locale = (typeof LOCALES)[number]
+const Silian_LOCALES = ["zh", "en"] as const
+type Locale = (typeof Silian_LOCALES)[number]
 
-export function LanguageSwitcher({ className = "" }: { className?: string }) {
-  const locale = useLocale() as Locale
-  const t = useTranslations("CommonA11y")
-  const router = useRouter()
-  const pathname = usePathname()
+export function LanguageSwitcher({ className: Silian_className = "" }: { className?: string }) {
+  const Silian_locale = Silian_useLocale() as Locale
+  const Silian_t = Silian_useTranslations("CommonA11y")
+  const Silian_router = Silian_useRouter()
+  const Silian_pathname = Silian_usePathname()
 
-  const switchLocale = (newLocale: Locale) => {
-    if (newLocale === locale) return
-    router.replace(pathname, { locale: newLocale })
+  const Silian_switchLocale = (Silian_newLocale: Locale) => {
+    if (Silian_newLocale === Silian_locale) return
+    Silian_router.replace(Silian_pathname, { locale: Silian_newLocale })
   }
 
   return (
@@ -22,26 +22,26 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
       className={`
         relative flex items-center border border-tech-main/40
         font-mono text-[0.625rem] tracking-[0.15em]
-        ${className}
+        ${Silian_className}
       `}>
-      {LOCALES.map((loc, i) => (
+      {Silian_LOCALES.map((Silian_loc, Silian_i) => (
         <button
-          key={loc}
+          key={Silian_loc}
           type="button"
-          onClick={() => switchLocale(loc)}
-          aria-label={t("languageSwitcher")}
-          aria-pressed={locale === loc}
+          onClick={() => Silian_switchLocale(Silian_loc)}
+          aria-label={Silian_t("languageSwitcher")}
+          aria-pressed={Silian_locale === Silian_loc}
           className={`
             flex touch-target min-h-8 min-w-7 items-center
             justify-center px-2 py-1 uppercase transition-colors duration-200
-            ${i > 0 ? "border-l border-tech-main/40" : ""}
+            ${Silian_i > 0 ? "border-l border-tech-main/40" : ""}
             ${
-              locale === loc
+              Silian_locale === Silian_loc
                 ? "bg-tech-main text-white"
                 : "bg-transparent text-tech-main hover:bg-tech-accent/30"
             }
           `}>
-          {`${loc === "en" ? "Eng" : "中文"}`}
+          {`${Silian_loc === "en" ? "Eng" : "中文"}`}
         </button>
       ))}
     </div>

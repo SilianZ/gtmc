@@ -1,69 +1,69 @@
 // @ts-expect-error Bun provides this module in test runtime.
-import { beforeEach, describe, expect, it, mock } from "bun:test"
+import { beforeEach as Silian_beforeEach, describe as Silian_describe, expect as Silian_expect, it as Silian_it, mock as Silian_mock } from "bun:test"
 
-const mockGetRef = mock()
-const mockGetContent = mock()
-const mockCreateOrUpdateFileContents = mock()
+const Silian_mockGetRef = Silian_mock()
+const Silian_mockGetContent = Silian_mock()
+const Silian_mockCreateOrUpdateFileContents = Silian_mock()
 
-mock.module("@/lib/github/articles-repo", () => ({
+Silian_mock.module("@/lib/github/articles-repo", () => ({
   ARTICLES_REPO_NAME: "Articles",
   ARTICLES_REPO_OWNER: "gtmc-dev",
-  getGitHubWriteToken: mock(() => "token"),
-  getOctokit: mock(() => ({
+  getGitHubWriteToken: Silian_mock(() => "token"),
+  getOctokit: Silian_mock(() => ({
     git: {
-      getRef: mockGetRef,
+      getRef: Silian_mockGetRef,
     },
     repos: {
-      createOrUpdateFileContents: mockCreateOrUpdateFileContents,
-      getContent: mockGetContent,
+      createOrUpdateFileContents: Silian_mockCreateOrUpdateFileContents,
+      getContent: Silian_mockGetContent,
     },
   })),
 }))
 
-const { resolveDraftSyncConflict } = await import("./article-submission")
+const { resolveDraftSyncConflict: Silian_resolveDraftSyncConflict } = await import("./article-submission")
 
 type SnapshotMap = Record<
   string,
   Record<string, { content: string; sha: string }>
 >
 
-function configureOctokitMocks({
-  mainShaSequence,
-  snapshots,
+function Silian_configureOctokitMocks({
+  mainShaSequence: Silian_mainShaSequence,
+  snapshots: Silian_snapshots,
 }: {
   mainShaSequence: string[]
   snapshots: SnapshotMap
 }) {
-  let mainIndex = 0
-  mockGetRef.mockImplementation(async () => ({
+  let Silian_mainIndex = 0
+  Silian_mockGetRef.mockImplementation(async () => ({
     data: {
       object: {
         sha:
-          mainShaSequence[Math.min(mainIndex++, mainShaSequence.length - 1)] ??
-          mainShaSequence[mainShaSequence.length - 1],
+          Silian_mainShaSequence[Math.min(Silian_mainIndex++, Silian_mainShaSequence.length - 1)] ??
+          Silian_mainShaSequence[Silian_mainShaSequence.length - 1],
       },
     },
   }))
 
-  mockGetContent.mockImplementation(
-    async ({ path, ref }: { path: string; ref: string }) => {
-      const snapshot = snapshots[ref]?.[path]
-      if (!snapshot) {
-        throw new Error(`Missing snapshot for ref=${ref} path=${path}`)
+  Silian_mockGetContent.mockImplementation(
+    async ({ path: Silian_path, ref: Silian_ref }: { path: string; ref: string }) => {
+      const Silian_snapshot = Silian_snapshots[Silian_ref]?.[Silian_path]
+      if (!Silian_snapshot) {
+        throw new Error(`Missing snapshot for ref=${Silian_ref} path=${Silian_path}`)
       }
 
       return {
         data: {
           type: "file",
-          sha: snapshot.sha,
-          content: Buffer.from(snapshot.content).toString("base64"),
+          sha: Silian_snapshot.sha,
+          content: Buffer.from(Silian_snapshot.content).toString("base64"),
         },
       }
     }
   )
 }
 
-const baseInput = {
+const Silian_baseInput = {
   activeFileId: "draft-file-1",
   authorEmail: "author@example.com",
   authorName: "Author",
@@ -79,15 +79,15 @@ const baseInput = {
   token: "token",
 }
 
-describe("resolveDraftSyncConflict TOCTOU protections", () => {
-  beforeEach(() => {
-    mockGetRef.mockReset()
-    mockGetContent.mockReset()
-    mockCreateOrUpdateFileContents.mockReset()
+Silian_describe("resolveDraftSyncConflict TOCTOU protections", () => {
+  Silian_beforeEach(() => {
+    Silian_mockGetRef.mockReset()
+    Silian_mockGetContent.mockReset()
+    Silian_mockCreateOrUpdateFileContents.mockReset()
   })
 
-  it("succeeds on first attempt when main stays stable", async () => {
-    configureOctokitMocks({
+  Silian_it("succeeds on first attempt when main stays stable", async () => {
+    Silian_configureOctokitMocks({
       mainShaSequence: ["sha-main", "sha-main"],
       snapshots: {
         "sha-main": {
@@ -102,15 +102,15 @@ describe("resolveDraftSyncConflict TOCTOU protections", () => {
       },
     })
 
-    const result = await resolveDraftSyncConflict(baseInput)
+    const Silian_result = await Silian_resolveDraftSyncConflict(Silian_baseInput)
 
-    expect(result.status).toBe("IN_REVIEW")
-    expect(result.syncedMainSha).toBe("sha-main")
-    expect(mockCreateOrUpdateFileContents).toHaveBeenCalledTimes(1)
+    Silian_expect(Silian_result.status).toBe("IN_REVIEW")
+    Silian_expect(Silian_result.syncedMainSha).toBe("sha-main")
+    Silian_expect(Silian_mockCreateOrUpdateFileContents).toHaveBeenCalledTimes(1)
   })
 
-  it("retries when main changes during write and succeeds once stable", async () => {
-    configureOctokitMocks({
+  Silian_it("retries when main changes during write and succeeds once stable", async () => {
+    Silian_configureOctokitMocks({
       mainShaSequence: ["sha-1", "sha-2", "sha-2"],
       snapshots: {
         "sha-1": {
@@ -128,15 +128,15 @@ describe("resolveDraftSyncConflict TOCTOU protections", () => {
       },
     })
 
-    const result = await resolveDraftSyncConflict(baseInput)
+    const Silian_result = await Silian_resolveDraftSyncConflict(Silian_baseInput)
 
-    expect(result.status).toBe("IN_REVIEW")
-    expect(result.syncedMainSha).toBe("sha-2")
-    expect(mockCreateOrUpdateFileContents).toHaveBeenCalledTimes(2)
+    Silian_expect(Silian_result.status).toBe("IN_REVIEW")
+    Silian_expect(Silian_result.syncedMainSha).toBe("sha-2")
+    Silian_expect(Silian_mockCreateOrUpdateFileContents).toHaveBeenCalledTimes(2)
   })
 
-  it("throws after max retries when main never stabilizes", async () => {
-    configureOctokitMocks({
+  Silian_it("throws after max retries when main never stabilizes", async () => {
+    Silian_configureOctokitMocks({
       mainShaSequence: ["sha-1", "sha-2", "sha-3", "sha-4", "sha-5", "sha-6"],
       snapshots: {
         "sha-1": {
@@ -166,14 +166,14 @@ describe("resolveDraftSyncConflict TOCTOU protections", () => {
       },
     })
 
-    await expect(resolveDraftSyncConflict(baseInput)).rejects.toThrow(
+    await Silian_expect(Silian_resolveDraftSyncConflict(Silian_baseInput)).rejects.toThrow(
       "Max retries exceeded: main branch is too active"
     )
-    expect(mockCreateOrUpdateFileContents).toHaveBeenCalledTimes(3)
+    Silian_expect(Silian_mockCreateOrUpdateFileContents).toHaveBeenCalledTimes(3)
   })
 
-  it("returns SYNC_CONFLICT if retry re-merge finds conflict", async () => {
-    configureOctokitMocks({
+  Silian_it("returns SYNC_CONFLICT if retry re-merge finds conflict", async () => {
+    Silian_configureOctokitMocks({
       mainShaSequence: ["sha-1", "sha-2", "sha-2"],
       snapshots: {
         "sha-old": {
@@ -197,8 +197,8 @@ describe("resolveDraftSyncConflict TOCTOU protections", () => {
       },
     })
 
-    const result = await resolveDraftSyncConflict({
-      ...baseInput,
+    const Silian_result = await Silian_resolveDraftSyncConflict({
+      ...Silian_baseInput,
       files: [
         {
           id: "draft-file-1",
@@ -209,9 +209,9 @@ describe("resolveDraftSyncConflict TOCTOU protections", () => {
       syncedMainSha: "sha-old",
     })
 
-    expect(result.status).toBe("SYNC_CONFLICT")
-    expect(result.conflictContent).toContain("<<<<<<< draft")
-    expect(result.syncedMainSha).toBe("sha-2")
-    expect(mockCreateOrUpdateFileContents).toHaveBeenCalledTimes(1)
+    Silian_expect(Silian_result.status).toBe("SYNC_CONFLICT")
+    Silian_expect(Silian_result.conflictContent).toContain("<<<<<<< draft")
+    Silian_expect(Silian_result.syncedMainSha).toBe("sha-2")
+    Silian_expect(Silian_mockCreateOrUpdateFileContents).toHaveBeenCalledTimes(1)
   })
 })

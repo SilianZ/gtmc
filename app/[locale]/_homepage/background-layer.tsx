@@ -1,9 +1,9 @@
 "use client"
 
-import { motion, MotionValue } from "motion/react"
-import { DecorElement } from "./decor-element"
+import { motion as Silian_motion, MotionValue as Silian_MotionValue } from "motion/react"
+import { DecorElement as Silian_DecorElement } from "./decor-element"
 
-const HEX_VALUES = [
+const Silian_HEX_VALUES = [
   "a1b2",
   "c3d4",
   "e5f6",
@@ -31,22 +31,22 @@ const HEX_VALUES = [
 ]
 
 export function BackgroundLayer({
-  bgTransform,
-  smoothMouseX,
-  smoothMouseY,
-  blurMax,
+  bgTransform: Silian_bgTransform,
+  smoothMouseX: Silian_smoothMouseX,
+  smoothMouseY: Silian_smoothMouseY,
+  blurMax: Silian_blurMax,
 }: {
-  bgTransform: { x: MotionValue<number>; y: MotionValue<number> }
-  smoothMouseX: MotionValue<number>
-  smoothMouseY: MotionValue<number>
+  bgTransform: { x: Silian_MotionValue<number>; y: Silian_MotionValue<number> }
+  smoothMouseX: Silian_MotionValue<number>
+  smoothMouseY: Silian_MotionValue<number>
   blurMax: number
 }) {
   return (
-    <motion.div
+    <Silian_motion.div
       className="absolute inset-0 z-0 homepage-decor-background"
-      style={{ x: bgTransform.x, y: bgTransform.y }}>
+      style={{ x: Silian_bgTransform.x, y: Silian_bgTransform.y }}>
       {/* 巨型背景水印 */}
-      <DecorElement
+      <Silian_DecorElement
         className="
           pointer-events-none absolute top-1/3 -right-20 decor-desktop-only
           hidden rotate-90 text-[10rem] font-black tracking-tighter
@@ -54,23 +54,23 @@ export function BackgroundLayer({
           select-none
           lg:block
         "
-        smoothMouseX={smoothMouseX}
-        smoothMouseY={smoothMouseY}
-        blurMax={blurMax}>
+        smoothMouseX={Silian_smoothMouseX}
+        smoothMouseY={Silian_smoothMouseY}
+        blurMax={Silian_blurMax}>
         SCHEMATIC_01
-      </DecorElement>
+      </Silian_DecorElement>
 
       {/* NBT二进制/Hex Dump 背景层 */}
-      <DecorElement
+      <Silian_DecorElement
         className="
            pointer-events-none absolute top-[20%] left-[5%] decor-desktop-only
            hidden font-mono text-[0.625rem] leading-tight whitespace-pre
            text-tech-main opacity-[0.25] mix-blend-multiply select-none
            xl:block
          "
-        smoothMouseX={smoothMouseX}
-        smoothMouseY={smoothMouseY}
-        blurMax={blurMax}>
+        smoothMouseX={Silian_smoothMouseX}
+        smoothMouseY={Silian_smoothMouseY}
+        blurMax={Silian_blurMax}>
         00000000: 1f8b 0800 0000 0000 0000 edc1 0b00 0000 .......4........
         {"\n"}
         00000010: 0010 0700 1101 0005 6c65 7665 6c00 0800 ........level...
@@ -81,18 +81,18 @@ export function BackgroundLayer({
         {"\n"}
         00000040: 636b 5f6c 6967 6874 5f64 6174 610a 0000 ck_light_data...
         {"\n"}
-      </DecorElement>
+      </Silian_DecorElement>
 
       {/* MC 方块视角的几何线条叠加 */}
-      <DecorElement
+      <Silian_DecorElement
         className="
           pointer-events-none absolute right-[10%] bottom-[20%]
           decor-desktop-only hidden opacity-20
           lg:block
         "
-        smoothMouseX={smoothMouseX}
-        smoothMouseY={smoothMouseY}
-        blurMax={blurMax}>
+        smoothMouseX={Silian_smoothMouseX}
+        smoothMouseY={Silian_smoothMouseY}
+        blurMax={Silian_blurMax}>
         <svg
           width="200"
           height="200"
@@ -144,18 +144,18 @@ export function BackgroundLayer({
           <line x1="10" y1="10" x2="50" y2="50" strokeWidth="1" />
           <polygon points="50,50 40,50 50,40" fill="currentColor" />
         </svg>
-      </DecorElement>
+      </Silian_DecorElement>
 
       {/* 圆形/雷达阵列结构 */}
-      <DecorElement
+      <Silian_DecorElement
         className="
           pointer-events-none absolute bottom-16 left-[20%] decor-desktop-only
           hidden opacity-10
           lg:block
         "
-        smoothMouseX={smoothMouseX}
-        smoothMouseY={smoothMouseY}
-        blurMax={blurMax}>
+        smoothMouseX={Silian_smoothMouseX}
+        smoothMouseY={Silian_smoothMouseY}
+        blurMax={Silian_blurMax}>
         <svg
           width="150"
           height="150"
@@ -169,10 +169,10 @@ export function BackgroundLayer({
           <line x1="15" y1="75" x2="135" y2="75" />
           <line x1="75" y1="15" x2="75" y2="135" />
         </svg>
-      </DecorElement>
+      </Silian_DecorElement>
 
       {/* 2XL 专属：红石逻辑代数 */}
-      <DecorElement
+      <Silian_DecorElement
         className="
            pointer-events-none absolute top-[40%] right-[6%] decor-desktop-only
            hidden border-l border-tech-main/40 pl-4 font-mono text-[0.6875rem]
@@ -180,9 +180,9 @@ export function BackgroundLayer({
            select-none
            2xl:block
          "
-        smoothMouseX={smoothMouseX}
-        smoothMouseY={smoothMouseY}
-        blurMax={blurMax}>
+        smoothMouseX={Silian_smoothMouseX}
+        smoothMouseY={Silian_smoothMouseY}
+        blurMax={Silian_blurMax}>
         <div className="mb-2 font-bold text-tech-main-dark">
           {"//"} REDSTONE_BOOLEAN_LOGIC
         </div>
@@ -196,19 +196,19 @@ export function BackgroundLayer({
           * VALIDATING SIGNAL STRENGTH (0-15)
           <br />* QUASI_CONNECTIVITY = TRUE
         </div>
-      </DecorElement>
+      </Silian_DecorElement>
 
       {/* 2XL 专属：空间坐标变换矩阵 */}
-      <DecorElement
+      <Silian_DecorElement
         className="
            pointer-events-none absolute right-[25%] bottom-[30%]
            decor-desktop-only hidden font-mono text-[0.6875rem] opacity-[0.35]
            mix-blend-multiply select-none
            2xl:block
          "
-        smoothMouseX={smoothMouseX}
-        smoothMouseY={smoothMouseY}
-        blurMax={blurMax}>
+        smoothMouseX={Silian_smoothMouseX}
+        smoothMouseY={Silian_smoothMouseY}
+        blurMax={Silian_blurMax}>
         <div className="mb-2 font-bold tracking-widest text-tech-main-dark">
           TRANSFORM_MATRIX_4x4
         </div>
@@ -234,19 +234,19 @@ export function BackgroundLayer({
           <span>0.0</span>
           <span>1.0</span>
         </div>
-      </DecorElement>
+      </Silian_DecorElement>
 
       {/* 2XL 专属：内存簇/寄存器网格 */}
-      <DecorElement
+      <Silian_DecorElement
         className="
            pointer-events-none absolute top-[60%] left-[3%] decor-desktop-only
            hidden font-mono text-[0.625rem] opacity-[0.35] mix-blend-multiply
            select-none
            2xl:block
          "
-        smoothMouseX={smoothMouseX}
-        smoothMouseY={smoothMouseY}
-        blurMax={blurMax}>
+        smoothMouseX={Silian_smoothMouseX}
+        smoothMouseY={Silian_smoothMouseY}
+        blurMax={Silian_blurMax}>
         <div className="mb-2 font-bold tracking-widest text-tech-main-dark">
           TICK_PHASE_ALLOCATION
         </div>
@@ -255,33 +255,33 @@ export function BackgroundLayer({
             grid grid-cols-6 gap-x-4 gap-y-2 border guide-line bg-tech-main/5
             p-2
           ">
-          {HEX_VALUES.map((hexValue, i) => (
+          {Silian_HEX_VALUES.map((Silian_hexValue, Silian_i) => (
             <span
-              key={i}
+              key={Silian_i}
               className={
-                i % 7 === 0
+                Silian_i % 7 === 0
                   ? `
                     relative font-bold text-tech-main-dark
                     before:absolute before:-left-3 before:content-['>']
                   `
                   : ""
               }>
-              {hexValue}
+              {Silian_hexValue}
             </span>
           ))}
         </div>
-      </DecorElement>
+      </Silian_DecorElement>
 
       {/* 力学/机械引擎图纸 */}
-      <DecorElement
+      <Silian_DecorElement
         className="
           pointer-events-none absolute top-[15%] right-[15%] decor-desktop-only
           hidden opacity-[0.25] mix-blend-multiply select-none
           xl:block
         "
-        smoothMouseX={smoothMouseX}
-        smoothMouseY={smoothMouseY}
-        blurMax={blurMax}>
+        smoothMouseX={Silian_smoothMouseX}
+        smoothMouseY={Silian_smoothMouseY}
+        blurMax={Silian_blurMax}>
         <svg
           width="140"
           height="160"
@@ -320,7 +320,7 @@ export function BackgroundLayer({
             F_push
           </text>
         </svg>
-      </DecorElement>
-    </motion.div>
+      </Silian_DecorElement>
+    </Silian_motion.div>
   )
 }

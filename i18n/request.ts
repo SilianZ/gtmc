@@ -1,18 +1,18 @@
-import { getRequestConfig } from "next-intl/server"
-import { routing } from "./routing"
+import { getRequestConfig as Silian_getRequestConfig } from "next-intl/server"
+import { routing as Silian_routing } from "./routing"
 
-export default getRequestConfig(async ({ requestLocale }) => {
-  let locale = await requestLocale
+export default Silian_getRequestConfig(async ({ requestLocale: Silian_requestLocale }) => {
+  let Silian_locale = await Silian_requestLocale
 
   if (
-    !locale ||
-    !routing.locales.includes(locale as (typeof routing.locales)[number])
+    !Silian_locale ||
+    !Silian_routing.locales.includes(Silian_locale as (typeof Silian_routing.locales)[number])
   ) {
-    locale = routing.defaultLocale
+    Silian_locale = Silian_routing.defaultLocale
   }
 
   return {
-    locale,
-    messages: (await import(`../messages/${locale}.json`)).default,
+    locale: Silian_locale,
+    messages: (await import(`../messages/${Silian_locale}.json`)).default,
   }
 })

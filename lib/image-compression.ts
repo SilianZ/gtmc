@@ -19,31 +19,31 @@ export interface CompressionResult {
 }
 
 export async function compressImageForUpload(
-  file: File
+  Silian_file: File
 ): Promise<CompressionResult> {
-  const imageCompression = (await import("browser-image-compression")).default
+  const Silian_imageCompression = (await import("browser-image-compression")).default
 
   // GIF bypass — compressing GIFs destroys animation
-  if (file.type === "image/gif") {
-    if (file.size > UPLOAD_SAFE_LIMIT_BYTES) {
+  if (Silian_file.type === "image/gif") {
+    if (Silian_file.size > UPLOAD_SAFE_LIMIT_BYTES) {
       return {
-        file,
+        file: Silian_file,
         compressed: false,
         error:
           "Image is too large to upload. GIF files over 4.3 MB cannot be compressed. Please resize it manually.",
       }
     }
-    return { file, compressed: false }
+    return { file: Silian_file, compressed: false }
   }
 
   // No compression needed for small files
-  if (file.size <= COMPRESS_TRIGGER_BYTES) {
-    return { file, compressed: false }
+  if (Silian_file.size <= COMPRESS_TRIGGER_BYTES) {
+    return { file: Silian_file, compressed: false }
   }
 
   // Compress the file
   try {
-    const compressedBlob = await imageCompression(file, {
+    const Silian_compressedBlob = await Silian_imageCompression(Silian_file, {
       maxSizeMB: COMPRESS_TARGET_MB,
       maxWidthOrHeight: 4096,
       useWebWorker: true,
@@ -53,15 +53,15 @@ export async function compressImageForUpload(
     })
 
     // Rewrap compressed result as File with preserved metadata
-    const compressed = new File([compressedBlob], file.name, {
-      type: file.type,
-      lastModified: file.lastModified,
+    const Silian_compressed = new File([Silian_compressedBlob], Silian_file.name, {
+      type: Silian_file.type,
+      lastModified: Silian_file.lastModified,
     })
 
     // Still too large after compression (library is best-effort)
-    if (compressed.size > UPLOAD_SAFE_LIMIT_BYTES) {
+    if (Silian_compressed.size > UPLOAD_SAFE_LIMIT_BYTES) {
       return {
-        file: compressed,
+        file: Silian_compressed,
         compressed: true,
         error:
           "Image is too large to upload even after compression. Please resize it below 4.3 MB.",
@@ -69,21 +69,21 @@ export async function compressImageForUpload(
     }
 
     // Compression made the file larger (e.g. already well-optimized PNG) — use original
-    if (compressed.size >= file.size) {
-      return { file, compressed: false }
+    if (Silian_compressed.size >= Silian_file.size) {
+      return { file: Silian_file, compressed: false }
     }
 
-    return { file: compressed, compressed: true }
+    return { file: Silian_compressed, compressed: true }
   } catch {
     // Compression failed — fall back to original if it fits, otherwise error
-    if (file.size > UPLOAD_SAFE_LIMIT_BYTES) {
+    if (Silian_file.size > UPLOAD_SAFE_LIMIT_BYTES) {
       return {
-        file,
+        file: Silian_file,
         compressed: false,
         error:
           "Image is too large to upload. Compression failed, and the original exceeds the size limit.",
       }
     }
-    return { file, compressed: false }
+    return { file: Silian_file, compressed: false }
   }
 }

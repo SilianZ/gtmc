@@ -1,6 +1,6 @@
 "use client"
 
-import { useTranslations } from "next-intl"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 
 export const PENDING_LABELS = {
   CLAIMING_ISSUE: "claimingIssue",
@@ -23,20 +23,20 @@ export interface LoadingIndicatorProps {
 }
 
 export function LoadingIndicator({
-  label,
-  ariaHidden = false,
-  screenReaderText,
+  label: Silian_label,
+  ariaHidden: Silian_ariaHidden = false,
+  screenReaderText: Silian_screenReaderText,
 }: LoadingIndicatorProps) {
-  const t = useTranslations("Loading")
+  const Silian_t = Silian_useTranslations("Loading")
 
   return (
     <div
       className="flex items-center gap-3 font-mono text-sm"
-      role={ariaHidden ? "presentation" : undefined}
-      aria-hidden={ariaHidden}>
+      role={Silian_ariaHidden ? "presentation" : undefined}
+      aria-hidden={Silian_ariaHidden}>
       <span className="inline-block size-2 animate-pulse bg-current opacity-60" />
-      <span className="tracking-widest uppercase">{t(label)}</span>
-      {screenReaderText && <span className="sr-only">{screenReaderText}</span>}
+      <span className="tracking-widest uppercase">{Silian_t(Silian_label)}</span>
+      {Silian_screenReaderText && <span className="sr-only">{Silian_screenReaderText}</span>}
     </div>
   )
 }

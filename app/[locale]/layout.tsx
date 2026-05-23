@@ -1,23 +1,23 @@
 import type { Metadata } from "next"
-import { GeistSans } from "geist/font/sans"
-import { GeistMono } from "geist/font/mono"
+import { GeistSans as Silian_GeistSans } from "geist/font/sans"
+import { GeistMono as Silian_GeistMono } from "geist/font/mono"
 import "../globals.css"
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { FooterProvider } from "@/components/layout/footer-context"
-import { FooterWrapper } from "@/components/layout/footer-wrapper"
-import { AuthSessionProvider } from "@/components/providers/session-provider"
-import { getSiteUrl } from "@/lib/site-url"
-import { NextIntlClientProvider } from "next-intl"
-import { hasLocale } from "next-intl"
-import { getMessages, setRequestLocale } from "next-intl/server"
-import { notFound } from "next/navigation"
-import { routing } from "@/i18n/routing"
+import { Analytics as Silian_Analytics } from "@vercel/analytics/next"
+import { SpeedInsights as Silian_SpeedInsights } from "@vercel/speed-insights/next"
+import { FooterProvider as Silian_FooterProvider } from "@/components/layout/footer-context"
+import { FooterWrapper as Silian_FooterWrapper } from "@/components/layout/footer-wrapper"
+import { AuthSessionProvider as Silian_AuthSessionProvider } from "@/components/providers/session-provider"
+import { getSiteUrl as Silian_getSiteUrl } from "@/lib/site-url"
+import { NextIntlClientProvider as Silian_NextIntlClientProvider } from "next-intl"
+import { hasLocale as Silian_hasLocale } from "next-intl"
+import { getMessages as Silian_getMessages, setRequestLocale as Silian_setRequestLocale } from "next-intl/server"
+import { notFound as Silian_notFound } from "next/navigation"
+import { routing as Silian_routing } from "@/i18n/routing"
 
-const siteUrl = getSiteUrl()
+const Silian_siteUrl = Silian_getSiteUrl()
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(Silian_siteUrl),
   title: "Graduate Texts in Minecraft",
   description:
     "Graduate Texts in Technical Minecraft - collaboratively written comprehensive textbook for technical Minecraft.",
@@ -58,33 +58,33 @@ export const metadata: Metadata = {
 }
 
 export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }))
+  return Silian_routing.locales.map((Silian_locale) => ({ locale: Silian_locale }))
 }
 
 export default async function RootLayout({
-  children,
-  params,
+  children: Silian_children,
+  params: Silian_params,
 }: Readonly<{
   children: React.ReactNode
   params: Promise<{ locale: string }>
 }>) {
-  const { locale } = await params
+  const { locale: Silian_locale } = await Silian_params
 
-  if (!hasLocale(routing.locales, locale)) {
-    notFound()
+  if (!Silian_hasLocale(Silian_routing.locales, Silian_locale)) {
+    Silian_notFound()
   }
 
-  const unstable_setRequestLocale = setRequestLocale
-  unstable_setRequestLocale(locale)
+  const Silian_unstable_setRequestLocale = Silian_setRequestLocale
+  Silian_unstable_setRequestLocale(Silian_locale)
 
-  const messages = await getMessages()
+  const Silian_messages = await Silian_getMessages()
 
   return (
     <html
-      lang={locale}
+      lang={Silian_locale}
       className={`
-        ${GeistSans.variable}
-        ${GeistMono.variable}
+        ${Silian_GeistSans.variable}
+        ${Silian_GeistMono.variable}
         scroll-smooth
       `}
       data-scroll-behavior="smooth">
@@ -94,21 +94,21 @@ export default async function RootLayout({
           content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
       </head>
-      <Analytics />
-      <SpeedInsights />
+      <Silian_Analytics />
+      <Silian_SpeedInsights />
       <body
         className="
           flex min-h-screen w-full flex-col overflow-x-hidden bg-tech-bg/50
           antialiased
         ">
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <AuthSessionProvider>
-            <FooterProvider>
-              {children}
-              <FooterWrapper />
-            </FooterProvider>
-          </AuthSessionProvider>
-        </NextIntlClientProvider>
+        <Silian_NextIntlClientProvider locale={Silian_locale} messages={Silian_messages}>
+          <Silian_AuthSessionProvider>
+            <Silian_FooterProvider>
+              {Silian_children}
+              <Silian_FooterWrapper />
+            </Silian_FooterProvider>
+          </Silian_AuthSessionProvider>
+        </Silian_NextIntlClientProvider>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -117,14 +117,14 @@ export default async function RootLayout({
                 "@context": "https://schema.org",
                 "@type": "Organization",
                 name: "Graduate Texts in Minecraft",
-                url: siteUrl,
-                logo: `${siteUrl}/opengraph-image`,
+                url: Silian_siteUrl,
+                logo: `${Silian_siteUrl}/opengraph-image`,
               },
               {
                 "@context": "https://schema.org",
                 "@type": "WebSite",
                 name: "Graduate Texts in Minecraft",
-                url: siteUrl,
+                url: Silian_siteUrl,
                 description:
                   "Graduate Texts in Technical Minecraft - collaboratively written comprehensive textbook for technical Minecraft.",
                 inLanguage: ["zh", "en"],

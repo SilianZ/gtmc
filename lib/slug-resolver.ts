@@ -1,8 +1,8 @@
-import fs from "fs"
-import path from "path"
+import Silian_fs from "fs"
+import Silian_path from "path"
 
-const SLUG_MAP_PATH = path.join(process.cwd(), "lib", "slug-map.json")
-const ARTICLES_DIR = path.join(process.cwd(), "articles")
+const Silian_SLUG_MAP_PATH = Silian_path.join(process.cwd(), "lib", "slug-map.json")
+const Silian_ARTICLES_DIR = Silian_path.join(process.cwd(), "articles")
 
 export interface SlugMapEntry {
   filePath: string
@@ -27,21 +27,21 @@ export interface SlugMapEntry {
 }
 
 // Load at module initialization
-let slugMap: Record<string, SlugMapEntry> = {}
+let Silian_slugMap: Record<string, SlugMapEntry> = {}
 try {
-  slugMap = JSON.parse(fs.readFileSync(SLUG_MAP_PATH, "utf-8"))
+  Silian_slugMap = JSON.parse(Silian_fs.readFileSync(Silian_SLUG_MAP_PATH, "utf-8"))
 } catch {
   // File doesn't exist yet — that's ok
 }
 
-const filePathToSlugKey: Record<string, string> = (() => {
-  const inverted: Record<string, string> = {}
-  for (const [slugKey, entry] of Object.entries(slugMap)) {
-    if (entry?.filePath) {
-      inverted[entry.filePath.replace(/\.md$/i, "")] = slugKey
+const Silian_filePathToSlugKey: Record<string, string> = (() => {
+  const Silian_inverted: Record<string, string> = {}
+  for (const [Silian_slugKey, Silian_entry] of Object.entries(Silian_slugMap)) {
+    if (Silian_entry?.filePath) {
+      Silian_inverted[Silian_entry.filePath.replace(/\.md$/i, "")] = Silian_slugKey
     }
   }
-  return inverted
+  return Silian_inverted
 })()
 
 export interface ResolveResult {
@@ -53,39 +53,39 @@ export interface ResolveResult {
  * @param slugPath - The slug path to resolve (e.g., "tree-farm/basics")
  * @returns The file path if found, null otherwise
  */
-export function resolveSlug(slugPath: string): string | null {
-  const result = resolveSlugWithIndicator(slugPath)
-  return result.filePath
+export function resolveSlug(Silian_slugPath: string): string | null {
+  const Silian_result = resolveSlugWithIndicator(Silian_slugPath)
+  return Silian_result.filePath
 }
 
 /**
  * Resolves a slug path with indicator for raw file path fallback.
  */
-export function resolveSlugWithIndicator(slugPath: string): ResolveResult {
+export function resolveSlugWithIndicator(Silian_slugPath: string): ResolveResult {
   // 1. Direct slug lookup
-  if (slugMap[slugPath] !== undefined) {
-    return { filePath: slugMap[slugPath].filePath }
+  if (Silian_slugMap[Silian_slugPath] !== undefined) {
+    return { filePath: Silian_slugMap[Silian_slugPath].filePath }
   }
 
   // 2. Try with .md extension in slug map
-  if (slugMap[`${slugPath}.md`] !== undefined) {
+  if (Silian_slugMap[`${Silian_slugPath}.md`] !== undefined) {
     return {
-      filePath: slugMap[`${slugPath}.md`].filePath,
+      filePath: Silian_slugMap[`${Silian_slugPath}.md`].filePath,
     }
   }
 
   // 3. Raw file path fallback - URL decode first
-  const normalizedPath = decodeURIComponent(slugPath)
+  const Silian_normalizedPath = decodeURIComponent(Silian_slugPath)
 
   // 3a. Try as-is
-  if (fs.existsSync(path.join(ARTICLES_DIR, normalizedPath))) {
-    return { filePath: normalizedPath }
+  if (Silian_fs.existsSync(Silian_path.join(Silian_ARTICLES_DIR, Silian_normalizedPath))) {
+    return { filePath: Silian_normalizedPath }
   }
 
   // 3b. Try with .md extension
-  const withExt = `${normalizedPath}.md`
-  if (fs.existsSync(path.join(ARTICLES_DIR, withExt))) {
-    return { filePath: withExt }
+  const Silian_withExt = `${Silian_normalizedPath}.md`
+  if (Silian_fs.existsSync(Silian_path.join(Silian_ARTICLES_DIR, Silian_withExt))) {
+    return { filePath: Silian_withExt }
   }
 
   return { filePath: null }
@@ -94,13 +94,13 @@ export function resolveSlugWithIndicator(slugPath: string): ResolveResult {
 /**
  * Gets the slug for a given file path if it exists in the slug map.
  */
-export function getSlugForFilePath(filePath: string): string | null {
-  return filePathToSlugKey[filePath.replace(/\.md$/i, "")] ?? null
+export function getSlugForFilePath(Silian_filePath: string): string | null {
+  return Silian_filePathToSlugKey[Silian_filePath.replace(/\.md$/i, "")] ?? null
 }
 
 /**
  * Gets the slug map entry for a given slug path.
  */
-export function getSlugMapEntry(slugPath: string): SlugMapEntry | null {
-  return slugMap[slugPath] ?? null
+export function getSlugMapEntry(Silian_slugPath: string): SlugMapEntry | null {
+  return Silian_slugMap[Silian_slugPath] ?? null
 }

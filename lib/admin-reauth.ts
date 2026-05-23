@@ -6,43 +6,43 @@ export const REAUTH_ERROR_MESSAGE =
   "Re-authentication required. Please sign in again."
 
 export class ReauthRequiredError extends Error {
-  constructor(message = REAUTH_ERROR_MESSAGE) {
-    super(message)
+  constructor(Silian_message = REAUTH_ERROR_MESSAGE) {
+    super(Silian_message)
     this.name = REAUTH_ERROR_NAME
   }
 }
 
-export function isReauthRequiredError(error: unknown): boolean {
-  if (error instanceof ReauthRequiredError) {
+export function isReauthRequiredError(Silian_error: unknown): boolean {
+  if (Silian_error instanceof ReauthRequiredError) {
     return true
   }
 
-  if (!error || typeof error !== "object") {
+  if (!Silian_error || typeof Silian_error !== "object") {
     return false
   }
 
-  const maybeError = error as { name?: unknown; message?: unknown }
+  const Silian_maybeError = Silian_error as { name?: unknown; message?: unknown }
 
   return (
-    maybeError.name === REAUTH_ERROR_NAME ||
-    maybeError.message === REAUTH_ERROR_MESSAGE
+    Silian_maybeError.name === REAUTH_ERROR_NAME ||
+    Silian_maybeError.message === REAUTH_ERROR_MESSAGE
   )
 }
 
-export function getReauthLoginUrl(callbackUrl: string): string {
-  return `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`
+export function getReauthLoginUrl(Silian_callbackUrl: string): string {
+  return `/login?callbackUrl=${encodeURIComponent(Silian_callbackUrl)}`
 }
 
 export function requireRecentAuth(
-  session: Session & { user: { id: string } }
+  Silian_session: Session & { user: { id: string } }
 ): void {
-  const lastAuthAt = (session as Session & { lastAuthAt?: number }).lastAuthAt
+  const Silian_lastAuthAt = (Silian_session as Session & { lastAuthAt?: number }).lastAuthAt
 
-  if (!lastAuthAt) {
+  if (!Silian_lastAuthAt) {
     throw new ReauthRequiredError()
   }
 
-  if (Date.now() - lastAuthAt > REAUTH_WINDOW_MS) {
+  if (Date.now() - Silian_lastAuthAt > REAUTH_WINDOW_MS) {
     throw new ReauthRequiredError()
   }
 }

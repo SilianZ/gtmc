@@ -1,7 +1,7 @@
 import {
-  GITHUB_API_BASE,
-  GithubFeaturesError,
-  requestGithub,
+  GITHUB_API_BASE as Silian_GITHUB_API_BASE,
+  GithubFeaturesError as Silian_GithubFeaturesError,
+  requestGithub as Silian_requestGithub,
 } from "./api-client"
 
 export type AppFeatureStatus = "PENDING" | "IN_PROGRESS" | "RESOLVED"
@@ -18,120 +18,120 @@ export const STATUS_LABEL_COLORS = {
   "status:resolved": "0e8a16",
 } as const
 
-const STATUS_LABEL_PREFIX = "status:"
+const Silian_STATUS_LABEL_PREFIX = "status:"
 
 export const EXPLANATION_MARKER = "<!-- GTMC_EXPLANATION"
 export const METADATA_MARKER = "<!-- GTMC_METADATA"
 export const SYSTEM_COMMENT_MARKER = "<!-- GTMC_SYSTEM_ASSIGNMENT -->"
 
-export function serializeSystemComment(content: string): string {
-  return `${SYSTEM_COMMENT_MARKER}\n\n${content}`
+export function serializeSystemComment(Silian_content: string): string {
+  return `${SYSTEM_COMMENT_MARKER}\n\n${Silian_content}`
 }
 
 export async function getGithubLoginByAccountId(
-  accountId: string
+  Silian_accountId: string
 ): Promise<string | null> {
-  const normalizedAccountId = accountId.trim()
-  if (!normalizedAccountId) {
+  const Silian_normalizedAccountId = Silian_accountId.trim()
+  if (!Silian_normalizedAccountId) {
     return null
   }
 
-  const endpoint = Number.isNaN(Number(normalizedAccountId))
-    ? `${GITHUB_API_BASE}/users/${encodeURIComponent(normalizedAccountId)}`
-    : `${GITHUB_API_BASE}/user/${normalizedAccountId}`
+  const Silian_endpoint = Number.isNaN(Number(Silian_normalizedAccountId))
+    ? `${Silian_GITHUB_API_BASE}/users/${encodeURIComponent(Silian_normalizedAccountId)}`
+    : `${Silian_GITHUB_API_BASE}/user/${Silian_normalizedAccountId}`
 
   try {
-    const { data } = await requestGithub<{
+    const { data: Silian_data } = await Silian_requestGithub<{
       login: string
       id: number
       [key: string]: unknown
-    }>(endpoint, {
+    }>(Silian_endpoint, {
       method: "GET",
     })
 
-    if (!data || !data.login) {
+    if (!Silian_data || !Silian_data.login) {
       return null
     }
 
-    return data.login
+    return Silian_data.login
   } catch {
     return null
   }
 }
 
 export async function getGithubLoginByToken(
-  token: string
+  Silian_token: string
 ): Promise<string | null> {
-  if (!token) {
+  if (!Silian_token) {
     return null
   }
 
   try {
-    const { data } = await requestGithub<{
+    const { data: Silian_data } = await Silian_requestGithub<{
       login?: string
       [key: string]: unknown
     }>(
-      `${GITHUB_API_BASE}/user`,
+      `${Silian_GITHUB_API_BASE}/user`,
       {
         method: "GET",
       },
       undefined,
-      token
+      Silian_token
     )
 
-    if (!data || typeof data.login !== "string" || data.login.length === 0) {
+    if (!Silian_data || typeof Silian_data.login !== "string" || Silian_data.login.length === 0) {
       return null
     }
 
-    return data.login
+    return Silian_data.login
   } catch {
     return null
   }
 }
 
-export function statusToLabels(status: string): string[] {
-  if (status === "PENDING") {
+export function statusToLabels(Silian_status: string): string[] {
+  if (Silian_status === "PENDING") {
     return [APP_STATUS_LABELS.PENDING]
   }
 
-  if (status === "IN_PROGRESS") {
+  if (Silian_status === "IN_PROGRESS") {
     return [APP_STATUS_LABELS.IN_PROGRESS]
   }
 
-  if (status === "RESOLVED") {
+  if (Silian_status === "RESOLVED") {
     return [APP_STATUS_LABELS.RESOLVED]
   }
 
-  throw new GithubFeaturesError({
+  throw new Silian_GithubFeaturesError({
     code: "API_ERROR",
-    message: `Unknown feature status: ${status}`,
+    message: `Unknown feature status: ${Silian_status}`,
   })
 }
 
-export function labelsToStatus(labels: string[]): AppFeatureStatus {
-  if (labels.includes(APP_STATUS_LABELS.RESOLVED)) {
+export function labelsToStatus(Silian_labels: string[]): AppFeatureStatus {
+  if (Silian_labels.includes(APP_STATUS_LABELS.RESOLVED)) {
     return "RESOLVED"
   }
 
-  if (labels.includes(APP_STATUS_LABELS.IN_PROGRESS)) {
+  if (Silian_labels.includes(APP_STATUS_LABELS.IN_PROGRESS)) {
     return "IN_PROGRESS"
   }
 
   return "PENDING"
 }
 
-export function issueStateForStatus(status: string): "open" | "closed" {
-  if (status === "RESOLVED") {
+export function issueStateForStatus(Silian_status: string): "open" | "closed" {
+  if (Silian_status === "RESOLVED") {
     return "closed"
   }
 
   return "open"
 }
 
-export function tagsToLabels(tags: string[]): string[] {
-  return [...tags]
+export function tagsToLabels(Silian_tags: string[]): string[] {
+  return [...Silian_tags]
 }
 
-export function labelsToTags(labels: string[]): string[] {
-  return labels.filter((label) => !label.startsWith(STATUS_LABEL_PREFIX))
+export function labelsToTags(Silian_labels: string[]): string[] {
+  return Silian_labels.filter((Silian_label) => !Silian_label.startsWith(Silian_STATUS_LABEL_PREFIX))
 }

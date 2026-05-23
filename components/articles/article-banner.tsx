@@ -1,79 +1,79 @@
 "use client"
 
-import Image from "next/image"
-import { useEffect, useRef, useState } from "react"
+import Silian_Image from "next/image"
+import { useEffect as Silian_useEffect, useRef as Silian_useRef, useState as Silian_useState } from "react"
 
 interface ArticleBannerProps {
   src: string
   alt: string
 }
 
-const PARALLAX_STRENGTH = 3
-const IMG_PARALLAX_STRENGTH = 8
+const Silian_PARALLAX_STRENGTH = 3
+const Silian_IMG_PARALLAX_STRENGTH = 8
 
-export function ArticleBanner({ src, alt }: ArticleBannerProps) {
-  const bannerRef = useRef<HTMLDivElement>(null)
-  const imgRef = useRef<HTMLDivElement>(null)
-  const [offset, setOffset] = useState({ x: 0, y: 0 })
-  const [hovered, setHovered] = useState(false)
-  const [locked, setLocked] = useState(false)
-  const [flashing, setFlashing] = useState(false)
+export function ArticleBanner({ src: Silian_src, alt: Silian_alt }: ArticleBannerProps) {
+  const Silian_bannerRef = Silian_useRef<HTMLDivElement>(null)
+  const Silian_imgRef = Silian_useRef<HTMLDivElement>(null)
+  const [Silian_offset, Silian_setOffset] = Silian_useState({ x: 0, y: 0 })
+  const [Silian_hovered, Silian_setHovered] = Silian_useState(false)
+  const [Silian_locked, Silian_setLocked] = Silian_useState(false)
+  const [Silian_flashing, Silian_setFlashing] = Silian_useState(false)
 
-  useEffect(() => {
-    function onMouseMove(e: MouseEvent) {
-      if (locked) return
-      const rect = bannerRef.current?.getBoundingClientRect()
-      if (!rect) return
-      const cx = rect.left + rect.width / 2
-      const cy = rect.top + rect.height / 2
-      const dx = (e.clientX - cx) / (window.innerWidth / 2)
-      const dy = (e.clientY - cy) / (window.innerHeight / 2)
-      setOffset({ x: dx, y: dy })
+  Silian_useEffect(() => {
+    function Silian_onMouseMove(Silian_e: MouseEvent) {
+      if (Silian_locked) return
+      const Silian_rect = Silian_bannerRef.current?.getBoundingClientRect()
+      if (!Silian_rect) return
+      const Silian_cx = Silian_rect.left + Silian_rect.width / 2
+      const Silian_cy = Silian_rect.top + Silian_rect.height / 2
+      const Silian_dx = (Silian_e.clientX - Silian_cx) / (window.innerWidth / 2)
+      const Silian_dy = (Silian_e.clientY - Silian_cy) / (window.innerHeight / 2)
+      Silian_setOffset({ x: Silian_dx, y: Silian_dy })
     }
-    window.addEventListener("mousemove", onMouseMove)
-    return () => window.removeEventListener("mousemove", onMouseMove)
-  }, [locked])
+    window.addEventListener("mousemove", Silian_onMouseMove)
+    return () => window.removeEventListener("mousemove", Silian_onMouseMove)
+  }, [Silian_locked])
 
-  useEffect(() => {
-    function checkScrollLock() {
-      if (locked) return
+  Silian_useEffect(() => {
+    function Silian_checkScrollLock() {
+      if (Silian_locked) return
       if (window.matchMedia("(pointer: coarse)").matches) {
-        const rect = bannerRef.current?.getBoundingClientRect()
-        if (!rect) return
-        if (rect.bottom < window.innerHeight * 0.4) {
-          setLocked(true)
-          setFlashing(true)
-          setTimeout(() => setFlashing(false), 400)
+        const Silian_rect = Silian_bannerRef.current?.getBoundingClientRect()
+        if (!Silian_rect) return
+        if (Silian_rect.bottom < window.innerHeight * 0.4) {
+          Silian_setLocked(true)
+          Silian_setFlashing(true)
+          setTimeout(() => Silian_setFlashing(false), 400)
         }
       }
     }
-    window.addEventListener("scroll", checkScrollLock, { passive: true })
-    return () => window.removeEventListener("scroll", checkScrollLock)
-  }, [locked])
+    window.addEventListener("scroll", Silian_checkScrollLock, { passive: true })
+    return () => window.removeEventListener("scroll", Silian_checkScrollLock)
+  }, [Silian_locked])
 
-  function handleFirstHover() {
-    if (locked) return
-    setLocked(true)
-    setFlashing(true)
-    setTimeout(() => setFlashing(false), 400)
+  function Silian_handleFirstHover() {
+    if (Silian_locked) return
+    Silian_setLocked(true)
+    Silian_setFlashing(true)
+    setTimeout(() => Silian_setFlashing(false), 400)
   }
 
-  const crosshairX = locked
+  const Silian_crosshairX = Silian_locked
     ? 50
-    : hovered
+    : Silian_hovered
       ? 50
-      : 50 + offset.x * PARALLAX_STRENGTH
-  const crosshairY = locked
+      : 50 + Silian_offset.x * Silian_PARALLAX_STRENGTH
+  const Silian_crosshairY = Silian_locked
     ? 50
-    : hovered
+    : Silian_hovered
       ? 50
-      : 50 + offset.y * PARALLAX_STRENGTH
-  const imgX = locked ? 0 : hovered ? 0 : -offset.x * IMG_PARALLAX_STRENGTH
-  const imgY = locked ? 0 : hovered ? 0 : -offset.y * IMG_PARALLAX_STRENGTH
+      : 50 + Silian_offset.y * Silian_PARALLAX_STRENGTH
+  const Silian_imgX = Silian_locked ? 0 : Silian_hovered ? 0 : -Silian_offset.x * Silian_IMG_PARALLAX_STRENGTH
+  const Silian_imgY = Silian_locked ? 0 : Silian_hovered ? 0 : -Silian_offset.y * Silian_IMG_PARALLAX_STRENGTH
 
   return (
     <div
-      ref={bannerRef}
+      ref={Silian_bannerRef}
       className="
         group/banner relative mb-8 animate-fade-in
         transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
@@ -109,40 +109,40 @@ export function ArticleBanner({ src, alt }: ArticleBannerProps) {
 
         {/* Image container */}
         <div
-          ref={imgRef}
+          ref={Silian_imgRef}
           role="img"
-          aria-label={alt}
+          aria-label={Silian_alt}
           className="relative aspect-21/9 w-full overflow-hidden"
           onMouseEnter={() => {
-            setHovered(true)
-            handleFirstHover()
+            Silian_setHovered(true)
+            Silian_handleFirstHover()
           }}
-          onMouseLeave={() => setHovered(false)}>
+          onMouseLeave={() => Silian_setHovered(false)}>
           {/* Shutter flash overlay */}
           <div
             className="pointer-events-none absolute inset-0 z-20 bg-black"
             style={{
-              opacity: flashing ? 0.3 : 0,
-              transition: flashing
+              opacity: Silian_flashing ? 0.3 : 0,
+              transition: Silian_flashing
                 ? "opacity 120ms ease-in"
                 : "opacity 80ms ease-out",
             }}
           />
 
-          <Image
-            src={src}
-            alt={alt}
+          <Silian_Image
+            src={Silian_src}
+            alt={Silian_alt}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
             className="object-cover"
             style={{
-              transform: `translate(${imgX}px, ${imgY}px) scale(${hovered ? 1.1 : locked ? 1 : 1.06})`,
-              filter: locked
+              transform: `translate(${Silian_imgX}px, ${Silian_imgY}px) scale(${Silian_hovered ? 1.1 : Silian_locked ? 1 : 1.06})`,
+              filter: Silian_locked
                 ? "blur(0px) saturate(1)"
                 : "blur(1.5px) saturate(0.88)",
-              transition: locked
+              transition: Silian_locked
                 ? "transform 600ms cubic-bezier(0.16,1,0.3,1), filter 500ms ease-out"
-                : hovered
+                : Silian_hovered
                   ? "transform 600ms cubic-bezier(0.16,1,0.3,1), filter 700ms cubic-bezier(0.16,1,0.3,1)"
                   : "transform 200ms linear, filter 700ms cubic-bezier(0.16,1,0.3,1)",
             }}
@@ -181,11 +181,11 @@ export function ArticleBanner({ src, alt }: ArticleBannerProps) {
           <div
             className="pointer-events-none absolute opacity-20 mix-blend-multiply group-hover/banner:opacity-40"
             style={{
-              left: `${crosshairX}%`,
-              top: `${crosshairY}%`,
+              left: `${Silian_crosshairX}%`,
+              top: `${Silian_crosshairY}%`,
               transform: "translate(-50%, -50%)",
               transition:
-                locked || hovered
+                Silian_locked || Silian_hovered
                   ? "left 600ms cubic-bezier(0.16,1,0.3,1), top 600ms cubic-bezier(0.16,1,0.3,1)"
                   : "none",
             }}>
@@ -203,7 +203,7 @@ export function ArticleBanner({ src, alt }: ArticleBannerProps) {
             tracking-wide text-tech-main/80
           ">
           <span className="shrink-0 text-tech-main/30">{"// "}</span>
-          <span className="truncate italic">{alt}</span>
+          <span className="truncate italic">{Silian_alt}</span>
         </div>
       </div>
 

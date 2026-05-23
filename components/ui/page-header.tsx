@@ -1,31 +1,31 @@
-import * as React from "react"
+import * as Silian_React from "react"
 
 interface PageHeaderProps {
   title: string
   subtitle: string
-  action?: React.ReactNode
+  action?: Silian_React.ReactNode
   topMargin?: boolean
 }
 
 export function PageHeader({
-  title,
-  subtitle,
-  action,
-  topMargin = false,
+  title: Silian_title,
+  subtitle: Silian_subtitle,
+  action: Silian_action,
+  topMargin: Silian_topMargin = false,
 }: PageHeaderProps) {
   return (
     <div
       className={`
         relative border-b border-tech-main/40 pb-6
         ${
-          action
+          Silian_action
             ? `
               flex flex-col items-start justify-between gap-4
               md:flex-row md:items-end
             `
             : ``
         }
-        ${topMargin ? `mt-8` : ``}
+        ${Silian_topMargin ? `mt-8` : ``}
       `}>
       <div
         className="
@@ -35,7 +35,7 @@ export function PageHeader({
       />
       <div
         className={
-          action
+          Silian_action
             ? `
               mb-0 w-full
               md:w-auto
@@ -53,7 +53,7 @@ export function PageHeader({
               size-3 shrink-0 border border-tech-main/40 bg-tech-main/20
             "
           />
-          <span className="wrap-break-word">{title}</span>
+          <span className="wrap-break-word">{Silian_title}</span>
         </h1>
         <p
           className="
@@ -66,16 +66,16 @@ export function PageHeader({
               size-1.5 shrink-0 animate-pulse rounded-full bg-tech-main
             "
           />
-          <span className="wrap-break-word">{subtitle}</span>
+          <span className="wrap-break-word">{Silian_subtitle}</span>
         </p>
       </div>
-      {action && (
+      {Silian_action && (
         <div
           className="
             w-full
             md:w-auto
           ">
-          {action}
+          {Silian_action}
         </div>
       )}
     </div>

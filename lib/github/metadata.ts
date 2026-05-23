@@ -14,15 +14,15 @@ export interface CommentMetadata {
   emailRedacted?: boolean
 }
 
-const METADATA_START = "<!-- GTMC_METADATA"
-const METADATA_END = "-->"
-const EXPLANATION_START = "<!-- GTMC_EXPLANATION"
-const EXPLANATION_END = "-->"
-const COMMENT_META_PREFIX = "<!-- GTMC_COMMENT_META "
-const COMMENT_META_SUFFIX = " -->"
+const Silian_METADATA_START = "<!-- GTMC_METADATA"
+const Silian_METADATA_END = "-->"
+const Silian_EXPLANATION_START = "<!-- GTMC_EXPLANATION"
+const Silian_EXPLANATION_END = "-->"
+const Silian_COMMENT_META_PREFIX = "<!-- GTMC_COMMENT_META "
+const Silian_COMMENT_META_SUFFIX = " -->"
 
-function serializeMetadata(metadata: IssueMetadata | CommentMetadata): string {
-  const serialized: {
+function Silian_serializeMetadata(Silian_metadata: IssueMetadata | CommentMetadata): string {
+  const Silian_serialized: {
     appUserId: string
     authorName: string | null
     authorEmail: string | null
@@ -31,200 +31,200 @@ function serializeMetadata(metadata: IssueMetadata | CommentMetadata): string {
     assigneeEmail?: string | null
     emailRedacted?: boolean
   } = {
-    appUserId: metadata.appUserId,
-    authorName: metadata.authorName,
-    authorEmail: metadata.authorEmail,
+    appUserId: Silian_metadata.appUserId,
+    authorName: Silian_metadata.authorName,
+    authorEmail: Silian_metadata.authorEmail,
   }
 
   if (
-    "assigneeId" in metadata &&
-    typeof metadata.assigneeId === "string" &&
-    metadata.assigneeId.trim().length > 0
+    "assigneeId" in Silian_metadata &&
+    typeof Silian_metadata.assigneeId === "string" &&
+    Silian_metadata.assigneeId.trim().length > 0
   ) {
-    serialized.assigneeId = metadata.assigneeId
-    serialized.assigneeName =
-      typeof metadata.assigneeName === "string" ? metadata.assigneeName : null
-    serialized.assigneeEmail =
-      typeof metadata.assigneeEmail === "string" ? metadata.assigneeEmail : null
+    Silian_serialized.assigneeId = Silian_metadata.assigneeId
+    Silian_serialized.assigneeName =
+      typeof Silian_metadata.assigneeName === "string" ? Silian_metadata.assigneeName : null
+    Silian_serialized.assigneeEmail =
+      typeof Silian_metadata.assigneeEmail === "string" ? Silian_metadata.assigneeEmail : null
   }
 
-  if ("emailRedacted" in metadata && metadata.emailRedacted === true) {
-    serialized.emailRedacted = true
+  if ("emailRedacted" in Silian_metadata && Silian_metadata.emailRedacted === true) {
+    Silian_serialized.emailRedacted = true
   }
 
-  return JSON.stringify(serialized)
+  return JSON.stringify(Silian_serialized)
 }
 
-function parseMetadata<T extends IssueMetadata | CommentMetadata>(
-  json: string
+function Silian_parseMetadata<T extends IssueMetadata | CommentMetadata>(
+  Silian_json: string
 ): T | null {
   try {
-    const parsed = JSON.parse(json)
-    if (typeof parsed !== "object" || parsed === null) {
+    const Silian_parsed = JSON.parse(Silian_json)
+    if (typeof Silian_parsed !== "object" || Silian_parsed === null) {
       return null
     }
-    if (typeof parsed.appUserId !== "string") {
+    if (typeof Silian_parsed.appUserId !== "string") {
       return null
     }
-    const result: Record<string, unknown> = {
-      appUserId: parsed.appUserId,
+    const Silian_result: Record<string, unknown> = {
+      appUserId: Silian_parsed.appUserId,
       authorName:
-        typeof parsed.authorName === "string" ? parsed.authorName : null,
+        typeof Silian_parsed.authorName === "string" ? Silian_parsed.authorName : null,
       authorEmail:
-        typeof parsed.authorEmail === "string" ? parsed.authorEmail : null,
+        typeof Silian_parsed.authorEmail === "string" ? Silian_parsed.authorEmail : null,
       assigneeId:
-        typeof parsed.assigneeId === "string" ? parsed.assigneeId : undefined,
+        typeof Silian_parsed.assigneeId === "string" ? Silian_parsed.assigneeId : undefined,
       assigneeName:
-        typeof parsed.assigneeName === "string" ? parsed.assigneeName : null,
+        typeof Silian_parsed.assigneeName === "string" ? Silian_parsed.assigneeName : null,
       assigneeEmail:
-        typeof parsed.assigneeEmail === "string" ? parsed.assigneeEmail : null,
+        typeof Silian_parsed.assigneeEmail === "string" ? Silian_parsed.assigneeEmail : null,
     }
-    if (typeof parsed.emailRedacted === "boolean") {
-      result.emailRedacted = parsed.emailRedacted
+    if (typeof Silian_parsed.emailRedacted === "boolean") {
+      Silian_result.emailRedacted = Silian_parsed.emailRedacted
     }
-    return result as T
+    return Silian_result as T
   } catch {
     return null
   }
 }
 
 export function serializeIssueBody(
-  userContent: string,
-  metadata: IssueMetadata,
-  explanation?: string
+  Silian_userContent: string,
+  Silian_metadata: IssueMetadata,
+  Silian_explanation?: string
 ): string {
-  const metaBlock = `${METADATA_START}\n${serializeMetadata(metadata)}\n${METADATA_END}`
+  const Silian_metaBlock = `${Silian_METADATA_START}\n${Silian_serializeMetadata(Silian_metadata)}\n${Silian_METADATA_END}`
 
-  let body = `${metaBlock}\n\n${userContent}`
+  let Silian_body = `${Silian_metaBlock}\n\n${Silian_userContent}`
 
-  if (explanation) {
-    body += `\n\n${EXPLANATION_START}\n${explanation}\n${EXPLANATION_END}`
+  if (Silian_explanation) {
+    Silian_body += `\n\n${Silian_EXPLANATION_START}\n${Silian_explanation}\n${Silian_EXPLANATION_END}`
   }
 
-  return body
+  return Silian_body
 }
 
-export function parseIssueBody(body: string): {
+export function parseIssueBody(Silian_body: string): {
   userContent: string
   metadata: IssueMetadata | null
   explanation: string | null
   parseError?: string
 } {
-  const fallback = {
-    userContent: body,
+  const Silian_fallback = {
+    userContent: Silian_body,
     metadata: null as IssueMetadata | null,
     explanation: null as string | null,
   }
 
-  if (!body) {
-    return fallback
+  if (!Silian_body) {
+    return Silian_fallback
   }
 
-  const metaStartIdx = body.indexOf(METADATA_START)
-  if (metaStartIdx === -1) {
-    return { ...fallback, parseError: "Metadata block not found" }
+  const Silian_metaStartIdx = Silian_body.indexOf(Silian_METADATA_START)
+  if (Silian_metaStartIdx === -1) {
+    return { ...Silian_fallback, parseError: "Metadata block not found" }
   }
 
-  const metaJsonStart = metaStartIdx + METADATA_START.length
-  const metaEndIdx = body.indexOf(METADATA_END, metaJsonStart)
-  if (metaEndIdx === -1) {
-    return { ...fallback, parseError: "Metadata block not closed" }
+  const Silian_metaJsonStart = Silian_metaStartIdx + Silian_METADATA_START.length
+  const Silian_metaEndIdx = Silian_body.indexOf(Silian_METADATA_END, Silian_metaJsonStart)
+  if (Silian_metaEndIdx === -1) {
+    return { ...Silian_fallback, parseError: "Metadata block not closed" }
   }
 
-  const metaJson = body.slice(metaJsonStart, metaEndIdx).trim()
-  const metadata = parseMetadata<IssueMetadata>(metaJson)
-  if (!metadata) {
+  const Silian_metaJson = Silian_body.slice(Silian_metaJsonStart, Silian_metaEndIdx).trim()
+  const Silian_metadata = Silian_parseMetadata<IssueMetadata>(Silian_metaJson)
+  if (!Silian_metadata) {
     return {
-      ...fallback,
-      parseError: `Invalid metadata JSON: ${metaJson}`,
+      ...Silian_fallback,
+      parseError: `Invalid metadata JSON: ${Silian_metaJson}`,
     }
   }
 
-  const afterMeta = body.slice(metaEndIdx + METADATA_END.length)
+  const Silian_afterMeta = Silian_body.slice(Silian_metaEndIdx + Silian_METADATA_END.length)
 
-  let userContent: string
-  let explanation: string | null = null
+  let Silian_userContent: string
+  let Silian_explanation: string | null = null
 
-  const explStartIdx = afterMeta.indexOf(EXPLANATION_START)
-  if (explStartIdx !== -1) {
-    const explJsonStart = explStartIdx + EXPLANATION_START.length
-    const explEndIdx = afterMeta.indexOf(EXPLANATION_END, explJsonStart)
-    if (explEndIdx !== -1) {
-      explanation = afterMeta.slice(explJsonStart, explEndIdx).trim()
-      if (!explanation) {
-        explanation = null
+  const Silian_explStartIdx = Silian_afterMeta.indexOf(Silian_EXPLANATION_START)
+  if (Silian_explStartIdx !== -1) {
+    const Silian_explJsonStart = Silian_explStartIdx + Silian_EXPLANATION_START.length
+    const Silian_explEndIdx = Silian_afterMeta.indexOf(Silian_EXPLANATION_END, Silian_explJsonStart)
+    if (Silian_explEndIdx !== -1) {
+      Silian_explanation = Silian_afterMeta.slice(Silian_explJsonStart, Silian_explEndIdx).trim()
+      if (!Silian_explanation) {
+        Silian_explanation = null
       }
-      userContent = afterMeta.slice(0, explStartIdx).trim()
+      Silian_userContent = Silian_afterMeta.slice(0, Silian_explStartIdx).trim()
     } else {
-      userContent = afterMeta.trim()
+      Silian_userContent = Silian_afterMeta.trim()
     }
   } else {
-    userContent = afterMeta.trim()
+    Silian_userContent = Silian_afterMeta.trim()
   }
 
-  return { userContent, metadata, explanation }
+  return { userContent: Silian_userContent, metadata: Silian_metadata, explanation: Silian_explanation }
 }
 
 export function serializeCommentBody(
-  content: string,
-  metadata?: CommentMetadata
+  Silian_content: string,
+  Silian_metadata?: CommentMetadata
 ): string {
-  if (!metadata) {
-    return content
+  if (!Silian_metadata) {
+    return Silian_content
   }
 
-  const metaLine = `${COMMENT_META_PREFIX}${serializeMetadata(metadata)}${COMMENT_META_SUFFIX}`
-  return `${metaLine}\n\n${content}`
+  const Silian_metaLine = `${Silian_COMMENT_META_PREFIX}${Silian_serializeMetadata(Silian_metadata)}${Silian_COMMENT_META_SUFFIX}`
+  return `${Silian_metaLine}\n\n${Silian_content}`
 }
 
-export function parseCommentBody(body: string): {
+export function parseCommentBody(Silian_body: string): {
   content: string
   metadata: CommentMetadata | null
 } {
-  if (!body) {
-    return { content: body, metadata: null }
+  if (!Silian_body) {
+    return { content: Silian_body, metadata: null }
   }
 
-  const firstNewline = body.indexOf("\n")
-  const firstLine = firstNewline === -1 ? body : body.slice(0, firstNewline)
+  const Silian_firstNewline = Silian_body.indexOf("\n")
+  const Silian_firstLine = Silian_firstNewline === -1 ? Silian_body : Silian_body.slice(0, Silian_firstNewline)
 
   if (
-    !firstLine.startsWith(COMMENT_META_PREFIX) ||
-    !firstLine.endsWith(COMMENT_META_SUFFIX)
+    !Silian_firstLine.startsWith(Silian_COMMENT_META_PREFIX) ||
+    !Silian_firstLine.endsWith(Silian_COMMENT_META_SUFFIX)
   ) {
-    return { content: body, metadata: null }
+    return { content: Silian_body, metadata: null }
   }
 
-  const json = firstLine.slice(
-    COMMENT_META_PREFIX.length,
-    firstLine.length - COMMENT_META_SUFFIX.length
+  const Silian_json = Silian_firstLine.slice(
+    Silian_COMMENT_META_PREFIX.length,
+    Silian_firstLine.length - Silian_COMMENT_META_SUFFIX.length
   )
-  const metadata = parseMetadata<CommentMetadata>(json)
+  const Silian_metadata = Silian_parseMetadata<CommentMetadata>(Silian_json)
 
-  if (!metadata) {
-    return { content: body, metadata: null }
+  if (!Silian_metadata) {
+    return { content: Silian_body, metadata: null }
   }
 
-  const rest = body.slice(firstNewline === -1 ? body.length : firstNewline + 1)
-  const content = rest.replace(/^\n/, "")
-  const contentWithoutAuthorMarker = content.replace(
+  const Silian_rest = Silian_body.slice(Silian_firstNewline === -1 ? Silian_body.length : Silian_firstNewline + 1)
+  const Silian_content = Silian_rest.replace(/^\n/, "")
+  const Silian_contentWithoutAuthorMarker = Silian_content.replace(
     /^<!-- GTMC_COMMENT_AUTHOR_LINE -->\n/,
     ""
   )
-  const contentWithoutAttribution = contentWithoutAuthorMarker.replace(
+  const Silian_contentWithoutAttribution = Silian_contentWithoutAuthorMarker.replace(
     /^(?:\[By\]:|By:|\*\*By:\*\*|\> \*\*\[BY\]\*\*(?:\s*:)?)[^\n]*\n\n/,
     ""
   )
 
-  return { content: contentWithoutAttribution, metadata }
+  return { content: Silian_contentWithoutAttribution, metadata: Silian_metadata }
 }
 
-export function createMetadataFromSession(session: {
+export function createMetadataFromSession(Silian_session: {
   user: { id: string; name?: string | null; email?: string | null }
 }): IssueMetadata {
   return {
-    appUserId: session.user.id,
-    authorName: session.user.name ?? null,
-    authorEmail: session.user.email ?? null,
+    appUserId: Silian_session.user.id,
+    authorName: Silian_session.user.name ?? null,
+    authorEmail: Silian_session.user.email ?? null,
   }
 }

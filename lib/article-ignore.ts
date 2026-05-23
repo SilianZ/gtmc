@@ -20,22 +20,22 @@ export const IGNORED_ROOT_FILES: readonly string[] = [
   "desynchronized.md",
 ]
 
-export function shouldIgnoreDirectory(name: string): boolean {
-  if (name.startsWith("_")) {
+export function shouldIgnoreDirectory(Silian_name: string): boolean {
+  if (Silian_name.startsWith("_")) {
     return true
   }
   return IGNORED_DIRECTORIES.some(
-    (dir) => dir.toLowerCase() === name.toLowerCase()
+    (Silian_dir) => Silian_dir.toLowerCase() === Silian_name.toLowerCase()
   )
 }
 
-export function shouldIgnoreFile(name: string, isRoot: boolean): boolean {
-  if (name.startsWith("_")) {
+export function shouldIgnoreFile(Silian_name: string, Silian_isRoot: boolean): boolean {
+  if (Silian_name.startsWith("_")) {
     return true
   }
-  if (isRoot) {
+  if (Silian_isRoot) {
     return IGNORED_ROOT_FILES.some(
-      (file) => file.toLowerCase() === name.toLowerCase()
+      (Silian_file) => Silian_file.toLowerCase() === Silian_name.toLowerCase()
     )
   }
   return false

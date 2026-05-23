@@ -1,26 +1,26 @@
 "use client"
 
-import * as React from "react"
-import { useTranslations } from "next-intl"
+import * as Silian_React from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 
 import {
-  OperationProgress,
+  OperationProgress as Silian_OperationProgress,
   type OperationProgressStage,
 } from "@/components/ui/operation-progress"
-import { MergeMethodPicker } from "@/components/review/merge-method-picker"
-import { TechButton } from "@/components/ui/tech-button"
-import { ActionForm } from "./action-form"
+import { MergeMethodPicker as Silian_MergeMethodPicker } from "@/components/review/merge-method-picker"
+import { TechButton as Silian_TechButton } from "@/components/ui/tech-button"
+import { ActionForm as Silian_ActionForm } from "./action-form"
 import type {
   ReviewMergeMethod,
   ReviewMergeStrategyAnalysis,
 } from "@/types/review"
 
 export function PRActionButtons({
-  closePRAction,
-  mergePRAction,
-  mergeStrategyAnalysis,
-  mergeBlockedReason,
-  squashCommitDefaults,
+  closePRAction: Silian_closePRAction,
+  mergePRAction: Silian_mergePRAction,
+  mergeStrategyAnalysis: Silian_mergeStrategyAnalysis,
+  mergeBlockedReason: Silian_mergeBlockedReason,
+  squashCommitDefaults: Silian_squashCommitDefaults,
 }: {
   closePRAction: () => Promise<void>
   mergePRAction:
@@ -38,142 +38,142 @@ export function PRActionButtons({
     coauthorLines: string[]
   }
 }) {
-  const t = useTranslations("OperationProgress")
-  const reviewT = useTranslations("Review")
-  const [selectedMethod, setSelectedMethod] = React.useState<ReviewMergeMethod>(
-    mergeStrategyAnalysis.recommendation
+  const Silian_t = Silian_useTranslations("OperationProgress")
+  const Silian_reviewT = Silian_useTranslations("Review")
+  const [Silian_selectedMethod, Silian_setSelectedMethod] = Silian_React.useState<ReviewMergeMethod>(
+    Silian_mergeStrategyAnalysis.recommendation
   )
-  const [commitTitle, setCommitTitle] = React.useState(
-    squashCommitDefaults?.title ?? ""
+  const [Silian_commitTitle, Silian_setCommitTitle] = Silian_React.useState(
+    Silian_squashCommitDefaults?.title ?? ""
   )
-  const [commitBody, setCommitBody] = React.useState(
-    squashCommitDefaults?.body ?? ""
+  const [Silian_commitBody, Silian_setCommitBody] = Silian_React.useState(
+    Silian_squashCommitDefaults?.body ?? ""
   )
 
-  React.useEffect(() => {
-    setSelectedMethod(mergeStrategyAnalysis.recommendation)
-  }, [mergeStrategyAnalysis])
+  Silian_React.useEffect(() => {
+    Silian_setSelectedMethod(Silian_mergeStrategyAnalysis.recommendation)
+  }, [Silian_mergeStrategyAnalysis])
 
-  React.useEffect(() => {
-    setCommitTitle(squashCommitDefaults?.title ?? "")
-  }, [squashCommitDefaults?.title])
+  Silian_React.useEffect(() => {
+    Silian_setCommitTitle(Silian_squashCommitDefaults?.title ?? "")
+  }, [Silian_squashCommitDefaults?.title])
 
-  React.useEffect(() => {
-    setCommitBody(squashCommitDefaults?.body ?? "")
-  }, [squashCommitDefaults?.body])
+  Silian_React.useEffect(() => {
+    Silian_setCommitBody(Silian_squashCommitDefaults?.body ?? "")
+  }, [Silian_squashCommitDefaults?.body])
 
-  const mergeStages = React.useMemo<OperationProgressStage[]>(
+  const Silian_mergeStages = Silian_React.useMemo<OperationProgressStage[]>(
     () => [
       {
         id: "authorize",
-        label: t("mergeStageAuthorize"),
+        label: Silian_t("mergeStageAuthorize"),
         durationMs: 260,
       },
       {
         id: "github-api",
-        label: t("mergeStageGithub"),
+        label: Silian_t("mergeStageGithub"),
         durationMs: 920,
       },
       {
         id: "reconcile-assets",
-        label: t("mergeStageAssets"),
+        label: Silian_t("mergeStageAssets"),
         durationMs: 640,
       },
       {
         id: "refresh-views",
-        label: t("mergeStageRefresh"),
+        label: Silian_t("mergeStageRefresh"),
         durationMs: 320,
       },
     ],
-    [t]
+    [Silian_t]
   )
 
-  const buildMergeOptions = React.useCallback(() => {
-    const coauthorLines = squashCommitDefaults?.coauthorLines ?? []
-    const finalBody =
-      selectedMethod === "squash" &&
-      coauthorLines.length > 0 &&
-      !coauthorLines.some((line) => commitBody.includes(line))
-        ? `${commitBody.trimEnd()}${commitBody.trim() ? "\n\n" : ""}${coauthorLines.join("\n")}`
-        : commitBody
+  const Silian_buildMergeOptions = Silian_React.useCallback(() => {
+    const Silian_coauthorLines = Silian_squashCommitDefaults?.coauthorLines ?? []
+    const Silian_finalBody =
+      Silian_selectedMethod === "squash" &&
+      Silian_coauthorLines.length > 0 &&
+      !Silian_coauthorLines.some((Silian_line) => Silian_commitBody.includes(Silian_line))
+        ? `${Silian_commitBody.trimEnd()}${Silian_commitBody.trim() ? "\n\n" : ""}${Silian_coauthorLines.join("\n")}`
+        : Silian_commitBody
 
     return {
-      mergeMethod: selectedMethod,
-      ...(selectedMethod === "squash"
-        ? { commitTitle, commitBody: finalBody }
+      mergeMethod: Silian_selectedMethod,
+      ...(Silian_selectedMethod === "squash"
+        ? { commitTitle: Silian_commitTitle, commitBody: Silian_finalBody }
         : {}),
     }
-  }, [commitBody, commitTitle, selectedMethod, squashCommitDefaults])
+  }, [Silian_commitBody, Silian_commitTitle, Silian_selectedMethod, Silian_squashCommitDefaults])
 
   return (
     <div className="space-y-4 border border-tech-main/35 bg-white/80 p-4 backdrop-blur-sm">
       <div className="space-y-1 border-b border-tech-main/15 pb-3">
         <p className="font-mono text-[0.6875rem] tracking-widest text-tech-main/50 uppercase">
-          {reviewT("mergeBoxLabel")}
+          {Silian_reviewT("mergeBoxLabel")}
         </p>
         <p className="font-mono text-sm font-bold tracking-widest text-tech-main uppercase">
-          {mergePRAction ? reviewT("readyToLand") : reviewT("mergeBlocked")}
+          {Silian_mergePRAction ? Silian_reviewT("readyToLand") : Silian_reviewT("mergeBlocked")}
         </p>
-        {mergeBlockedReason ? (
+        {Silian_mergeBlockedReason ? (
           <p className="font-mono text-[0.6875rem] leading-relaxed text-red-600">
-            {mergeBlockedReason}
+            {Silian_mergeBlockedReason}
           </p>
         ) : null}
       </div>
 
-      <MergeMethodPicker
-        analysis={mergeStrategyAnalysis}
-        selectedMethod={selectedMethod}
-        onSelectMethod={setSelectedMethod}
-        commitTitle={commitTitle}
-        commitBody={commitBody}
-        onCommitTitleChange={setCommitTitle}
-        onCommitBodyChange={setCommitBody}
-        coauthorLines={squashCommitDefaults?.coauthorLines}
-        disabled={!mergePRAction}
+      <Silian_MergeMethodPicker
+        analysis={Silian_mergeStrategyAnalysis}
+        selectedMethod={Silian_selectedMethod}
+        onSelectMethod={Silian_setSelectedMethod}
+        commitTitle={Silian_commitTitle}
+        commitBody={Silian_commitBody}
+        onCommitTitleChange={Silian_setCommitTitle}
+        onCommitBodyChange={Silian_setCommitBody}
+        coauthorLines={Silian_squashCommitDefaults?.coauthorLines}
+        disabled={!Silian_mergePRAction}
         compact
       />
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <ActionForm action={closePRAction} className="flex-1">
-          {({ isPending }) => (
-            <TechButton
+        <Silian_ActionForm action={Silian_closePRAction} className="flex-1">
+          {({ isPending: Silian_isPending }) => (
+            <Silian_TechButton
               type="submit"
               variant="secondary"
-              disabled={isPending}
+              disabled={Silian_isPending}
               className="w-full border-red-600 text-red-600 hover:bg-red-600 hover:text-white">
-              {isPending ? "CLOSING..." : "CLOSE_PR"}
-            </TechButton>
+              {Silian_isPending ? "CLOSING..." : "CLOSE_PR"}
+            </Silian_TechButton>
           )}
-        </ActionForm>
+        </Silian_ActionForm>
 
-        <ActionForm
+        <Silian_ActionForm
           action={() =>
-            mergePRAction?.(buildMergeOptions()) ?? Promise.resolve()
+            Silian_mergePRAction?.(Silian_buildMergeOptions()) ?? Promise.resolve()
           }
           className="flex-1">
-          {({ isPending, state }) => (
+          {({ isPending: Silian_isPending, state: Silian_state }) => (
             <div className="space-y-3">
-              <TechButton
+              <Silian_TechButton
                 type="submit"
                 variant="primary"
-                disabled={isPending || !mergePRAction}
-                aria-busy={isPending}
+                disabled={Silian_isPending || !Silian_mergePRAction}
+                aria-busy={Silian_isPending}
                 className="w-full">
-                {isPending ? reviewT("merging") : reviewT("confirmMerge")}
-              </TechButton>
+                {Silian_isPending ? Silian_reviewT("merging") : Silian_reviewT("confirmMerge")}
+              </Silian_TechButton>
 
-              <OperationProgress
-                state={state}
-                title={t("mergeTitle")}
-                stages={mergeStages}
-                successLabel={t("mergeSuccess")}
-                errorLabel={t("mergeError")}
+              <Silian_OperationProgress
+                state={Silian_state}
+                title={Silian_t("mergeTitle")}
+                stages={Silian_mergeStages}
+                successLabel={Silian_t("mergeSuccess")}
+                errorLabel={Silian_t("mergeError")}
                 compact
               />
             </div>
           )}
-        </ActionForm>
+        </Silian_ActionForm>
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
-import { Octokit } from "@octokit/rest"
+import { Octokit as Silian_Octokit } from "@octokit/rest"
 import {
-  resolveGithubArticlesReadToken,
-  resolveGithubArticlesWriteToken,
+  resolveGithubArticlesReadToken as Silian_resolveGithubArticlesReadToken,
+  resolveGithubArticlesWriteToken as Silian_resolveGithubArticlesWriteToken,
 } from "@/lib/github/tokens"
 
 export const ARTICLES_REPO_OWNER =
@@ -12,15 +12,15 @@ export const ARTICLES_REPO_OWNER =
 export const ARTICLES_REPO_NAME =
   process.env.GITHUB_ARTICLES_REPO_NAME || "Articles"
 
-const getGitHubReadToken = () => resolveGithubArticlesReadToken()
+const Silian_getGitHubReadToken = () => Silian_resolveGithubArticlesReadToken()
 
-export const getGitHubWriteToken = (fallbackToken?: string | null) =>
-  resolveGithubArticlesWriteToken(fallbackToken)
+export const getGitHubWriteToken = (Silian_fallbackToken?: string | null) =>
+  Silian_resolveGithubArticlesWriteToken(Silian_fallbackToken)
 
-export const getOctokit = (token?: string, silent404 = false) => {
-  return new Octokit({
-    auth: token || getGitHubReadToken(),
-    log: silent404
+export const getOctokit = (Silian_token?: string, Silian_silent404 = false) => {
+  return new Silian_Octokit({
+    auth: Silian_token || Silian_getGitHubReadToken(),
+    log: Silian_silent404
       ? {
           debug: () => {},
           info: () => {},

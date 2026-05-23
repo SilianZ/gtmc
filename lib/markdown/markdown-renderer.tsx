@@ -1,7 +1,7 @@
-import ReactMarkdown from "react-markdown"
+import Silian_ReactMarkdown from "react-markdown"
 import type { RehypeShikiPlugin } from "@/lib/markdown/plugins/rehype-shiki"
-import { getMarkdownComponents } from "@/lib/markdown/components"
-import { getPluginsForContent } from "@/lib/markdown/processor"
+import { getMarkdownComponents as Silian_getMarkdownComponents } from "@/lib/markdown/components"
+import { getPluginsForContent as Silian_getPluginsForContent } from "@/lib/markdown/processor"
 
 interface MarkdownRendererProps {
   content: string
@@ -10,21 +10,21 @@ interface MarkdownRendererProps {
 }
 
 export function MarkdownRenderer({
-  content,
-  rawPath = "",
-  shikiPlugin,
+  content: Silian_content,
+  rawPath: Silian_rawPath = "",
+  shikiPlugin: Silian_shikiPlugin,
 }: MarkdownRendererProps) {
-  const { remarkPlugins, rehypePlugins } = getPluginsForContent(
-    content,
-    shikiPlugin
+  const { remarkPlugins: Silian_remarkPlugins, rehypePlugins: Silian_rehypePlugins } = Silian_getPluginsForContent(
+    Silian_content,
+    Silian_shikiPlugin
   )
 
   return (
-    <ReactMarkdown
-      remarkPlugins={remarkPlugins}
-      rehypePlugins={rehypePlugins}
-      components={getMarkdownComponents(rawPath)}>
-      {content}
-    </ReactMarkdown>
+    <Silian_ReactMarkdown
+      remarkPlugins={Silian_remarkPlugins}
+      rehypePlugins={Silian_rehypePlugins}
+      components={Silian_getMarkdownComponents(Silian_rawPath)}>
+      {Silian_content}
+    </Silian_ReactMarkdown>
   )
 }

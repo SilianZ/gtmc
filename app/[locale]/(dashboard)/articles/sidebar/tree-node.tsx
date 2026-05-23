@@ -1,58 +1,58 @@
 "use client"
 
-import { Link } from "@/i18n/navigation"
-import { formatIndexPrefix } from "@/lib/index-formatter"
-import { encodeSlug } from "@/lib/slug-utils"
+import { Link as Silian_Link } from "@/i18n/navigation"
+import { formatIndexPrefix as Silian_formatIndexPrefix } from "@/lib/index-formatter"
+import { encodeSlug as Silian_encodeSlug } from "@/lib/slug-utils"
 import type { TreeNode } from "@/types/sidebar-tree"
-import React from "react"
-import { useSidebarContext } from "./sidebar-context"
+import Silian_React from "react"
+import { useSidebarContext as Silian_useSidebarContext } from "./sidebar-context"
 
 export type { TreeNode } from "@/types/sidebar-tree"
 
 export function SidebarTree({
-  items,
-  onNavigate,
+  items: Silian_items,
+  onNavigate: Silian_onNavigate,
 }: {
   items: TreeNode[]
   onNavigate?: () => void
 }) {
   const {
-    effectivePath,
-    isFolderExpanded,
-    toggleFolder,
-    highlightActive,
-    activeItemRef,
-    folderGridRefs,
-  } = useSidebarContext()
+    effectivePath: Silian_effectivePath,
+    isFolderExpanded: Silian_isFolderExpanded,
+    toggleFolder: Silian_toggleFolder,
+    highlightActive: Silian_highlightActive,
+    activeItemRef: Silian_activeItemRef,
+    folderGridRefs: Silian_folderGridRefs,
+  } = Silian_useSidebarContext()
 
-  const decodedPathname = decodeURIComponent(effectivePath)
-  const firstAppendixArticleIndex = items.findIndex(
-    (item) => !item.isFolder && (item.isAppendix ?? false)
+  const Silian_decodedPathname = decodeURIComponent(Silian_effectivePath)
+  const Silian_firstAppendixArticleIndex = Silian_items.findIndex(
+    (Silian_item) => !Silian_item.isFolder && (Silian_item.isAppendix ?? false)
   )
-  const hasRegularBeforeFirstAppendix =
-    firstAppendixArticleIndex > 0 &&
-    items
-      .slice(0, firstAppendixArticleIndex)
-      .some((item) => !item.isFolder && !(item.isAppendix ?? false))
+  const Silian_hasRegularBeforeFirstAppendix =
+    Silian_firstAppendixArticleIndex > 0 &&
+    Silian_items
+      .slice(0, Silian_firstAppendixArticleIndex)
+      .some((Silian_item) => !Silian_item.isFolder && !(Silian_item.isAppendix ?? false))
 
   return (
     <ul className="my-1 pl-6">
-      {items.map((item, index) => {
-        const fileRoute = `/articles/${encodeSlug(item.slug)}`
-        const decodedRoute = decodeURIComponent(fileRoute)
-        const isActive =
-          !item.isFolder &&
-          (decodedPathname === decodedRoute ||
-            decodedPathname === `${decodedRoute}/`)
-        const folderExpanded = item.isFolder ? isFolderExpanded(item.id) : false
-        const showAppendixSeparator =
-          index === firstAppendixArticleIndex && hasRegularBeforeFirstAppendix
+      {Silian_items.map((Silian_item, Silian_index) => {
+        const Silian_fileRoute = `/articles/${Silian_encodeSlug(Silian_item.slug)}`
+        const Silian_decodedRoute = decodeURIComponent(Silian_fileRoute)
+        const Silian_isActive =
+          !Silian_item.isFolder &&
+          (Silian_decodedPathname === Silian_decodedRoute ||
+            Silian_decodedPathname === `${Silian_decodedRoute}/`)
+        const Silian_folderExpanded = Silian_item.isFolder ? Silian_isFolderExpanded(Silian_item.id) : false
+        const Silian_showAppendixSeparator =
+          Silian_index === Silian_firstAppendixArticleIndex && Silian_hasRegularBeforeFirstAppendix
 
         return (
-          <React.Fragment key={item.id}>
-            {showAppendixSeparator && (
+          <Silian_React.Fragment key={Silian_item.id}>
+            {Silian_showAppendixSeparator && (
               <li
-                key={`appendix-separator-before-${item.id}`}
+                key={`appendix-separator-before-${Silian_item.id}`}
                 className="
                   mt-3 mb-1.5 flex list-none items-center gap-2 pl-1 font-mono
                   text-[0.625rem] tracking-[0.12em] text-tech-main/50 uppercase
@@ -65,9 +65,9 @@ export function SidebarTree({
             )}
 
             <li
-              key={item.id}
+              key={Silian_item.id}
               data-sidebar-row="1"
-              ref={!item.isFolder && isActive ? activeItemRef : undefined}
+              ref={!Silian_item.isFolder && Silian_isActive ? Silian_activeItemRef : undefined}
               className={`
                  relative my-1.5 list-none font-mono text-[1rem] transition-all
                  duration-300
@@ -76,7 +76,7 @@ export function SidebarTree({
                  before:content-['']
                  md:text-base
                 ${
-                  !item.isFolder && isActive
+                  !Silian_item.isFolder && Silian_isActive
                     ? `before:w-[3px] before:bg-tech-main`
                     : `
                       before:bg-transparent
@@ -84,17 +84,17 @@ export function SidebarTree({
                     `
                 }
                 ${
-                  !item.isFolder && isActive && highlightActive
+                  !Silian_item.isFolder && Silian_isActive && Silian_highlightActive
                     ? `bg-tech-main/8`
-                    : !item.isFolder && isActive
+                    : !Silian_item.isFolder && Silian_isActive
                       ? `bg-tech-main/5`
                       : `hover:bg-tech-main/5`
                 }
               `}>
-              {item.isFolder ? (
+              {Silian_item.isFolder ? (
                 <button
                   type="button"
-                  onClick={() => toggleFolder(item.id)}
+                  onClick={() => Silian_toggleFolder(Silian_item.id)}
                   className="
                     mt-3 mb-1 flex w-fit cursor-pointer items-center text-left
                     font-bold text-tech-main/80 uppercase opacity-80
@@ -103,9 +103,9 @@ export function SidebarTree({
                     focus:outline-none
                   ">
                   <span className="inline-block w-4 text-xs text-tech-main/50">
-                    {folderExpanded ? "▼" : "▶"}
+                    {Silian_folderExpanded ? "▼" : "▶"}
                   </span>
-                  <span>{item.title}</span>
+                  <span>{Silian_item.title}</span>
                 </button>
               ) : (
                 <div className="relative">
@@ -114,7 +114,7 @@ export function SidebarTree({
                       group relative -ml-4 flex items-center py-1.5 pl-4
                       transition-colors
                       ${
-                        isActive
+                        Silian_isActive
                           ? `font-bold text-tech-main`
                           : `
                             text-slate-700
@@ -122,16 +122,16 @@ export function SidebarTree({
                           `
                       }
                     `}>
-                    <Link
-                      href={fileRoute}
-                      onClick={() => onNavigate?.()}
+                    <Silian_Link
+                      href={Silian_fileRoute}
+                      onClick={() => Silian_onNavigate?.()}
                       className="block w-full pb-px pl-1">
-                      {item.isReadmeIntro
-                        ? `00 ${item.title}`
-                        : !item.isFolder && item.index !== undefined
-                          ? `${formatIndexPrefix(item.index, item.isAppendix ?? false, item.isPreface ?? false)}${item.title}`
-                          : item.title}
-                      {item.isAdvanced && (
+                      {Silian_item.isReadmeIntro
+                        ? `00 ${Silian_item.title}`
+                        : !Silian_item.isFolder && Silian_item.index !== undefined
+                          ? `${Silian_formatIndexPrefix(Silian_item.index, Silian_item.isAppendix ?? false, Silian_item.isPreface ?? false)}${Silian_item.title}`
+                          : Silian_item.title}
+                      {Silian_item.isAdvanced && (
                         <span
                           className="
                             mx-1 inline-block shrink-0 bg-[#4c5b96] px-[3px]
@@ -141,35 +141,35 @@ export function SidebarTree({
                           ADVANCED
                         </span>
                       )}
-                    </Link>
+                    </Silian_Link>
                   </div>
                 </div>
               )}
 
-              {item.children && item.children.length > 0 && (
+              {Silian_item.children && Silian_item.children.length > 0 && (
                 <div
-                  ref={(el) => {
-                    if (el) folderGridRefs.current.set(item.id, el)
-                    else folderGridRefs.current.delete(item.id)
+                  ref={(Silian_el) => {
+                    if (Silian_el) Silian_folderGridRefs.current.set(Silian_item.id, Silian_el)
+                    else Silian_folderGridRefs.current.delete(Silian_item.id)
                   }}
                   className={`
                     grid transition-all duration-300 ease-out
                     ${
-                      !item.isFolder || folderExpanded
+                      !Silian_item.isFolder || Silian_folderExpanded
                         ? `grid-rows-[1fr] opacity-100`
                         : `grid-rows-[0fr] opacity-0`
                     }
                   `}>
                   <div className="overflow-hidden">
                     <SidebarTree
-                      items={item.children}
-                      onNavigate={onNavigate}
+                      items={Silian_item.children}
+                      onNavigate={Silian_onNavigate}
                     />
                   </div>
                 </div>
               )}
             </li>
-          </React.Fragment>
+          </Silian_React.Fragment>
         )
       })}
     </ul>

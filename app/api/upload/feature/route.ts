@@ -1,92 +1,92 @@
-import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
-import { uploadFileToGithub, GithubFeaturesError } from "@/lib/github"
-import { classifyFile, sanitizeFilename } from "@/lib/file-upload"
+import { NextRequest as Silian_NextRequest, NextResponse as Silian_NextResponse } from "next/server"
+import { auth as Silian_auth } from "@/lib/auth"
+import { uploadFileToGithub as Silian_uploadFileToGithub, GithubFeaturesError as Silian_GithubFeaturesError } from "@/lib/github"
+import { classifyFile as Silian_classifyFile, sanitizeFilename as Silian_sanitizeFilename } from "@/lib/file-upload"
 
-export async function POST(req: NextRequest) {
-  const session = await auth()
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+export async function POST(Silian_req: Silian_NextRequest) {
+  const Silian_session = await Silian_auth()
+  if (!Silian_session?.user) {
+    return Silian_NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   try {
-    const formData = await req.formData()
-    const file = formData.get("file") as File | null
+    const Silian_formData = await Silian_req.formData()
+    const Silian_file = Silian_formData.get("file") as File | null
 
-    if (!file) {
-      return NextResponse.json({ error: "No file provided." }, { status: 400 })
+    if (!Silian_file) {
+      return Silian_NextResponse.json({ error: "No file provided." }, { status: 400 })
     }
 
-    const classification = classifyFile(file.type)
-    if (!classification) {
-      return NextResponse.json(
+    const Silian_classification = Silian_classifyFile(Silian_file.type)
+    if (!Silian_classification) {
+      return Silian_NextResponse.json(
         { error: "File type not allowed." },
         { status: 400 }
       )
     }
 
-    const arrayBuffer = await file.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
+    const Silian_arrayBuffer = await Silian_file.arrayBuffer()
+    const Silian_buffer = Buffer.from(Silian_arrayBuffer)
 
-    if (buffer.length > classification.maxBytes) {
-      const maxMB = Math.round(classification.maxBytes / (1024 * 1024))
-      return NextResponse.json(
+    if (Silian_buffer.length > Silian_classification.maxBytes) {
+      const Silian_maxMB = Math.round(Silian_classification.maxBytes / (1024 * 1024))
+      return Silian_NextResponse.json(
         {
-          error: `File too large (max ${maxMB}MB for ${classification.category}).`,
+          error: `File too large (max ${Silian_maxMB}MB for ${Silian_classification.category}).`,
         },
         { status: 400 }
       )
     }
 
-    const filename = sanitizeFilename(file.name, file.type)
+    const Silian_filename = Silian_sanitizeFilename(Silian_file.name, Silian_file.type)
 
-    const url = await uploadFileToGithub(
-      buffer,
-      filename,
-      file.type,
-      classification.category
+    const Silian_url = await Silian_uploadFileToGithub(
+      Silian_buffer,
+      Silian_filename,
+      Silian_file.type,
+      Silian_classification.category
     )
 
-    return NextResponse.json({
+    return Silian_NextResponse.json({
       success: true,
-      url,
-      filename,
-      mimeType: file.type,
-      fileSize: buffer.length,
-      category: classification.category,
-      proxyable: classification.proxyable,
+      url: Silian_url,
+      filename: Silian_filename,
+      mimeType: Silian_file.type,
+      fileSize: Silian_buffer.length,
+      category: Silian_classification.category,
+      proxyable: Silian_classification.proxyable,
     })
-  } catch (error) {
-    if (error instanceof GithubFeaturesError) {
-      if (error.code === "CONFIG_MISSING") {
-        return NextResponse.json(
+  } catch (Silian_error) {
+    if (Silian_error instanceof Silian_GithubFeaturesError) {
+      if (Silian_error.code === "CONFIG_MISSING") {
+        return Silian_NextResponse.json(
           { error: "Upload is not configured on this server." },
           { status: 500 }
         )
       }
-      if (error.code === "AUTH_FAILED") {
-        return NextResponse.json(
+      if (Silian_error.code === "AUTH_FAILED") {
+        return Silian_NextResponse.json(
           { error: "Upload authorization failed." },
           { status: 403 }
         )
       }
-      if (error.code === "RATE_LIMITED") {
-        return NextResponse.json(
+      if (Silian_error.code === "RATE_LIMITED") {
+        return Silian_NextResponse.json(
           {
             error: "Upload service temporarily unavailable. Try again shortly.",
           },
           { status: 429 }
         )
       }
-      if (error.code === "API_ERROR") {
-        return NextResponse.json(
+      if (Silian_error.code === "API_ERROR") {
+        return Silian_NextResponse.json(
           { error: "File upload failed. Please try again." },
           { status: 502 }
         )
       }
     }
 
-    console.error("Feature upload error:", error)
-    return NextResponse.json({ error: "Upload failed." }, { status: 500 })
+    console.error("Feature upload error:", Silian_error)
+    return Silian_NextResponse.json({ error: "Upload failed." }, { status: 500 })
   }
 }

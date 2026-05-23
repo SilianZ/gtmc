@@ -14,17 +14,17 @@
  * This scopes all assets to a revision for efficient cleanup queries.
  */
 
-import { createClient } from "@supabase/supabase-js"
-import { randomUUID } from "crypto"
-import path from "path"
+import { createClient as Silian_createClient } from "@supabase/supabase-js"
+import { randomUUID as Silian_randomUUID } from "crypto"
+import Silian_path from "path"
 
 // ---------------------------------------------------------------------------
 // Config Error
 // ---------------------------------------------------------------------------
 
 export class DraftStorageConfigError extends Error {
-  constructor(message: string) {
-    super(message)
+  constructor(Silian_message: string) {
+    super(Silian_message)
     this.name = "DraftStorageConfigError"
   }
 }
@@ -40,28 +40,28 @@ interface DraftStorageConfig {
   prefix: string
 }
 
-function getDraftStorageConfig(): DraftStorageConfig {
-  const url = process.env.SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  const bucket = process.env.DRAFT_STORAGE_BUCKET ?? "gtmc-drafts"
-  const prefix = process.env.DRAFT_STORAGE_TEMP_PREFIX ?? "draft-temp"
+function Silian_getDraftStorageConfig(): DraftStorageConfig {
+  const Silian_url = process.env.SUPABASE_URL
+  const Silian_key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const Silian_bucket = process.env.DRAFT_STORAGE_BUCKET ?? "gtmc-drafts"
+  const Silian_prefix = process.env.DRAFT_STORAGE_TEMP_PREFIX ?? "draft-temp"
 
-  if (!url || !key) {
+  if (!Silian_url || !Silian_key) {
     throw new DraftStorageConfigError(
       "Missing Supabase configuration. Required env vars: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY."
     )
   }
 
-  return { url, key, bucket, prefix }
+  return { url: Silian_url, key: Silian_key, bucket: Silian_bucket, prefix: Silian_prefix }
 }
 
 // ---------------------------------------------------------------------------
 // Client Creation (server-only)
 // ---------------------------------------------------------------------------
 
-function createSupabaseClient() {
-  const config = getDraftStorageConfig()
-  return createClient(config.url, config.key, {
+function Silian_createSupabaseClient() {
+  const Silian_config = Silian_getDraftStorageConfig()
+  return Silian_createClient(Silian_config.url, Silian_config.key, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
@@ -82,13 +82,13 @@ function createSupabaseClient() {
  * @returns Storage path (e.g., "draft-temp/rev-abc123/550e8400-e29b-41d4-a716-446655440000.png")
  */
 export function computeDraftStoragePath(
-  revisionId: string,
-  filename: string
+  Silian_revisionId: string,
+  Silian_filename: string
 ): string {
-  const config = getDraftStorageConfig()
-  const ext = path.extname(filename).toLowerCase().slice(1) || "bin"
-  const uuid = randomUUID()
-  return `${config.prefix}/${revisionId}/${uuid}.${ext}`
+  const Silian_config = Silian_getDraftStorageConfig()
+  const Silian_ext = Silian_path.extname(Silian_filename).toLowerCase().slice(1) || "bin"
+  const Silian_uuid = Silian_randomUUID()
+  return `${Silian_config.prefix}/${Silian_revisionId}/${Silian_uuid}.${Silian_ext}`
 }
 
 // ---------------------------------------------------------------------------
@@ -101,11 +101,11 @@ export function computeDraftStoragePath(
  * @param storagePath - Storage path (e.g., "draft-temp/rev-abc123/file.png")
  * @returns Public URL
  */
-export function getDraftAssetPublicUrl(storagePath: string): string {
-  const config = getDraftStorageConfig()
-  const client = createSupabaseClient()
-  const { data } = client.storage.from(config.bucket).getPublicUrl(storagePath)
-  return data.publicUrl
+export function getDraftAssetPublicUrl(Silian_storagePath: string): string {
+  const Silian_config = Silian_getDraftStorageConfig()
+  const Silian_client = Silian_createSupabaseClient()
+  const { data: Silian_data } = Silian_client.storage.from(Silian_config.bucket).getPublicUrl(Silian_storagePath)
+  return Silian_data.publicUrl
 }
 
 // ---------------------------------------------------------------------------
@@ -123,28 +123,28 @@ export function getDraftAssetPublicUrl(storagePath: string): string {
  * @throws Error if upload fails
  */
 export async function uploadDraftAsset(
-  storagePath: string,
-  data: Buffer | Uint8Array,
-  mimeType: string
+  Silian_storagePath: string,
+  Silian_data: Buffer | Uint8Array,
+  Silian_mimeType: string
 ): Promise<{ publicUrl: string }> {
-  const config = getDraftStorageConfig()
-  const client = createSupabaseClient()
+  const Silian_config = Silian_getDraftStorageConfig()
+  const Silian_client = Silian_createSupabaseClient()
 
-  const { error } = await client.storage
-    .from(config.bucket)
-    .upload(storagePath, data, {
-      contentType: mimeType,
+  const { error: Silian_error } = await Silian_client.storage
+    .from(Silian_config.bucket)
+    .upload(Silian_storagePath, Silian_data, {
+      contentType: Silian_mimeType,
       upsert: false,
     })
 
-  if (error) {
+  if (Silian_error) {
     throw new Error(
-      `Failed to upload draft asset to ${storagePath}: ${error.message}`
+      `Failed to upload draft asset to ${Silian_storagePath}: ${Silian_error.message}`
     )
   }
 
-  const publicUrl = getDraftAssetPublicUrl(storagePath)
-  return { publicUrl }
+  const Silian_publicUrl = getDraftAssetPublicUrl(Silian_storagePath)
+  return { publicUrl: Silian_publicUrl }
 }
 
 // ---------------------------------------------------------------------------
@@ -159,21 +159,21 @@ export async function uploadDraftAsset(
  * @throws DraftStorageConfigError if config is missing
  * @throws Error if download fails
  */
-export async function downloadDraftAsset(storagePath: string): Promise<Buffer> {
-  const config = getDraftStorageConfig()
-  const client = createSupabaseClient()
+export async function downloadDraftAsset(Silian_storagePath: string): Promise<Buffer> {
+  const Silian_config = Silian_getDraftStorageConfig()
+  const Silian_client = Silian_createSupabaseClient()
 
-  const { data, error } = await client.storage
-    .from(config.bucket)
-    .download(storagePath)
+  const { data: Silian_data, error: Silian_error } = await Silian_client.storage
+    .from(Silian_config.bucket)
+    .download(Silian_storagePath)
 
-  if (error) {
+  if (Silian_error) {
     throw new Error(
-      `Failed to download draft asset from ${storagePath}: ${error.message}`
+      `Failed to download draft asset from ${Silian_storagePath}: ${Silian_error.message}`
     )
   }
 
-  return Buffer.from(await data.arrayBuffer())
+  return Buffer.from(await Silian_data.arrayBuffer())
 }
 
 // ---------------------------------------------------------------------------
@@ -188,18 +188,18 @@ export async function downloadDraftAsset(storagePath: string): Promise<Buffer> {
  * @throws DraftStorageConfigError if config is missing
  * @throws Error if deletion fails (other than 404)
  */
-export async function deleteDraftAsset(storagePath: string): Promise<void> {
-  const config = getDraftStorageConfig()
-  const client = createSupabaseClient()
+export async function deleteDraftAsset(Silian_storagePath: string): Promise<void> {
+  const Silian_config = Silian_getDraftStorageConfig()
+  const Silian_client = Silian_createSupabaseClient()
 
-  const { error } = await client.storage
-    .from(config.bucket)
-    .remove([storagePath])
+  const { error: Silian_error } = await Silian_client.storage
+    .from(Silian_config.bucket)
+    .remove([Silian_storagePath])
 
   // Idempotent: 404 is not an error (asset already gone or never existed)
-  if (error && error.message !== "Not found") {
+  if (Silian_error && Silian_error.message !== "Not found") {
     throw new Error(
-      `Failed to delete draft asset at ${storagePath}: ${error.message}`
+      `Failed to delete draft asset at ${Silian_storagePath}: ${Silian_error.message}`
     )
   }
 }

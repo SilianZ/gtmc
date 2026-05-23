@@ -1,10 +1,10 @@
 import type { NextConfig } from "next"
-import withBundleAnalyzer from "@next/bundle-analyzer"
-import createNextIntlPlugin from "next-intl/plugin"
+import Silian_withBundleAnalyzer from "@next/bundle-analyzer"
+import Silian_createNextIntlPlugin from "next-intl/plugin"
 
-const withNextIntl = createNextIntlPlugin("./i18n/request.ts")
+const Silian_withNextIntl = Silian_createNextIntlPlugin("./i18n/request.ts")
 
-const nextConfig: NextConfig = {
+const Silian_nextConfig: NextConfig = {
   serverExternalPackages: ["@prisma/client", "prisma"],
   images: {
     remotePatterns: [
@@ -20,9 +20,9 @@ const nextConfig: NextConfig = {
   },
 }
 
-const config =
+const Silian_config =
   process.env.ANALYZE === "true"
-    ? withBundleAnalyzer({ enabled: true })(nextConfig)
-    : nextConfig
+    ? Silian_withBundleAnalyzer({ enabled: true })(Silian_nextConfig)
+    : Silian_nextConfig
 
-export default withNextIntl(config)
+export default Silian_withNextIntl(Silian_config)

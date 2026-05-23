@@ -1,9 +1,9 @@
-import { useTranslations } from "next-intl"
-import { Link } from "@/i18n/navigation"
-import { articleUrl } from "@/lib/article-url"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { Link as Silian_Link } from "@/i18n/navigation"
+import { articleUrl as Silian_articleUrl } from "@/lib/article-url"
 
 export default function Footer() {
-  const t = useTranslations("Footer")
+  const Silian_t = Silian_useTranslations("Footer")
 
   return (
     <footer
@@ -78,40 +78,40 @@ export default function Footer() {
               md:col-span-5 md:flex-row md:justify-around
             ">
             <nav
-              aria-label={t("documentationNav")}
+              aria-label={Silian_t("documentationNav")}
               className="flex flex-col space-y-4">
-              <h3 className="section-label">{t("documentation")}</h3>
+              <h3 className="section-label">{Silian_t("documentation")}</h3>
               <ul className="flex flex-col space-y-3 text-sm text-tech-main">
                 <li>
-                  <Link
-                    href={articleUrl("Preface")}
+                  <Silian_Link
+                    href={Silian_articleUrl("Preface")}
                     className="
                       transition-colors
                       hover:text-tech-main-dark
                     ">
-                    {t("preface")}
-                  </Link>
+                    {Silian_t("preface")}
+                  </Silian_Link>
                 </li>
                 <li>
-                  <Link
+                  <Silian_Link
                     href="/articles"
                     className="
                       transition-colors
                       hover:text-tech-main-dark
                     ">
-                    {t("articles")}
-                  </Link>
+                    {Silian_t("articles")}
+                  </Silian_Link>
                 </li>
               </ul>
             </nav>
 
             <nav
-              aria-label={t("communityNav")}
+              aria-label={Silian_t("communityNav")}
               className="flex flex-col space-y-4">
-              <h3 className="section-label">{t("community")}</h3>
+              <h3 className="section-label">{Silian_t("community")}</h3>
               <ul className="flex flex-col space-y-3 text-sm text-tech-main">
                 <li>
-                  <Link
+                  <Silian_Link
                     href="https://github.com/gtmc-dev/gtmc-web"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -120,10 +120,10 @@ export default function Footer() {
                       hover:text-tech-main-dark
                     ">
                     GitHub
-                  </Link>
+                  </Silian_Link>
                 </li>
                 <li>
-                  <Link
+                  <Silian_Link
                     href="https://github.com/gtmc-dev"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -132,10 +132,10 @@ export default function Footer() {
                       hover:text-tech-main-dark
                     ">
                     Team
-                  </Link>
+                  </Silian_Link>
                 </li>
                 <li>
-                  <Link
+                  <Silian_Link
                     href="https://github.com/gtmc-dev/gtmc-web/issues"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -144,24 +144,24 @@ export default function Footer() {
                       hover:text-tech-main-dark
                     ">
                     Issues
-                  </Link>
+                  </Silian_Link>
                 </li>
               </ul>
             </nav>
           </div>
 
           <aside
-            aria-label={t("legalNav")}
+            aria-label={Silian_t("legalNav")}
             className="
               flex flex-col space-y-4
               md:col-span-3 md:items-end md:text-right
             ">
-            <h3 className="section-label">{t("legalInfo")}</h3>
+            <h3 className="section-label">{Silian_t("legalInfo")}</h3>
             <div className="flex flex-col space-y-2 text-sm text-tech-main">
               <p>&copy; 2024-{new Date().getFullYear()} GTMC Wiki</p>
               <p>
                 Articles are released under{" "}
-                <Link
+                <Silian_Link
                   href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -171,18 +171,18 @@ export default function Footer() {
                     hover:text-tech-main-dark hover:decoration-tech-main-dark
                   ">
                   CC BY-NC-SA 4.0
-                </Link>
+                </Silian_Link>
                 .
               </p>
               <p>
                 Site code remains available under{" "}
-                <Link
+                <Silian_Link
                   href="https://github.com/gtmc-dev/gtmc-web/blob/main/LICENSE"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline decoration-tech-main/30 underline-offset-4 transition-colors hover:text-tech-main-dark hover:decoration-tech-main-dark">
                   Apache-2.0
-                </Link>
+                </Silian_Link>
                 .
               </p>
               <p className="text-xs opacity-80">

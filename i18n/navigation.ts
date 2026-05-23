@@ -1,5 +1,5 @@
-import { createNavigation } from "next-intl/navigation"
-import { routing } from "./routing"
+import { createNavigation as Silian_createNavigation } from "next-intl/navigation"
+import { routing as Silian_routing } from "./routing"
 
 export const { Link, redirect, usePathname, useRouter, getPathname } =
-  createNavigation(routing)
+  Silian_createNavigation(Silian_routing)

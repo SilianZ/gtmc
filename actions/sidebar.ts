@@ -1,49 +1,49 @@
 ﻿"use server"
 
-import { getCurrentUserAuthContext, requireAdmin } from "@/lib/auth-context"
-import { requireAuth } from "@/lib/auth-helpers"
-import { unstable_cache } from "next/cache"
-import { createDirectFile, createPR } from "@/lib/github/pr-manager"
-import { getRepoTranslations, type ArticleTreeNode } from "@/lib/github/sync"
-import { getArticleTree, type ArticleLocale } from "@/lib/article-loader"
-import { shouldIgnoreDirectory, shouldIgnoreFile } from "@/lib/article-ignore"
+import { getCurrentUserAuthContext as Silian_getCurrentUserAuthContext, requireAdmin as Silian_requireAdmin } from "@/lib/auth-context"
+import { requireAuth as Silian_requireAuth } from "@/lib/auth-helpers"
+import { unstable_cache as Silian_unstable_cache } from "next/cache"
+import { createDirectFile as Silian_createDirectFile, createPR as Silian_createPR } from "@/lib/github/pr-manager"
+import { getRepoTranslations as Silian_getRepoTranslations, type ArticleTreeNode } from "@/lib/github/sync"
+import { getArticleTree as Silian_getArticleTree, type ArticleLocale } from "@/lib/article-loader"
+import { shouldIgnoreDirectory as Silian_shouldIgnoreDirectory, shouldIgnoreFile as Silian_shouldIgnoreFile } from "@/lib/article-ignore"
 import type { TreeNode } from "@/types/sidebar-tree"
-import { statSync } from "fs"
-import { join } from "path"
+import { statSync as Silian_statSync } from "fs"
+import { join as Silian_join } from "path"
 
-function isAppendixDirectoryName(name: string): boolean {
-  const normalized = name.trim().toLowerCase()
-  return normalized.includes("appendix") || normalized.includes("附录")
+function Silian_isAppendixDirectoryName(Silian_name: string): boolean {
+  const Silian_normalized = Silian_name.trim().toLowerCase()
+  return Silian_normalized.includes("appendix") || Silian_normalized.includes("附录")
 }
 
-function isReadmeArticle(node: TreeNode): boolean {
-  if (node.isFolder) {
+function Silian_isReadmeArticle(Silian_node: TreeNode): boolean {
+  if (Silian_node.isFolder) {
     return false
   }
 
-  const normalize = (value: string) =>
-    value.trim().toLowerCase().replace(/\.md$/, "")
-  const slugTail = node.slug.split("/").pop() ?? ""
+  const Silian_normalize = (Silian_value: string) =>
+    Silian_value.trim().toLowerCase().replace(/\.md$/, "")
+  const Silian_slugTail = Silian_node.slug.split("/").pop() ?? ""
 
-  return normalize(node.title) === "readme" || normalize(slugTail) === "readme"
+  return Silian_normalize(Silian_node.title) === "readme" || Silian_normalize(Silian_slugTail) === "readme"
 }
 
-function getSlugMapMtime(): string {
-  const slugMapPath = join(process.cwd(), "lib", "slug-map.json")
-  return statSync(slugMapPath).mtime.getTime().toString()
+function Silian_getSlugMapMtime(): string {
+  const Silian_slugMapPath = Silian_join(process.cwd(), "lib", "slug-map.json")
+  return Silian_statSync(Silian_slugMapPath).mtime.getTime().toString()
 }
 
-const getCachedArticleTree = unstable_cache(
-  async (locale: ArticleLocale) => {
-    return getArticleTree(locale)
+const Silian_getCachedArticleTree = Silian_unstable_cache(
+  async (Silian_locale: ArticleLocale) => {
+    return Silian_getArticleTree(Silian_locale)
   },
-  ["github-repo-tree", getSlugMapMtime()],
+  ["github-repo-tree", Silian_getSlugMapMtime()],
   { revalidate: 60, tags: ["github-repo-tree"] }
 )
 
-const getCachedTranslations = unstable_cache(
+const Silian_getCachedTranslations = Silian_unstable_cache(
   async () => {
-    return getRepoTranslations()
+    return Silian_getRepoTranslations()
   },
   ["github-sidebar-translations"],
   { revalidate: 3600, tags: ["github-repo-translations"] }
@@ -54,259 +54,259 @@ const getCachedTranslations = unstable_cache(
  * Tree is built from the GitHub repository only.
  */
 export async function getSidebarTree(
-  locale: ArticleLocale = "zh"
+  Silian_locale: ArticleLocale = "zh"
 ): Promise<TreeNode[]> {
   // 1. Get GitHub repo tree (cached)
-  let githubTree: ArticleTreeNode[] = []
-  let translations: Record<string, string> = {}
+  let Silian_githubTree: ArticleTreeNode[] = []
+  let Silian_translations: Record<string, string> = {}
 
-  const githubTreePromise = getCachedArticleTree(locale)
-  const translationsPromise = getCachedTranslations()
+  const Silian_githubTreePromise = Silian_getCachedArticleTree(Silian_locale)
+  const Silian_translationsPromise = Silian_getCachedTranslations()
 
-  const [treeResult, translationsResult] = await Promise.allSettled([
-    githubTreePromise,
-    translationsPromise,
+  const [Silian_treeResult, Silian_translationsResult] = await Promise.allSettled([
+    Silian_githubTreePromise,
+    Silian_translationsPromise,
   ])
 
-  if (treeResult.status === "fulfilled") {
-    githubTree = treeResult.value
+  if (Silian_treeResult.status === "fulfilled") {
+    Silian_githubTree = Silian_treeResult.value
   } else {
-    console.error("Failed to fetch GitHub repo tree:", treeResult.reason)
+    console.error("Failed to fetch GitHub repo tree:", Silian_treeResult.reason)
   }
 
-  if (translationsResult.status === "fulfilled") {
-    translations = translationsResult.value
+  if (Silian_translationsResult.status === "fulfilled") {
+    Silian_translations = Silian_translationsResult.value
   } else {
     console.error(
       "Failed to fetch sidebar translations:",
-      translationsResult.reason
+      Silian_translationsResult.reason
     )
   }
 
   // 3. Build unified map keyed by slug
-  const unifiedMap = new Map<string, TreeNode>()
-  const mergedTree: TreeNode[] = []
+  const Silian_unifiedMap = new Map<string, TreeNode>()
+  const Silian_mergedTree: TreeNode[] = []
 
   // Add GitHub tree
-  function addGithubNodes(nodes: ArticleTreeNode[], parentArray: TreeNode[]) {
-    for (const node of nodes) {
-      const nodeWithMeta = node as ArticleTreeNode & Partial<TreeNode>
-      const clone: TreeNode = {
-        ...node,
-        index: nodeWithMeta.index ?? -1,
-        isAppendix: nodeWithMeta.isAppendix ?? false,
-        isPreface: nodeWithMeta.isPreface ?? false,
-        isAdvanced: nodeWithMeta.isAdvanced ?? false,
-        introTitle: nodeWithMeta.introTitle ?? "",
+  function Silian_addGithubNodes(Silian_nodes: ArticleTreeNode[], Silian_parentArray: TreeNode[]) {
+    for (const Silian_node of Silian_nodes) {
+      const Silian_nodeWithMeta = Silian_node as ArticleTreeNode & Partial<TreeNode>
+      const Silian_clone: TreeNode = {
+        ...Silian_node,
+        index: Silian_nodeWithMeta.index ?? -1,
+        isAppendix: Silian_nodeWithMeta.isAppendix ?? false,
+        isPreface: Silian_nodeWithMeta.isPreface ?? false,
+        isAdvanced: Silian_nodeWithMeta.isAdvanced ?? false,
+        introTitle: Silian_nodeWithMeta.introTitle ?? "",
         children: [],
       }
-      unifiedMap.set(clone.slug.toLowerCase(), clone)
-      parentArray.push(clone)
-      if (node.children && node.children.length > 0) {
-        addGithubNodes(node.children, clone.children)
+      Silian_unifiedMap.set(Silian_clone.slug.toLowerCase(), Silian_clone)
+      Silian_parentArray.push(Silian_clone)
+      if (Silian_node.children && Silian_node.children.length > 0) {
+        Silian_addGithubNodes(Silian_node.children, Silian_clone.children)
       }
     }
   }
 
-  addGithubNodes(githubTree, mergedTree)
+  Silian_addGithubNodes(Silian_githubTree, Silian_mergedTree)
 
   // 4. Apply translations to top-level titles
-  mergedTree.forEach((node) => {
-    if (translations[node.title]) {
-      node.title = translations[node.title]
+  Silian_mergedTree.forEach((Silian_node) => {
+    if (Silian_translations[Silian_node.title]) {
+      Silian_node.title = Silian_translations[Silian_node.title]
     }
   })
 
-  function sortTree(nodes: TreeNode[]) {
-    const compareIndex = (a: number, b: number) => {
-      const aNoIndex = a === -1
-      const bNoIndex = b === -1
+  function Silian_sortTree(Silian_nodes: TreeNode[]) {
+    const Silian_compareIndex = (Silian_a: number, Silian_b: number) => {
+      const Silian_aNoIndex = Silian_a === -1
+      const Silian_bNoIndex = Silian_b === -1
 
-      if (aNoIndex !== bNoIndex) {
-        return aNoIndex ? 1 : -1
+      if (Silian_aNoIndex !== Silian_bNoIndex) {
+        return Silian_aNoIndex ? 1 : -1
       }
 
-      if (aNoIndex && bNoIndex) {
+      if (Silian_aNoIndex && Silian_bNoIndex) {
         return 0
       }
 
-      return a - b
+      return Silian_a - Silian_b
     }
 
-    nodes.sort((a, b) => {
-      if (a.isPreface !== b.isPreface) {
-        return a.isPreface ? -1 : 1
+    Silian_nodes.sort((Silian_a, Silian_b) => {
+      if (Silian_a.isPreface !== Silian_b.isPreface) {
+        return Silian_a.isPreface ? -1 : 1
       }
 
-      if (a.isReadmeIntro !== b.isReadmeIntro) {
-        return a.isReadmeIntro ? -1 : 1
+      if (Silian_a.isReadmeIntro !== Silian_b.isReadmeIntro) {
+        return Silian_a.isReadmeIntro ? -1 : 1
       }
 
-      if (a.isFolder !== b.isFolder) {
-        return a.isFolder ? -1 : 1
+      if (Silian_a.isFolder !== Silian_b.isFolder) {
+        return Silian_a.isFolder ? -1 : 1
       }
 
-      if (!a.isFolder && !b.isFolder) {
-        if (a.isAppendix !== b.isAppendix) {
-          return a.isAppendix ? 1 : -1
+      if (!Silian_a.isFolder && !Silian_b.isFolder) {
+        if (Silian_a.isAppendix !== Silian_b.isAppendix) {
+          return Silian_a.isAppendix ? 1 : -1
         }
 
-        const aIsReadme =
-          !a.title || a.title === "" || a.slug.toLowerCase().endsWith("/readme")
-        const bIsReadme =
-          !b.title || b.title === "" || b.slug.toLowerCase().endsWith("/readme")
-        if (aIsReadme !== bIsReadme) {
-          return aIsReadme ? -1 : 1
+        const Silian_aIsReadme =
+          !Silian_a.title || Silian_a.title === "" || Silian_a.slug.toLowerCase().endsWith("/readme")
+        const Silian_bIsReadme =
+          !Silian_b.title || Silian_b.title === "" || Silian_b.slug.toLowerCase().endsWith("/readme")
+        if (Silian_aIsReadme !== Silian_bIsReadme) {
+          return Silian_aIsReadme ? -1 : 1
         }
 
-        const indexComparison = compareIndex(a.index ?? -1, b.index ?? -1)
-        if (indexComparison !== 0) {
-          return indexComparison
+        const Silian_indexComparison = Silian_compareIndex(Silian_a.index ?? -1, Silian_b.index ?? -1)
+        if (Silian_indexComparison !== 0) {
+          return Silian_indexComparison
         }
       }
 
-      return a.title.localeCompare(b.title)
+      return Silian_a.title.localeCompare(Silian_b.title)
     })
-    for (const node of nodes) {
-      if (node.children && node.children.length > 0) {
-        sortTree(node.children)
+    for (const Silian_node of Silian_nodes) {
+      if (Silian_node.children && Silian_node.children.length > 0) {
+        Silian_sortTree(Silian_node.children)
       }
     }
   }
   // 7. Filter out ignored articles using centralized ignore logic
-  function filterIgnoredNodes(nodes: TreeNode[], isRoot: boolean): TreeNode[] {
-    const result: TreeNode[] = []
-    for (const node of nodes) {
+  function Silian_filterIgnoredNodes(Silian_nodes: TreeNode[], Silian_isRoot: boolean): TreeNode[] {
+    const Silian_result: TreeNode[] = []
+    for (const Silian_node of Silian_nodes) {
       // Check if this node should be ignored
-      if (node.isFolder) {
-        if (shouldIgnoreDirectory(node.title)) {
+      if (Silian_node.isFolder) {
+        if (Silian_shouldIgnoreDirectory(Silian_node.title)) {
           continue
         }
       } else {
-        if (shouldIgnoreFile(node.title, isRoot)) {
+        if (Silian_shouldIgnoreFile(Silian_node.title, Silian_isRoot)) {
           continue
         }
       }
 
       // Recursively filter children
-      if (node.children && node.children.length > 0) {
-        node.children = filterIgnoredNodes(node.children, false)
+      if (Silian_node.children && Silian_node.children.length > 0) {
+        Silian_node.children = Silian_filterIgnoredNodes(Silian_node.children, false)
       }
 
-      if (node.isFolder && isAppendixDirectoryName(node.title)) {
-        const promotedChildren = node.children.filter(
-          (child) => child.isFolder || !isReadmeArticle(child)
+      if (Silian_node.isFolder && Silian_isAppendixDirectoryName(Silian_node.title)) {
+        const Silian_promotedChildren = Silian_node.children.filter(
+          (Silian_child) => Silian_child.isFolder || !Silian_isReadmeArticle(Silian_child)
         )
-        const promotedParentId = node.parentId
+        const Silian_promotedParentId = Silian_node.parentId
 
-        for (const child of promotedChildren) {
-          child.parentId = promotedParentId
+        for (const Silian_child of Silian_promotedChildren) {
+          Silian_child.parentId = Silian_promotedParentId
         }
 
-        result.push(...promotedChildren)
+        Silian_result.push(...Silian_promotedChildren)
         continue
       }
 
-      result.push(node)
+      Silian_result.push(Silian_node)
     }
-    return result
+    return Silian_result
   }
 
-  const filteredTree = filterIgnoredNodes(mergedTree, true)
+  const Silian_filteredTree = Silian_filterIgnoredNodes(Silian_mergedTree, true)
 
-  function injectReadmeIntroNodes(nodes: TreeNode[]) {
-    for (const node of nodes) {
-      if (node.children && node.children.length > 0) {
-        injectReadmeIntroNodes(node.children)
+  function Silian_injectReadmeIntroNodes(Silian_nodes: TreeNode[]) {
+    for (const Silian_node of Silian_nodes) {
+      if (Silian_node.children && Silian_node.children.length > 0) {
+        Silian_injectReadmeIntroNodes(Silian_node.children)
       }
 
-      const introTitle = node.introTitle?.trim() ?? ""
-      if (!node.isFolder || node.isPreface || introTitle === "") {
+      const Silian_introTitle = Silian_node.introTitle?.trim() ?? ""
+      if (!Silian_node.isFolder || Silian_node.isPreface || Silian_introTitle === "") {
         continue
       }
 
-      const hasInjectedIntro = node.children.some(
-        (child) => child.isReadmeIntro
+      const Silian_hasInjectedIntro = Silian_node.children.some(
+        (Silian_child) => Silian_child.isReadmeIntro
       )
-      if (hasInjectedIntro) {
+      if (Silian_hasInjectedIntro) {
         continue
       }
 
-      node.children.push({
-        id: `${node.slug}/readme-intro`,
-        title: introTitle,
-        slug: node.slug,
+      Silian_node.children.push({
+        id: `${Silian_node.slug}/readme-intro`,
+        title: Silian_introTitle,
+        slug: Silian_node.slug,
         index: -1,
         isFolder: false,
         isAppendix: false,
         isPreface: false,
         isAdvanced: false,
         isReadmeIntro: true,
-        parentId: node.id,
+        parentId: Silian_node.id,
         children: [],
       })
     }
   }
 
-  injectReadmeIntroNodes(filteredTree)
-  sortTree(filteredTree)
+  Silian_injectReadmeIntroNodes(Silian_filteredTree)
+  Silian_sortTree(Silian_filteredTree)
 
-  return filteredTree
+  return Silian_filteredTree
 }
 
 export async function createDocument({
-  title,
-  slug,
-  isFolder = false,
-  parentId = null,
+  title: Silian_title,
+  slug: Silian_slug,
+  isFolder: Silian_isFolder = false,
+  parentId: Silian_parentId = null,
 }: {
   title: string
   slug: string
   isFolder?: boolean
   parentId?: string | null
 }) {
-  const session = await requireAuth("未授权，请先登录")
+  const Silian_session = await Silian_requireAuth("未授权，请先登录")
 
-  let parentPath = ""
-  if (parentId && parentId.startsWith("gh-")) {
-    parentPath = parentId.replace(/^gh-/, "")
+  let Silian_parentPath = ""
+  if (Silian_parentId && Silian_parentId.startsWith("gh-")) {
+    Silian_parentPath = Silian_parentId.replace(/^gh-/, "")
   }
 
-  let finalSlug = slug
-  if (parentPath) {
-    if (!slug.includes("/")) {
-      finalSlug = `${parentPath}/${slug}`
-    } else if (!slug.startsWith(parentPath + "/")) {
-      finalSlug = `${parentPath}/${slug}`
+  let Silian_finalSlug = Silian_slug
+  if (Silian_parentPath) {
+    if (!Silian_slug.includes("/")) {
+      Silian_finalSlug = `${Silian_parentPath}/${Silian_slug}`
+    } else if (!Silian_slug.startsWith(Silian_parentPath + "/")) {
+      Silian_finalSlug = `${Silian_parentPath}/${Silian_slug}`
     }
   }
-  finalSlug = finalSlug.replace(/^\/+/, "")
+  Silian_finalSlug = Silian_finalSlug.replace(/^\/+/, "")
 
-  const initialContent = isFolder ? "" : "# " + title
-  const filePath = isFolder ? `${finalSlug}/.gitkeep` : `${finalSlug}.md`
+  const Silian_initialContent = Silian_isFolder ? "" : "# " + Silian_title
+  const Silian_filePath = Silian_isFolder ? `${Silian_finalSlug}/.gitkeep` : `${Silian_finalSlug}.md`
 
-  const authorName = session.user.name || "Unknown"
-  const authorEmail = session.user.email || "unknown@gtmc.dev"
-  const authContext = await getCurrentUserAuthContext(session.user.id)
+  const Silian_authorName = Silian_session.user.name || "Unknown"
+  const Silian_authorEmail = Silian_session.user.email || "unknown@gtmc.dev"
+  const Silian_authContext = await Silian_getCurrentUserAuthContext(Silian_session.user.id)
 
-  if (authContext.role === "ADMIN") {
-    await requireAdmin(session.user.id)
-    await createDirectFile({
-      title: isFolder ? `Create folder ${title}` : `Create file ${title}`,
-      content: initialContent,
-      filePath,
-      authorName,
-      authorEmail,
+  if (Silian_authContext.role === "ADMIN") {
+    await Silian_requireAdmin(Silian_session.user.id)
+    await Silian_createDirectFile({
+      title: Silian_isFolder ? `Create folder ${Silian_title}` : `Create file ${Silian_title}`,
+      content: Silian_initialContent,
+      filePath: Silian_filePath,
+      authorName: Silian_authorName,
+      authorEmail: Silian_authorEmail,
     })
   } else {
-    await createPR({
-      title: isFolder
-        ? `[系统自动生成] Request to create folder ${title}`
-        : `[系统自动生成] Request to create file ${title}`,
-      content: initialContent,
-      filePath,
-      authorName,
-      authorEmail,
+    await Silian_createPR({
+      title: Silian_isFolder
+        ? `[系统自动生成] Request to create folder ${Silian_title}`
+        : `[系统自动生成] Request to create file ${Silian_title}`,
+      content: Silian_initialContent,
+      filePath: Silian_filePath,
+      authorName: Silian_authorName,
+      authorEmail: Silian_authorEmail,
     })
   }
 }

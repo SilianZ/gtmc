@@ -1,15 +1,15 @@
 "use client"
 
-import * as React from "react"
-import { useState } from "react"
-import { useTranslations } from "next-intl"
-import { TechButton } from "@/components/ui/tech-button"
-import { MergeView } from "@codemirror/merge"
-import { EditorView } from "@codemirror/view"
-import { markdown, markdownLanguage } from "@codemirror/lang-markdown"
-import { languages } from "@codemirror/language-data"
+import * as Silian_React from "react"
+import { useState as Silian_useState } from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { TechButton as Silian_TechButton } from "@/components/ui/tech-button"
+import { MergeView as Silian_MergeView } from "@codemirror/merge"
+import { EditorView as Silian_EditorView } from "@codemirror/view"
+import { markdown as Silian_markdown, markdownLanguage as Silian_markdownLanguage } from "@codemirror/lang-markdown"
+import { languages as Silian_languages } from "@codemirror/language-data"
 
-const mergeTheme = EditorView.theme({
+const Silian_mergeTheme = Silian_EditorView.theme({
   "&": {
     fontFamily: "var(--font-mono)",
     fontSize: "0.875rem",
@@ -50,197 +50,197 @@ export interface ConflictBlockProps {
 }
 
 export function ConflictBlock({
-  id,
-  index,
-  total,
-  ours,
-  theirs,
-  onAcceptOurs,
-  onAcceptTheirs,
-  onManualEdit,
-  autoApplied,
+  id: Silian_id,
+  index: Silian_index,
+  total: Silian_total,
+  ours: Silian_ours,
+  theirs: Silian_theirs,
+  onAcceptOurs: Silian_onAcceptOurs,
+  onAcceptTheirs: Silian_onAcceptTheirs,
+  onManualEdit: Silian_onManualEdit,
+  autoApplied: Silian_autoApplied,
 }: ConflictBlockProps) {
-  const t = useTranslations("Review")
-  const editorT = useTranslations("Editor")
-  const [isManualEdit, setIsManualEdit] = useState(false)
-  const [manualContent, setManualContent] = useState(ours)
-  const [overrideAuto, setOverrideAuto] = useState(false)
-  const [justResolved, setJustResolved] = useState(false)
-  const mergeViewContainer = React.useRef<HTMLDivElement>(null)
+  const Silian_t = Silian_useTranslations("Review")
+  const Silian_editorT = Silian_useTranslations("Editor")
+  const [Silian_isManualEdit, Silian_setIsManualEdit] = Silian_useState(false)
+  const [Silian_manualContent, Silian_setManualContent] = Silian_useState(Silian_ours)
+  const [Silian_overrideAuto, Silian_setOverrideAuto] = Silian_useState(false)
+  const [Silian_justResolved, Silian_setJustResolved] = Silian_useState(false)
+  const Silian_mergeViewContainer = Silian_React.useRef<HTMLDivElement>(null)
 
-  const showAutoResolved = autoApplied && !overrideAuto
+  const Silian_showAutoResolved = Silian_autoApplied && !Silian_overrideAuto
 
-  const flashResolved = () => {
-    setJustResolved(true)
-    setTimeout(() => setJustResolved(false), 200)
+  const Silian_flashResolved = () => {
+    Silian_setJustResolved(true)
+    setTimeout(() => Silian_setJustResolved(false), 200)
   }
 
-  const handleAcceptOurs = () => {
-    flashResolved()
-    onAcceptOurs()
+  const Silian_handleAcceptOurs = () => {
+    Silian_flashResolved()
+    Silian_onAcceptOurs()
   }
 
-  const handleAcceptTheirs = () => {
-    flashResolved()
-    onAcceptTheirs()
+  const Silian_handleAcceptTheirs = () => {
+    Silian_flashResolved()
+    Silian_onAcceptTheirs()
   }
 
-  React.useEffect(() => {
-    if (!mergeViewContainer.current || isManualEdit || showAutoResolved) return
+  Silian_React.useEffect(() => {
+    if (!Silian_mergeViewContainer.current || Silian_isManualEdit || Silian_showAutoResolved) return
 
-    const view = new MergeView({
+    const Silian_view = new Silian_MergeView({
       a: {
-        doc: ours,
+        doc: Silian_ours,
         extensions: [
-          EditorView.editable.of(false),
-          markdown({ base: markdownLanguage, codeLanguages: languages }),
-          mergeTheme,
+          Silian_EditorView.editable.of(false),
+          Silian_markdown({ base: Silian_markdownLanguage, codeLanguages: Silian_languages }),
+          Silian_mergeTheme,
         ],
       },
       b: {
-        doc: theirs,
+        doc: Silian_theirs,
         extensions: [
-          EditorView.editable.of(false),
-          markdown({ base: markdownLanguage, codeLanguages: languages }),
-          mergeTheme,
+          Silian_EditorView.editable.of(false),
+          Silian_markdown({ base: Silian_markdownLanguage, codeLanguages: Silian_languages }),
+          Silian_mergeTheme,
         ],
       },
-      parent: mergeViewContainer.current,
+      parent: Silian_mergeViewContainer.current,
       orientation: "a-b",
       revertControls: "a-to-b",
     })
 
-    return () => view.destroy()
-  }, [ours, theirs, isManualEdit, showAutoResolved])
+    return () => Silian_view.destroy()
+  }, [Silian_ours, Silian_theirs, Silian_isManualEdit, Silian_showAutoResolved])
 
-  const counterLabel =
-    index !== undefined && total !== undefined
-      ? t("conflictNofN", { current: index, total })
+  const Silian_counterLabel =
+    Silian_index !== undefined && Silian_total !== undefined
+      ? Silian_t("conflictNofN", { current: Silian_index, total: Silian_total })
       : "CONFLICT_BLOCK_"
 
   return (
     <div
       className={`my-4 flex flex-col border border-l-4 border-red-500/50 transition-colors duration-200 ${
-        justResolved
+        Silian_justResolved
           ? "border-l-green-500 bg-green-500/5"
-          : showAutoResolved
+          : Silian_showAutoResolved
             ? "border-l-green-500"
             : "border-l-red-500"
       }`}
-      data-conflict-id={id}>
+      data-conflict-id={Silian_id}>
       <div className="border-b border-red-500/30 bg-red-500/10 p-2 text-center text-xs font-bold tracking-widest text-red-700 uppercase">
-        {counterLabel}
+        {Silian_counterLabel}
       </div>
 
-      {autoApplied && (
+      {Silian_autoApplied && (
         <div className="flex items-center gap-3 border-b border-red-500/20 px-3 py-2">
           <span className="border border-green-500/30 bg-green-500/10 px-3 py-1 font-mono text-xs tracking-widest text-green-700 uppercase">
-            {t("autoResolved")}
+            {Silian_t("autoResolved")}
           </span>
-          {!overrideAuto && (
-            <TechButton
+          {!Silian_overrideAuto && (
+            <Silian_TechButton
               variant="ghost"
               size="sm"
-              onClick={() => setOverrideAuto(true)}>
-              {t("override")}
-            </TechButton>
+              onClick={() => Silian_setOverrideAuto(true)}>
+              {Silian_t("override")}
+            </Silian_TechButton>
           )}
         </div>
       )}
 
-      {showAutoResolved ? (
+      {Silian_showAutoResolved ? (
         <div className="p-3">
           <pre className="border border-green-500/20 bg-green-500/5 p-3 font-mono text-sm/relaxed whitespace-pre-wrap text-green-900">
-            {autoApplied.resolution}
+            {Silian_autoApplied.resolution}
           </pre>
         </div>
       ) : (
         <>
-          {!isManualEdit && (
+          {!Silian_isManualEdit && (
             <div className="flex flex-col">
               <div className="flex">
                 <div className="flex-1 border-b border-amber-500/20 bg-amber-500/5 px-3 py-1.5">
                   <span className="font-mono text-xs font-bold tracking-widest text-amber-700 uppercase">
-                    {t("ourChanges")}
+                    {Silian_t("ourChanges")}
                   </span>
                 </div>
                 <div className="w-px bg-red-500/20" />
                 <div className="flex-1 border-b border-blue-500/20 bg-blue-500/5 px-3 py-1.5">
                   <span className="font-mono text-xs font-bold tracking-widest text-blue-700 uppercase">
-                    {t("theirChanges")}
+                    {Silian_t("theirChanges")}
                   </span>
                 </div>
               </div>
 
-              <div className="flex-1" ref={mergeViewContainer} />
+              <div className="flex-1" ref={Silian_mergeViewContainer} />
 
               <div className="flex border-t border-red-500/20">
                 <div className="flex-1 border-r border-red-500/20 bg-amber-500/5 p-2">
-                  <TechButton
+                  <Silian_TechButton
                     variant="secondary"
                     size="sm"
                     className="min-h-11 w-full border-amber-500/50 text-amber-700 hover:border-amber-500 hover:bg-amber-500/20"
-                    onClick={handleAcceptOurs}>
-                    {t("acceptDraft")}
-                  </TechButton>
+                    onClick={Silian_handleAcceptOurs}>
+                    {Silian_t("acceptDraft")}
+                  </Silian_TechButton>
                 </div>
                 <div className="flex-1 bg-blue-500/5 p-2">
-                  <TechButton
+                  <Silian_TechButton
                     variant="secondary"
                     size="sm"
                     className="min-h-11 w-full border-blue-500/50 text-blue-700 hover:border-blue-500 hover:bg-blue-500/20"
-                    onClick={handleAcceptTheirs}>
-                    {t("acceptMain")}
-                  </TechButton>
+                    onClick={Silian_handleAcceptTheirs}>
+                    {Silian_t("acceptMain")}
+                  </Silian_TechButton>
                 </div>
               </div>
             </div>
           )}
 
-          {isManualEdit && (
+          {Silian_isManualEdit && (
             <div className="flex flex-col gap-2 p-3">
               <span className="font-mono text-xs font-bold tracking-widest text-tech-main uppercase">
-                {t("manualEdit")}
+                {Silian_t("manualEdit")}
               </span>
               <textarea
                 className="min-h-[160px] w-full resize-y border border-tech-main/40 bg-tech-bg p-2 font-mono text-sm text-tech-main focus:border-tech-main focus:outline-none"
-                value={manualContent}
-                onChange={(e) => setManualContent(e.target.value)}
+                value={Silian_manualContent}
+                onChange={(Silian_e) => Silian_setManualContent(Silian_e.target.value)}
               />
               <div className="flex gap-2">
-                <TechButton
+                <Silian_TechButton
                   variant="primary"
                   size="sm"
                   onClick={() => {
-                    onManualEdit(manualContent)
-                    setIsManualEdit(false)
+                    Silian_onManualEdit(Silian_manualContent)
+                    Silian_setIsManualEdit(false)
                   }}>
-                  {t("applyManualEdit")}
-                </TechButton>
-                <TechButton
+                  {Silian_t("applyManualEdit")}
+                </Silian_TechButton>
+                <Silian_TechButton
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    setManualContent(ours)
-                    setIsManualEdit(false)
+                    Silian_setManualContent(Silian_ours)
+                    Silian_setIsManualEdit(false)
                   }}>
-                  {editorT("cancelButton")}
-                </TechButton>
+                  {Silian_editorT("cancelButton")}
+                </Silian_TechButton>
               </div>
             </div>
           )}
 
-          {!isManualEdit && (
+          {!Silian_isManualEdit && (
             <div className="flex justify-center border-t border-red-500/20 p-2">
-              <TechButton
+              <Silian_TechButton
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  setManualContent(ours)
-                  setIsManualEdit(true)
+                  Silian_setManualContent(Silian_ours)
+                  Silian_setIsManualEdit(true)
                 }}>
-                {t("manualEdit")}
-              </TechButton>
+                {Silian_t("manualEdit")}
+              </Silian_TechButton>
             </div>
           )}
         </>

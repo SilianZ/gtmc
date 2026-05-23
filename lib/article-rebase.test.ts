@@ -1,58 +1,58 @@
 // @ts-expect-error Bun provides this module in test runtime.
-import { describe, expect, it, beforeEach, mock } from "bun:test"
+import { describe as Silian_describe, expect as Silian_expect, it as Silian_it, beforeEach as Silian_beforeEach, mock as Silian_mock } from "bun:test"
 
-const mockCompareCommits = mock()
-const mockGetCommit = mock()
-const mockGetContent = mock()
-const mockRevisionUpdate = mock(async () => ({}))
-const mockRevisionFindUnique = mock(async () => null)
+const Silian_mockCompareCommits = Silian_mock()
+const Silian_mockGetCommit = Silian_mock()
+const Silian_mockGetContent = Silian_mock()
+const Silian_mockRevisionUpdate = Silian_mock(async () => ({}))
+const Silian_mockRevisionFindUnique = Silian_mock(async () => null)
 
-mock.module("@/lib/github/articles-repo", () => ({
-  getOctokit: mock(() => ({
+Silian_mock.module("@/lib/github/articles-repo", () => ({
+  getOctokit: Silian_mock(() => ({
     repos: {
-      compareCommits: mockCompareCommits,
-      getCommit: mockGetCommit,
-      getContent: mockGetContent,
+      compareCommits: Silian_mockCompareCommits,
+      getCommit: Silian_mockGetCommit,
+      getContent: Silian_mockGetContent,
     },
   })),
   ARTICLES_REPO_OWNER: "gtmc-dev",
   ARTICLES_REPO_NAME: "Articles",
-  getGitHubWriteToken: mock(() => "token"),
+  getGitHubWriteToken: Silian_mock(() => "token"),
 }))
 
-mock.module("@/lib/prisma", () => ({
+Silian_mock.module("@/lib/prisma", () => ({
   prisma: {
     revision: {
-      update: mockRevisionUpdate,
-      findUnique: mockRevisionFindUnique,
+      update: Silian_mockRevisionUpdate,
+      findUnique: Silian_mockRevisionFindUnique,
     },
   },
 }))
 
-const { rebaseArticleContent, analyzeRebaseNeed, abortRebase, resumeRebase } =
+const { rebaseArticleContent: Silian_rebaseArticleContent, analyzeRebaseNeed: Silian_analyzeRebaseNeed, abortRebase: Silian_abortRebase, resumeRebase: Silian_resumeRebase } =
   await import("./article-rebase")
 import type { RebaseInput, AnalyzeRebaseInput } from "./article-rebase"
 
-describe("rebaseArticleContent", () => {
-  beforeEach(() => {
-    mockCompareCommits.mockReset()
-    mockGetCommit.mockReset()
-    mockGetContent.mockReset()
-    mockRevisionUpdate.mockReset()
-    mockRevisionFindUnique.mockReset()
-    mockCompareCommits.mockImplementation(async () => ({
+Silian_describe("rebaseArticleContent", () => {
+  Silian_beforeEach(() => {
+    Silian_mockCompareCommits.mockReset()
+    Silian_mockGetCommit.mockReset()
+    Silian_mockGetContent.mockReset()
+    Silian_mockRevisionUpdate.mockReset()
+    Silian_mockRevisionFindUnique.mockReset()
+    Silian_mockCompareCommits.mockImplementation(async () => ({
       data: { commits: [] },
     }))
-    mockGetCommit.mockImplementation(async () => ({ data: { files: [] } }))
-    mockGetContent.mockImplementation(async () => ({
+    Silian_mockGetCommit.mockImplementation(async () => ({ data: { files: [] } }))
+    Silian_mockGetContent.mockImplementation(async () => ({
       data: { type: "file", content: "", sha: "" },
     }))
-    mockRevisionUpdate.mockImplementation(async () => ({}))
-    mockRevisionFindUnique.mockImplementation(async () => null)
+    Silian_mockRevisionUpdate.mockImplementation(async () => ({}))
+    Silian_mockRevisionFindUnique.mockImplementation(async () => null)
   })
 
-  it("NO_CHANGE: baseMainSha === latestMainSha", async () => {
-    const input: RebaseInput = {
+  Silian_it("NO_CHANGE: baseMainSha === latestMainSha", async () => {
+    const Silian_input: RebaseInput = {
       draftId: "draft-1",
       filePath: "test.md",
       baseMainSha: "abc123",
@@ -60,14 +60,14 @@ describe("rebaseArticleContent", () => {
       draftContent: "draft content",
     }
 
-    const result = await rebaseArticleContent(input)
+    const Silian_result = await Silian_rebaseArticleContent(Silian_input)
 
-    expect(result.status).toBe("NO_CHANGE")
-    expect(result).toHaveProperty("message")
+    Silian_expect(Silian_result.status).toBe("NO_CHANGE")
+    Silian_expect(Silian_result).toHaveProperty("message")
   })
 
-  it("NO_CHANGE: no commits modified the file", async () => {
-    mockCompareCommits.mockImplementation(async () => ({
+  Silian_it("NO_CHANGE: no commits modified the file", async () => {
+    Silian_mockCompareCommits.mockImplementation(async () => ({
       data: {
         commits: [
           {
@@ -80,11 +80,11 @@ describe("rebaseArticleContent", () => {
         ],
       },
     }))
-    mockGetCommit.mockImplementation(async () => ({
+    Silian_mockGetCommit.mockImplementation(async () => ({
       data: { files: [{ filename: "other.md" }] },
     }))
 
-    const input: RebaseInput = {
+    const Silian_input: RebaseInput = {
       draftId: "draft-1",
       filePath: "test.md",
       baseMainSha: "abc123",
@@ -92,13 +92,13 @@ describe("rebaseArticleContent", () => {
       draftContent: "draft content",
     }
 
-    const result = await rebaseArticleContent(input)
+    const Silian_result = await Silian_rebaseArticleContent(Silian_input)
 
-    expect(result.status).toBe("NO_CHANGE")
+    Silian_expect(Silian_result.status).toBe("NO_CHANGE")
   })
 
-  it("SUCCESS: 2 commits, both modify file, no conflicts", async () => {
-    mockCompareCommits.mockImplementation(async () => ({
+  Silian_it("SUCCESS: 2 commits, both modify file, no conflicts", async () => {
+    Silian_mockCompareCommits.mockImplementation(async () => ({
       data: {
         commits: [
           {
@@ -119,24 +119,24 @@ describe("rebaseArticleContent", () => {
       },
     }))
 
-    mockGetCommit.mockImplementation(async () => {
+    Silian_mockGetCommit.mockImplementation(async () => {
       return { data: { files: [{ filename: "test.md" }] } }
     })
 
-    const contentMap: Record<string, string> = {
+    const Silian_contentMap: Record<string, string> = {
       abc: "line1",
       c1: "line1\nline2",
       c2: "line1\nline2\nline3",
     }
-    mockGetContent.mockImplementation(async ({ ref }: { ref: string }) => ({
+    Silian_mockGetContent.mockImplementation(async ({ ref: Silian_ref }: { ref: string }) => ({
       data: {
         type: "file",
-        content: Buffer.from(contentMap[ref] || "").toString("base64"),
-        sha: "s" + ref,
+        content: Buffer.from(Silian_contentMap[Silian_ref] || "").toString("base64"),
+        sha: "s" + Silian_ref,
       },
     }))
 
-    const result = await rebaseArticleContent({
+    const Silian_result = await Silian_rebaseArticleContent({
       draftId: "draft-1",
       filePath: "test.md",
       baseMainSha: "abc",
@@ -144,14 +144,14 @@ describe("rebaseArticleContent", () => {
       draftContent: "line1\nline2",
     })
 
-    expect(result.status).toBe("SUCCESS")
-    if (result.status === "SUCCESS") {
-      expect(result.appliedCommits).toHaveLength(2)
+    Silian_expect(Silian_result.status).toBe("SUCCESS")
+    if (Silian_result.status === "SUCCESS") {
+      Silian_expect(Silian_result.appliedCommits).toHaveLength(2)
     }
   })
 
-  it("CONFLICT: 2 commits, commit 2 conflicts", async () => {
-    mockCompareCommits.mockImplementation(async () => ({
+  Silian_it("CONFLICT: 2 commits, commit 2 conflicts", async () => {
+    Silian_mockCompareCommits.mockImplementation(async () => ({
       data: {
         commits: [
           {
@@ -172,24 +172,24 @@ describe("rebaseArticleContent", () => {
       },
     }))
 
-    mockGetCommit.mockImplementation(async () => {
+    Silian_mockGetCommit.mockImplementation(async () => {
       return { data: { files: [{ filename: "test.md" }] } }
     })
 
-    const contentMap: Record<string, string> = {
+    const Silian_contentMap: Record<string, string> = {
       abc: "line1",
       c1: "line1\nline2",
       c2: "line1\nline2\nline3",
     }
-    mockGetContent.mockImplementation(async ({ ref }: { ref: string }) => ({
+    Silian_mockGetContent.mockImplementation(async ({ ref: Silian_ref }: { ref: string }) => ({
       data: {
         type: "file",
-        content: Buffer.from(contentMap[ref] || "").toString("base64"),
-        sha: "s" + ref,
+        content: Buffer.from(Silian_contentMap[Silian_ref] || "").toString("base64"),
+        sha: "s" + Silian_ref,
       },
     }))
 
-    const result = await rebaseArticleContent({
+    const Silian_result = await Silian_rebaseArticleContent({
       draftId: "draft-1",
       filePath: "test.md",
       baseMainSha: "abc",
@@ -197,14 +197,14 @@ describe("rebaseArticleContent", () => {
       draftContent: "line1\nline2\ndraft",
     })
 
-    expect(result.status).toBe("CONFLICT")
-    if (result.status === "CONFLICT") {
-      expect(result.conflictCommit.sha).toBe("c1")
+    Silian_expect(Silian_result.status).toBe("CONFLICT")
+    if (Silian_result.status === "CONFLICT") {
+      Silian_expect(Silian_result.conflictCommit.sha).toBe("c1")
     }
   })
 
-  it("SUCCESS with irrelevant commits: 3 commits, only 1 modifies file", async () => {
-    mockCompareCommits.mockImplementation(async () => ({
+  Silian_it("SUCCESS with irrelevant commits: 3 commits, only 1 modifies file", async () => {
+    Silian_mockCompareCommits.mockImplementation(async () => ({
       data: {
         commits: [
           {
@@ -232,7 +232,7 @@ describe("rebaseArticleContent", () => {
       },
     }))
 
-    const commitMap: Record<
+    const Silian_commitMap: Record<
       string,
       { data: { files: { filename: string }[] } }
     > = {
@@ -240,23 +240,23 @@ describe("rebaseArticleContent", () => {
       c2: { data: { files: [{ filename: "test.md" }] } },
       c3: { data: { files: [{ filename: "another.md" }] } },
     }
-    mockGetCommit.mockImplementation(async ({ ref }: { ref: string }) => {
-      return commitMap[ref] || { data: { files: [] } }
+    Silian_mockGetCommit.mockImplementation(async ({ ref: Silian_ref }: { ref: string }) => {
+      return Silian_commitMap[Silian_ref] || { data: { files: [] } }
     })
 
-    const contentMap: Record<string, string> = {
+    const Silian_contentMap: Record<string, string> = {
       abc: "base",
       c2: "base\nupdated",
     }
-    mockGetContent.mockImplementation(async ({ ref }: { ref: string }) => ({
+    Silian_mockGetContent.mockImplementation(async ({ ref: Silian_ref }: { ref: string }) => ({
       data: {
         type: "file",
-        content: Buffer.from(contentMap[ref] || "").toString("base64"),
-        sha: "s" + ref,
+        content: Buffer.from(Silian_contentMap[Silian_ref] || "").toString("base64"),
+        sha: "s" + Silian_ref,
       },
     }))
 
-    const result = await rebaseArticleContent({
+    const Silian_result = await Silian_rebaseArticleContent({
       draftId: "draft-1",
       filePath: "test.md",
       baseMainSha: "abc",
@@ -264,15 +264,15 @@ describe("rebaseArticleContent", () => {
       draftContent: "base\nupdated",
     })
 
-    expect(result.status).toBe("SUCCESS")
-    if (result.status === "SUCCESS") {
-      expect(result.appliedCommits).toHaveLength(1)
-      expect(result.appliedCommits[0].sha).toBe("c2")
+    Silian_expect(Silian_result.status).toBe("SUCCESS")
+    if (Silian_result.status === "SUCCESS") {
+      Silian_expect(Silian_result.appliedCommits).toHaveLength(1)
+      Silian_expect(Silian_result.appliedCommits[0].sha).toBe("c2")
     }
   })
 
-  it("FILE_DELETED_CONFLICT: file deleted in latest main", async () => {
-    mockCompareCommits.mockImplementation(async () => ({
+  Silian_it("FILE_DELETED_CONFLICT: file deleted in latest main", async () => {
+    Silian_mockCompareCommits.mockImplementation(async () => ({
       data: {
         commits: [
           {
@@ -286,12 +286,12 @@ describe("rebaseArticleContent", () => {
       },
     }))
 
-    mockGetCommit.mockImplementation(async () => ({
+    Silian_mockGetCommit.mockImplementation(async () => ({
       data: { files: [{ filename: "test.md" }] },
     }))
 
-    mockGetContent.mockImplementation(async ({ ref }: { ref: string }) => {
-      if (ref === "abc") {
+    Silian_mockGetContent.mockImplementation(async ({ ref: Silian_ref }: { ref: string }) => {
+      if (Silian_ref === "abc") {
         return {
           data: {
             type: "file",
@@ -303,7 +303,7 @@ describe("rebaseArticleContent", () => {
       throw new Error("404 Not Found")
     })
 
-    const result = await rebaseArticleContent({
+    const Silian_result = await Silian_rebaseArticleContent({
       draftId: "draft-del",
       filePath: "test.md",
       baseMainSha: "abc",
@@ -311,49 +311,49 @@ describe("rebaseArticleContent", () => {
       draftContent: "my draft content",
     })
 
-    expect(result.status).toBe("FILE_DELETED_CONFLICT")
-    if (result.status === "FILE_DELETED_CONFLICT") {
-      expect(result.draftContent).toBe("my draft content")
-      expect(result.deletedAtCommit.sha).toBe("c1")
-      expect(result.appliedCommits).toHaveLength(0)
+    Silian_expect(Silian_result.status).toBe("FILE_DELETED_CONFLICT")
+    if (Silian_result.status === "FILE_DELETED_CONFLICT") {
+      Silian_expect(Silian_result.draftContent).toBe("my draft content")
+      Silian_expect(Silian_result.deletedAtCommit.sha).toBe("c1")
+      Silian_expect(Silian_result.appliedCommits).toHaveLength(0)
     }
   })
 })
 
-describe("analyzeRebaseNeed", () => {
-  beforeEach(() => {
-    mockCompareCommits.mockReset()
-    mockGetCommit.mockReset()
-    mockRevisionUpdate.mockReset()
-    mockRevisionFindUnique.mockReset()
-    mockCompareCommits.mockImplementation(async () => ({
+Silian_describe("analyzeRebaseNeed", () => {
+  Silian_beforeEach(() => {
+    Silian_mockCompareCommits.mockReset()
+    Silian_mockGetCommit.mockReset()
+    Silian_mockRevisionUpdate.mockReset()
+    Silian_mockRevisionFindUnique.mockReset()
+    Silian_mockCompareCommits.mockImplementation(async () => ({
       data: { commits: [] },
     }))
-    mockGetCommit.mockImplementation(async () => ({ data: { files: [] } }))
-    mockRevisionUpdate.mockImplementation(async () => ({}))
-    mockRevisionFindUnique.mockImplementation(async () => null)
+    Silian_mockGetCommit.mockImplementation(async () => ({ data: { files: [] } }))
+    Silian_mockRevisionUpdate.mockImplementation(async () => ({}))
+    Silian_mockRevisionFindUnique.mockImplementation(async () => null)
   })
 
-  it("returns QUICK_MERGE_OK when baseMainSha === latestMainSha", async () => {
-    const input: AnalyzeRebaseInput = {
+  Silian_it("returns QUICK_MERGE_OK when baseMainSha === latestMainSha", async () => {
+    const Silian_input: AnalyzeRebaseInput = {
       filePath: "test.md",
       baseMainSha: "abc123",
       latestMainSha: "abc123",
     }
 
-    const result = await analyzeRebaseNeed(input)
+    const Silian_result = await Silian_analyzeRebaseNeed(Silian_input)
 
-    expect(result.recommendation).toBe("QUICK_MERGE_OK")
-    expect(result.totalCommits).toBe(0)
-    expect(result.fileEditCount).toBe(0)
-    expect(result.commitInfos).toHaveLength(0)
-    expect(result.adminMessage).toBe(
+    Silian_expect(Silian_result.recommendation).toBe("QUICK_MERGE_OK")
+    Silian_expect(Silian_result.totalCommits).toBe(0)
+    Silian_expect(Silian_result.fileEditCount).toBe(0)
+    Silian_expect(Silian_result.commitInfos).toHaveLength(0)
+    Silian_expect(Silian_result.adminMessage).toBe(
       "No changes in main since draft was created."
     )
   })
 
-  it("returns REBASE_RECOMMENDED when file modified in multiple commits", async () => {
-    mockCompareCommits.mockImplementation(async () => ({
+  Silian_it("returns REBASE_RECOMMENDED when file modified in multiple commits", async () => {
+    Silian_mockCompareCommits.mockImplementation(async () => ({
       data: {
         commits: [
           {
@@ -395,52 +395,52 @@ describe("analyzeRebaseNeed", () => {
       },
     }))
 
-    const commitFileMap: Record<string, string[]> = {
+    const Silian_commitFileMap: Record<string, string[]> = {
       c1: ["test.md"],
       c2: ["test.md"],
       c3: ["test.md"],
       c4: ["other.md"],
       c5: ["another.md"],
     }
-    mockGetCommit.mockImplementation(async ({ ref }: { ref: string }) => ({
+    Silian_mockGetCommit.mockImplementation(async ({ ref: Silian_ref }: { ref: string }) => ({
       data: {
-        files: (commitFileMap[ref] || []).map((filename) => ({ filename })),
+        files: (Silian_commitFileMap[Silian_ref] || []).map((Silian_filename) => ({ filename: Silian_filename })),
       },
     }))
 
-    const input: AnalyzeRebaseInput = {
+    const Silian_input: AnalyzeRebaseInput = {
       filePath: "test.md",
       baseMainSha: "base",
       latestMainSha: "latest",
     }
 
-    const result = await analyzeRebaseNeed(input)
+    const Silian_result = await Silian_analyzeRebaseNeed(Silian_input)
 
-    expect(result.recommendation).toBe("REBASE_RECOMMENDED")
-    expect(result.totalCommits).toBe(5)
-    expect(result.fileEditCount).toBe(3)
-    expect(result.commitInfos).toHaveLength(3)
-    expect(result.adminMessage).toBe(
+    Silian_expect(Silian_result.recommendation).toBe("REBASE_RECOMMENDED")
+    Silian_expect(Silian_result.totalCommits).toBe(5)
+    Silian_expect(Silian_result.fileEditCount).toBe(3)
+    Silian_expect(Silian_result.commitInfos).toHaveLength(3)
+    Silian_expect(Silian_result.adminMessage).toBe(
       "The article was modified in 3 separate commits. Fine-grained rebase is recommended to resolve each change individually."
     )
   })
 
-  it("returns QUICK_MERGE_OK when file modified in 0 or 1 commit", async () => {
-    const inputZero: AnalyzeRebaseInput = {
+  Silian_it("returns QUICK_MERGE_OK when file modified in 0 or 1 commit", async () => {
+    const Silian_inputZero: AnalyzeRebaseInput = {
       filePath: "test.md",
       baseMainSha: "base",
       latestMainSha: "latest",
     }
 
-    const resultZero = await analyzeRebaseNeed(inputZero)
+    const Silian_resultZero = await Silian_analyzeRebaseNeed(Silian_inputZero)
 
-    expect(resultZero.recommendation).toBe("QUICK_MERGE_OK")
-    expect(resultZero.fileEditCount).toBe(0)
-    expect(resultZero.adminMessage).toBe(
+    Silian_expect(Silian_resultZero.recommendation).toBe("QUICK_MERGE_OK")
+    Silian_expect(Silian_resultZero.fileEditCount).toBe(0)
+    Silian_expect(Silian_resultZero.adminMessage).toBe(
       "The article was modified in no commit. A quick merge should suffice."
     )
 
-    mockCompareCommits.mockImplementation(async () => ({
+    Silian_mockCompareCommits.mockImplementation(async () => ({
       data: {
         commits: [
           {
@@ -461,43 +461,43 @@ describe("analyzeRebaseNeed", () => {
       },
     }))
 
-    const commitFileMap: Record<string, string[]> = {
+    const Silian_commitFileMap: Record<string, string[]> = {
       c1: ["test.md"],
       c2: ["other.md"],
     }
-    mockGetCommit.mockImplementation(async ({ ref }: { ref: string }) => ({
+    Silian_mockGetCommit.mockImplementation(async ({ ref: Silian_ref }: { ref: string }) => ({
       data: {
-        files: (commitFileMap[ref] || []).map((filename) => ({ filename })),
+        files: (Silian_commitFileMap[Silian_ref] || []).map((Silian_filename) => ({ filename: Silian_filename })),
       },
     }))
 
-    const inputOne: AnalyzeRebaseInput = {
+    const Silian_inputOne: AnalyzeRebaseInput = {
       filePath: "test.md",
       baseMainSha: "base",
       latestMainSha: "latest",
     }
 
-    const resultOne = await analyzeRebaseNeed(inputOne)
+    const Silian_resultOne = await Silian_analyzeRebaseNeed(Silian_inputOne)
 
-    expect(resultOne.recommendation).toBe("QUICK_MERGE_OK")
-    expect(resultOne.fileEditCount).toBe(1)
-    expect(resultOne.totalCommits).toBe(2)
-    expect(resultOne.adminMessage).toBe(
+    Silian_expect(Silian_resultOne.recommendation).toBe("QUICK_MERGE_OK")
+    Silian_expect(Silian_resultOne.fileEditCount).toBe(1)
+    Silian_expect(Silian_resultOne.totalCommits).toBe(2)
+    Silian_expect(Silian_resultOne.adminMessage).toBe(
       "The article was modified in 1 commit. A quick merge should suffice."
     )
   })
 })
 
-describe("abortRebase", () => {
-  beforeEach(() => {
-    mockRevisionUpdate.mockReset()
-    mockRevisionFindUnique.mockReset()
-    mockRevisionUpdate.mockImplementation(async () => ({}))
-    mockRevisionFindUnique.mockImplementation(async () => null)
+Silian_describe("abortRebase", () => {
+  Silian_beforeEach(() => {
+    Silian_mockRevisionUpdate.mockReset()
+    Silian_mockRevisionFindUnique.mockReset()
+    Silian_mockRevisionUpdate.mockImplementation(async () => ({}))
+    Silian_mockRevisionFindUnique.mockImplementation(async () => null)
   })
 
-  it("restores original content when conflict state exists", async () => {
-    mockRevisionFindUnique.mockImplementation(async () => ({
+  Silian_it("restores original content when conflict state exists", async () => {
+    Silian_mockRevisionFindUnique.mockImplementation(async () => ({
       rebaseState: {
         status: "CONFLICT",
         commitShas: ["c1", "c2"],
@@ -508,13 +508,13 @@ describe("abortRebase", () => {
       },
     }))
 
-    const result = await abortRebase({ draftId: "draft-1" })
+    const Silian_result = await Silian_abortRebase({ draftId: "draft-1" })
 
-    expect(result).toEqual({
+    Silian_expect(Silian_result).toEqual({
       status: "ABORTED",
       originalContent: "original body",
     })
-    expect(mockRevisionUpdate).toHaveBeenCalledWith({
+    Silian_expect(Silian_mockRevisionUpdate).toHaveBeenCalledWith({
       where: { id: "draft-1" },
       data: {
         content: "original body",
@@ -530,8 +530,8 @@ describe("abortRebase", () => {
     })
   })
 
-  it("returns error when no active rebase", async () => {
-    mockRevisionFindUnique.mockImplementation(async () => ({
+  Silian_it("returns error when no active rebase", async () => {
+    Silian_mockRevisionFindUnique.mockImplementation(async () => ({
       rebaseState: {
         status: "COMPLETED",
         commitShas: [],
@@ -541,30 +541,30 @@ describe("abortRebase", () => {
       },
     }))
 
-    const result = await abortRebase({ draftId: "draft-1" })
+    const Silian_result = await Silian_abortRebase({ draftId: "draft-1" })
 
-    expect(result).toEqual({
+    Silian_expect(Silian_result).toEqual({
       status: "ERROR",
       message: "No active rebase to abort",
     })
-    expect(mockRevisionUpdate).not.toHaveBeenCalled()
+    Silian_expect(Silian_mockRevisionUpdate).not.toHaveBeenCalled()
   })
 })
 
-describe("resumeRebase", () => {
-  beforeEach(() => {
-    mockGetContent.mockReset()
-    mockRevisionUpdate.mockReset()
-    mockRevisionFindUnique.mockReset()
-    mockGetContent.mockImplementation(async () => ({
+Silian_describe("resumeRebase", () => {
+  Silian_beforeEach(() => {
+    Silian_mockGetContent.mockReset()
+    Silian_mockRevisionUpdate.mockReset()
+    Silian_mockRevisionFindUnique.mockReset()
+    Silian_mockGetContent.mockImplementation(async () => ({
       data: { type: "file", content: "", sha: "" },
     }))
-    mockRevisionUpdate.mockImplementation(async () => ({}))
-    mockRevisionFindUnique.mockImplementation(async () => null)
+    Silian_mockRevisionUpdate.mockImplementation(async () => ({}))
+    Silian_mockRevisionFindUnique.mockImplementation(async () => null)
   })
 
-  it("continues from conflict and completes successfully", async () => {
-    mockRevisionFindUnique.mockImplementation(async () => ({
+  Silian_it("continues from conflict and completes successfully", async () => {
+    Silian_mockRevisionFindUnique.mockImplementation(async () => ({
       filePath: "test.md",
       rebaseState: {
         status: "CONFLICT",
@@ -589,34 +589,34 @@ describe("resumeRebase", () => {
       },
     }))
 
-    mockGetContent.mockImplementation(async ({ ref }: { ref: string }) => {
-      const contentMap: Record<string, string> = {
+    Silian_mockGetContent.mockImplementation(async ({ ref: Silian_ref }: { ref: string }) => {
+      const Silian_contentMap: Record<string, string> = {
         c1: "resolved",
         c2: "resolved\nnext",
       }
       return {
         data: {
           type: "file",
-          content: Buffer.from(contentMap[ref] || "").toString("base64"),
-          sha: `s${ref}`,
+          content: Buffer.from(Silian_contentMap[Silian_ref] || "").toString("base64"),
+          sha: `s${Silian_ref}`,
         },
       }
     })
 
-    const result = await resumeRebase({
+    const Silian_result = await Silian_resumeRebase({
       draftId: "draft-1",
       resolvedContent: "resolved",
     })
 
-    expect(result.status).toBe("SUCCESS")
-    if (result.status === "SUCCESS") {
-      expect(result.finalContent).toBe("resolved\nnext")
-      expect(result.appliedCommits.map((c) => c.sha)).toEqual(["c2"])
+    Silian_expect(Silian_result.status).toBe("SUCCESS")
+    if (Silian_result.status === "SUCCESS") {
+      Silian_expect(Silian_result.finalContent).toBe("resolved\nnext")
+      Silian_expect(Silian_result.appliedCommits.map((Silian_c) => Silian_c.sha)).toEqual(["c2"])
     }
   })
 
-  it("returns error when state is not CONFLICT", async () => {
-    mockRevisionFindUnique.mockImplementation(async () => ({
+  Silian_it("returns error when state is not CONFLICT", async () => {
+    Silian_mockRevisionFindUnique.mockImplementation(async () => ({
       filePath: "test.md",
       rebaseState: {
         status: "IN_PROGRESS",
@@ -627,15 +627,15 @@ describe("resumeRebase", () => {
       },
     }))
 
-    const result = await resumeRebase({
+    const Silian_result = await Silian_resumeRebase({
       draftId: "draft-1",
       resolvedContent: "resolved",
     })
 
-    expect(result).toEqual({
+    Silian_expect(Silian_result).toEqual({
       status: "ERROR",
       message: "No conflict to resume from",
     })
-    expect(mockRevisionUpdate).not.toHaveBeenCalled()
+    Silian_expect(Silian_mockRevisionUpdate).not.toHaveBeenCalled()
   })
 })

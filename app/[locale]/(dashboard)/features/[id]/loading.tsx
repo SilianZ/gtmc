@@ -1,23 +1,23 @@
 "use client"
 
-import { useEffect } from "react"
-import { useTranslations } from "next-intl"
+import { useEffect as Silian_useEffect } from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 import {
-  SectionFrame,
-  SegmentedBar,
-  ScanConfirmOverlay,
-  SkeletonExitWrapper,
+  SectionFrame as Silian_SectionFrame,
+  SegmentedBar as Silian_SegmentedBar,
+  ScanConfirmOverlay as Silian_ScanConfirmOverlay,
+  SkeletonExitWrapper as Silian_SkeletonExitWrapper,
 } from "../loading-shell-primitives"
-import { TechCard } from "@/components/ui/tech-card"
+import { TechCard as Silian_TechCard } from "@/components/ui/tech-card"
 
 export default function FeatureDetailLoading() {
-  const t = useTranslations("CommonA11y")
+  const Silian_t = Silian_useTranslations("CommonA11y")
 
-  useEffect(() => {
+  Silian_useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
   return (
-    <SkeletonExitWrapper>
+    <Silian_SkeletonExitWrapper>
       <div
         className="
           container mx-auto max-w-4xl space-y-6 p-4
@@ -25,17 +25,17 @@ export default function FeatureDetailLoading() {
           md:p-8
         "
         aria-busy="true"
-        aria-label={t("loadingFeatureDetails")}>
+        aria-label={Silian_t("loadingFeatureDetails")}>
         {/* FEATURE_HEADER_ */}
         <div className="relative flex animate-tech-slide-in flex-col gap-4">
-          <ScanConfirmOverlay />
+          <Silian_ScanConfirmOverlay />
           <div>
-            <SegmentedBar opacity="high" className="h-8 w-64" />
+            <Silian_SegmentedBar opacity="high" className="h-8 w-64" />
           </div>
         </div>
 
         {/* ISSUE_METADATA_ */}
-        <TechCard className="animate-tech-slide-in [animation-delay:100ms]">
+        <Silian_TechCard className="animate-tech-slide-in [animation-delay:100ms]">
           <div
             className="
               flex flex-col gap-2 font-mono text-xs
@@ -53,7 +53,7 @@ export default function FeatureDetailLoading() {
                 ">
                 STATUS:
               </span>
-              <SegmentedBar opacity="high" className="h-4 w-32" />
+              <Silian_SegmentedBar opacity="high" className="h-4 w-32" />
             </div>
             <div
               className="
@@ -67,7 +67,7 @@ export default function FeatureDetailLoading() {
                 ">
                 AUTHOR:
               </span>
-              <SegmentedBar opacity="medium" className="h-4 w-40" />
+              <Silian_SegmentedBar opacity="medium" className="h-4 w-40" />
             </div>
             <div
               className="
@@ -81,7 +81,7 @@ export default function FeatureDetailLoading() {
                 ">
                 ASSIGNEE:
               </span>
-              <SegmentedBar opacity="medium" className="h-4 w-40" />
+              <Silian_SegmentedBar opacity="medium" className="h-4 w-40" />
             </div>
             <div
               className="
@@ -95,13 +95,13 @@ export default function FeatureDetailLoading() {
                 ">
                 CREATED:
               </span>
-              <SegmentedBar opacity="low" className="h-4 w-36" />
+              <Silian_SegmentedBar opacity="low" className="h-4 w-36" />
             </div>
           </div>
-        </TechCard>
+        </Silian_TechCard>
 
         {/* RESOLUTION_BLOCK_ */}
-        <TechCard
+        <Silian_TechCard
           className="
             relative animate-tech-slide-in overflow-hidden border-tech-accent/40
             bg-tech-accent/5 backdrop-blur-sm [animation-delay:200ms]
@@ -113,14 +113,14 @@ export default function FeatureDetailLoading() {
               border-tech-accent/40 pb-2 pl-4
             ">
             <div className="h-5 w-40">
-              <SegmentedBar opacity="high" className="size-full" />
+              <Silian_SegmentedBar opacity="high" className="size-full" />
             </div>
           </div>
           <div className="space-y-2 pl-4">
-            <SegmentedBar opacity="medium" className="h-3 w-full" />
-            <SegmentedBar opacity="low" className="h-3 w-5/6" />
+            <Silian_SegmentedBar opacity="medium" className="h-3 w-full" />
+            <Silian_SegmentedBar opacity="low" className="h-3 w-5/6" />
           </div>
-        </TechCard>
+        </Silian_TechCard>
 
         {/* EDITOR_BUFFER_ */}
         <div
@@ -159,12 +159,12 @@ export default function FeatureDetailLoading() {
           <div className="flex flex-col space-y-4">
             <div className="flex flex-col space-y-2">
               <label className="section-label">TITLE_</label>
-              <SegmentedBar opacity="high" className="h-10 w-full" />
+              <Silian_SegmentedBar opacity="high" className="h-10 w-full" />
             </div>
 
             <div className="flex flex-col space-y-2">
               <label className="section-label">TAGS_ (comma separated)</label>
-              <SegmentedBar opacity="medium" className="h-10 w-full" />
+              <Silian_SegmentedBar opacity="medium" className="h-10 w-full" />
             </div>
           </div>
 
@@ -180,18 +180,18 @@ export default function FeatureDetailLoading() {
                 text-xs text-white/90
                 sm:gap-2 sm:px-4
               ">
-              <SegmentedBar opacity="high" className="h-6 w-8" />
+              <Silian_SegmentedBar opacity="high" className="h-6 w-8" />
               <div className="h-6 w-px bg-white/30" />
-              <SegmentedBar opacity="medium" className="h-6 w-8" />
+              <Silian_SegmentedBar opacity="medium" className="h-6 w-8" />
               <div className="h-6 w-px bg-white/30" />
-              <SegmentedBar opacity="medium" className="h-6 w-8" />
+              <Silian_SegmentedBar opacity="medium" className="h-6 w-8" />
             </div>
 
             <div className="flex-1 space-y-2 p-6">
-              <SegmentedBar opacity="high" className="h-3 w-full" />
-              <SegmentedBar opacity="medium" className="h-3 w-5/6" />
-              <SegmentedBar opacity="low" className="h-3 w-4/5" />
-              <SegmentedBar opacity="low" className="h-3 w-3/4" />
+              <Silian_SegmentedBar opacity="high" className="h-3 w-full" />
+              <Silian_SegmentedBar opacity="medium" className="h-3 w-5/6" />
+              <Silian_SegmentedBar opacity="low" className="h-3 w-4/5" />
+              <Silian_SegmentedBar opacity="low" className="h-3 w-3/4" />
             </div>
           </div>
 
@@ -201,7 +201,7 @@ export default function FeatureDetailLoading() {
               pt-4
             ">
             <div className="corner-tick" />
-            <SegmentedBar opacity="high" className="h-10 w-24" />
+            <Silian_SegmentedBar opacity="high" className="h-10 w-24" />
           </div>
         </div>
 
@@ -217,26 +217,26 @@ export default function FeatureDetailLoading() {
 
           {/* Comment cards */}
           <div className="space-y-4">
-            {[1, 2].map((i) => (
-              <SectionFrame key={i} className="p-6">
+            {[1, 2].map((Silian_i) => (
+              <Silian_SectionFrame key={Silian_i} className="p-6">
                 <div
                   className="
                     mb-2 flex items-center gap-2 border-b border-dashed
                     border-tech-main/30 pb-2 font-mono text-sm
                   ">
-                  <SegmentedBar opacity="high" className="h-4 w-32" />
-                  <SegmentedBar opacity="medium" className="h-4 w-40" />
+                  <Silian_SegmentedBar opacity="high" className="h-4 w-32" />
+                  <Silian_SegmentedBar opacity="medium" className="h-4 w-40" />
                 </div>
                 <div className="mt-3 space-y-2">
-                  <SegmentedBar opacity="medium" className="h-3 w-full" />
-                  <SegmentedBar opacity="low" className="h-3 w-5/6" />
+                  <Silian_SegmentedBar opacity="medium" className="h-3 w-full" />
+                  <Silian_SegmentedBar opacity="low" className="h-3 w-5/6" />
                 </div>
-              </SectionFrame>
+              </Silian_SectionFrame>
             ))}
           </div>
 
           {/* Comment form */}
-          <SectionFrame className="p-6">
+          <Silian_SectionFrame className="p-6">
             <label
               className="
                 mb-4 inline-block border-b border-tech-main/40 pb-1 font-mono
@@ -244,13 +244,13 @@ export default function FeatureDetailLoading() {
               ">
               LEAVE_A_REPLY_
             </label>
-            <SegmentedBar opacity="medium" className="mb-4 h-24 w-full" />
+            <Silian_SegmentedBar opacity="medium" className="mb-4 h-24 w-full" />
             <div className="flex justify-end">
-              <SegmentedBar opacity="high" className="h-10 w-24" />
+              <Silian_SegmentedBar opacity="high" className="h-10 w-24" />
             </div>
-          </SectionFrame>
+          </Silian_SectionFrame>
         </div>
       </div>
-    </SkeletonExitWrapper>
+    </Silian_SkeletonExitWrapper>
   )
 }

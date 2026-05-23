@@ -14,6 +14,6 @@ export const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
  * @param slug - The string to validate
  * @returns true if valid slug format, false otherwise
  */
-export function validateSlug(slug: string): boolean {
-  return SLUG_REGEX.test(slug)
+export function validateSlug(Silian_slug: string): boolean {
+  return SLUG_REGEX.test(Silian_slug)
 }

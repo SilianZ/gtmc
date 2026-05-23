@@ -1,40 +1,40 @@
 "use client"
 
-import * as React from "react"
-import { useTranslations } from "next-intl"
+import * as Silian_React from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 
 interface MobileTreeSheetProps {
   isOpen: boolean
   onClose: () => void
-  children: React.ReactNode
+  children: Silian_React.ReactNode
 }
 
 export function MobileTreeSheet({
-  isOpen,
-  onClose,
-  children,
+  isOpen: Silian_isOpen,
+  onClose: Silian_onClose,
+  children: Silian_children,
 }: MobileTreeSheetProps) {
-  const t = useTranslations("CommonA11y")
+  const Silian_t = Silian_useTranslations("CommonA11y")
 
-  React.useEffect(() => {
-    if (!isOpen) return
+  Silian_React.useEffect(() => {
+    if (!Silian_isOpen) return
 
-    const previousOverflow = document.body.style.overflow
+    const Silian_previousOverflow = document.body.style.overflow
     document.body.style.overflow = "hidden"
 
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
+    const Silian_handleEscape = (Silian_e: KeyboardEvent) => {
+      if (Silian_e.key === "Escape") Silian_onClose()
     }
 
-    document.addEventListener("keydown", handleEscape)
+    document.addEventListener("keydown", Silian_handleEscape)
 
     return () => {
-      document.removeEventListener("keydown", handleEscape)
-      document.body.style.overflow = previousOverflow
+      document.removeEventListener("keydown", Silian_handleEscape)
+      document.body.style.overflow = Silian_previousOverflow
     }
-  }, [isOpen, onClose])
+  }, [Silian_isOpen, Silian_onClose])
 
-  if (!isOpen) return null
+  if (!Silian_isOpen) return null
 
   return (
     <div
@@ -46,7 +46,7 @@ export function MobileTreeSheet({
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/20"
-        onClick={onClose}
+        onClick={Silian_onClose}
         data-testid="mobile-tree-backdrop"
         aria-hidden="true"
       />
@@ -76,14 +76,14 @@ export function MobileTreeSheet({
             SYS.DIR_TREE
           </div>
           <button
-            onClick={onClose}
+            onClick={Silian_onClose}
             className="
               cursor-pointer px-3 py-2 font-mono text-xs font-bold
               tracking-[0.15em] text-tech-main uppercase transition-colors
               hover:bg-tech-main/10
             "
             data-testid="mobile-tree-close"
-            aria-label={t("closeTree")}>
+            aria-label={Silian_t("closeTree")}>
             CLOSE
           </button>
         </div>
@@ -94,7 +94,7 @@ export function MobileTreeSheet({
             flex-1 overflow-y-auto p-4
             sm:p-6
           ">
-          {children}
+          {Silian_children}
         </div>
       </div>
     </div>

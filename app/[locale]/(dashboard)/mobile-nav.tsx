@@ -1,11 +1,11 @@
 "use client"
 
-import * as React from "react"
-import { createPortal } from "react-dom"
-import { useTranslations } from "next-intl"
-import { Link } from "@/i18n/navigation"
-import { usePathname } from "@/i18n/navigation"
-import { LanguageSwitcher } from "@/components/layout/language-switcher"
+import * as Silian_React from "react"
+import { createPortal as Silian_createPortal } from "react-dom"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { Link as Silian_Link } from "@/i18n/navigation"
+import { usePathname as Silian_usePathname } from "@/i18n/navigation"
+import { LanguageSwitcher as Silian_LanguageSwitcher } from "@/components/layout/language-switcher"
 
 interface NavLink {
   href: string
@@ -16,53 +16,53 @@ interface MobileNavProps {
   navLinks: NavLink[]
 }
 
-export function MobileNav({ navLinks }: MobileNavProps) {
-  const t = useTranslations("CommonA11y")
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
-  const [isMounted, setIsMounted] = React.useState(false)
-  const pathname = usePathname()
+export function MobileNav({ navLinks: Silian_navLinks }: MobileNavProps) {
+  const Silian_t = Silian_useTranslations("CommonA11y")
+  const [Silian_isDrawerOpen, Silian_setIsDrawerOpen] = Silian_React.useState(false)
+  const [Silian_isMounted, Silian_setIsMounted] = Silian_React.useState(false)
+  const Silian_pathname = Silian_usePathname()
 
-  React.useEffect(() => {
-    setIsMounted(true)
+  Silian_React.useEffect(() => {
+    Silian_setIsMounted(true)
   }, [])
 
-  React.useEffect(() => {
-    setIsDrawerOpen(false)
-  }, [pathname])
+  Silian_React.useEffect(() => {
+    Silian_setIsDrawerOpen(false)
+  }, [Silian_pathname])
 
   return (
     <>
       <button
-        onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+        onClick={() => Silian_setIsDrawerOpen(!Silian_isDrawerOpen)}
         className="
           flex min-h-11 min-w-11 cursor-pointer flex-col items-center
           justify-center gap-1.5 p-2 transition-colors
           hover:bg-tech-main/10
           md:hidden
         "
-        aria-label={t("toggleNavigationMenu")}
-        aria-expanded={isDrawerOpen}>
+        aria-label={Silian_t("toggleNavigationMenu")}
+        aria-expanded={Silian_isDrawerOpen}>
         <span
           className={`
             h-0.5 w-5 bg-tech-main transition-all
-            ${isDrawerOpen ? `translate-y-2 rotate-45` : ""}
+            ${Silian_isDrawerOpen ? `translate-y-2 rotate-45` : ""}
           `}></span>
         <span
           className={`
             h-0.5 w-5 bg-tech-main transition-all
-            ${isDrawerOpen ? `opacity-0` : ""}
+            ${Silian_isDrawerOpen ? `opacity-0` : ""}
           `}></span>
         <span
           className={`
             h-0.5 w-5 bg-tech-main transition-all
-            ${isDrawerOpen ? `-translate-y-2 -rotate-45` : ""}
+            ${Silian_isDrawerOpen ? `-translate-y-2 -rotate-45` : ""}
           `}></span>
       </button>
 
-      {isMounted &&
-        createPortal(
+      {Silian_isMounted &&
+        Silian_createPortal(
           <div>
-            {isDrawerOpen && (
+            {Silian_isDrawerOpen && (
               <div
                 className="
                   fixed top-16 left-0 z-40 h-[calc(100dvh-4rem)] w-screen
@@ -71,7 +71,7 @@ export function MobileNav({ navLinks }: MobileNavProps) {
                   supports-[width:100dvw]:w-dvw
                   md:hidden
                 "
-                onClick={() => setIsDrawerOpen(false)}
+                onClick={() => Silian_setIsDrawerOpen(false)}
                 aria-hidden="true"
               />
             )}
@@ -82,27 +82,27 @@ export function MobileNav({ navLinks }: MobileNavProps) {
                 border-tech-main/40 bg-white/95 backdrop-blur-md transition-all
                 duration-300
                 md:hidden
-                ${isDrawerOpen ? "max-h-screen" : "max-h-0"}
+                ${Silian_isDrawerOpen ? "max-h-screen" : "max-h-0"}
               `}>
               <div
                 className="
                   space-y-2 p-4
                   sm:p-6
                 ">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
+                {Silian_navLinks.map((Silian_link) => (
+                  <Silian_Link
+                    key={Silian_link.href}
+                    href={Silian_link.href}
                     className="
                       flex min-h-11 items-center border border-tech-main/40
                       bg-white/60 p-3 font-mono text-xs tracking-[0.15em]
                       text-tech-main-dark transition-colors
                       hover:bg-tech-main hover:text-white
                     ">
-                    {link.label}
-                  </Link>
+                    {Silian_link.label}
+                  </Silian_Link>
                 ))}
-                <LanguageSwitcher className="border-none" />
+                <Silian_LanguageSwitcher className="border-none" />
               </div>
             </div>
           </div>,

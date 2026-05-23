@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useTransition } from "react"
-import { useTranslations } from "next-intl"
-import { TechCard } from "@/components/ui/tech-card"
-import { TechButton } from "@/components/ui/tech-button"
-import { updateFeatureExplanation } from "@/actions/feature"
-import { LoadingIndicator, PENDING_LABELS } from "../loading-indicator"
+import { useState as Silian_useState, useTransition as Silian_useTransition } from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { TechCard as Silian_TechCard } from "@/components/ui/tech-card"
+import { TechButton as Silian_TechButton } from "@/components/ui/tech-button"
+import { updateFeatureExplanation as Silian_updateFeatureExplanation } from "@/actions/feature"
+import { LoadingIndicator as Silian_LoadingIndicator, PENDING_LABELS as Silian_PENDING_LABELS } from "../loading-indicator"
 
 interface FeatureExplanationProps {
   featureId: string
@@ -16,38 +16,38 @@ interface FeatureExplanationProps {
 }
 
 export function FeatureExplanation({
-  featureId,
-  initialExplanation,
-  isAssignee,
-  isAdmin,
-  isClosed,
+  featureId: Silian_featureId,
+  initialExplanation: Silian_initialExplanation,
+  isAssignee: Silian_isAssignee,
+  isAdmin: Silian_isAdmin,
+  isClosed: Silian_isClosed,
 }: FeatureExplanationProps) {
-  const t = useTranslations("Feature")
-  const [isEditing, setIsEditing] = useState(false)
-  const [explanation, setExplanation] = useState(initialExplanation || "")
-  const [isPending, startTransition] = useTransition()
+  const Silian_t = Silian_useTranslations("Feature")
+  const [Silian_isEditing, Silian_setIsEditing] = Silian_useState(false)
+  const [Silian_explanation, Silian_setExplanation] = Silian_useState(Silian_initialExplanation || "")
+  const [Silian_isPending, Silian_startTransition] = Silian_useTransition()
 
-  const canEdit = isAssignee || isAdmin
-  const effectiveCanEdit = canEdit && !isClosed
+  const Silian_canEdit = Silian_isAssignee || Silian_isAdmin
+  const Silian_effectiveCanEdit = Silian_canEdit && !Silian_isClosed
 
-  const handleSave = () => {
-    startTransition(async () => {
-      await updateFeatureExplanation(featureId, explanation)
-      setIsEditing(false)
+  const Silian_handleSave = () => {
+    Silian_startTransition(async () => {
+      await Silian_updateFeatureExplanation(Silian_featureId, Silian_explanation)
+      Silian_setIsEditing(false)
     })
   }
 
-  if (!initialExplanation && !effectiveCanEdit) return null
+  if (!Silian_initialExplanation && !Silian_effectiveCanEdit) return null
 
-  if (isEditing) {
+  if (Silian_isEditing) {
     return (
-      <TechCard className="border-tech-accent/40 bg-white/80 backdrop-blur-sm">
+      <Silian_TechCard className="border-tech-accent/40 bg-white/80 backdrop-blur-sm">
         <h3
           className="
             mb-2 border-b border-tech-accent/40 pb-2 text-lg font-bold
             tracking-widest text-tech-main uppercase
           ">
-          {t("editResolutionExplanation")}
+          {Silian_t("editResolutionExplanation")}
         </h3>
         <textarea
           className="
@@ -56,44 +56,44 @@ export function FeatureExplanation({
             backdrop-blur-sm
             focus:border-tech-accent/60 focus:ring-0 focus:outline-none
           "
-          value={explanation}
-          onChange={(e) => setExplanation(e.target.value)}
-          placeholder={t("explanationPlaceholder")}
-          disabled={isPending}
-          aria-busy={isPending}
+          value={Silian_explanation}
+          onChange={(Silian_e) => Silian_setExplanation(Silian_e.target.value)}
+          placeholder={Silian_t("explanationPlaceholder")}
+          disabled={Silian_isPending}
+          aria-busy={Silian_isPending}
         />
         <div className="flex justify-end gap-2">
-          <TechButton
+          <Silian_TechButton
             variant="ghost"
             size="sm"
-            onClick={() => setIsEditing(false)}
-            disabled={isPending}>
-            {t("cancelButton")}
-          </TechButton>
-          <TechButton
+            onClick={() => Silian_setIsEditing(false)}
+            disabled={Silian_isPending}>
+            {Silian_t("cancelButton")}
+          </Silian_TechButton>
+          <Silian_TechButton
             variant="primary"
             size="sm"
             className="
               border-tech-accent bg-tech-accent text-white
               hover:bg-tech-accent/90
             "
-            onClick={handleSave}
-            disabled={isPending}
-            aria-busy={isPending}>
-            {isPending ? (
-              <LoadingIndicator label={PENDING_LABELS.SAVING_EXPLANATION} />
+            onClick={Silian_handleSave}
+            disabled={Silian_isPending}
+            aria-busy={Silian_isPending}>
+            {Silian_isPending ? (
+              <Silian_LoadingIndicator label={Silian_PENDING_LABELS.SAVING_EXPLANATION} />
             ) : (
-              t("saveExplanationButton")
+              Silian_t("saveExplanationButton")
             )}
-          </TechButton>
+          </Silian_TechButton>
         </div>
-      </TechCard>
+      </Silian_TechCard>
     )
   }
 
-  if (initialExplanation) {
+  if (Silian_initialExplanation) {
     return (
-      <TechCard
+      <Silian_TechCard
         className="
           group relative overflow-hidden border-tech-accent/40 bg-tech-accent/5
           backdrop-blur-sm
@@ -108,11 +108,11 @@ export function FeatureExplanation({
             className="
               text-lg font-bold tracking-widest text-tech-main uppercase
             ">
-            {t("officialResolution")}
+            {Silian_t("officialResolution")}
           </h3>
-          {effectiveCanEdit && (
+          {Silian_effectiveCanEdit && (
             <button
-              onClick={() => setIsEditing(true)}
+              onClick={() => Silian_setIsEditing(true)}
               className="
                 cursor-pointer px-2 font-mono text-xs text-tech-main
                 hover:underline
@@ -122,15 +122,15 @@ export function FeatureExplanation({
           )}
         </div>
         <div className="pl-4 font-mono text-sm whitespace-pre-wrap text-zinc-800">
-          {initialExplanation}
+          {Silian_initialExplanation}
         </div>
-      </TechCard>
+      </Silian_TechCard>
     )
   }
 
   // NO explanation yet, but user CAN edit
   return (
-    <TechCard
+    <Silian_TechCard
       className="
         border-dashed border-tech-accent/40 bg-white/40 py-6 text-center
       ">
@@ -138,17 +138,17 @@ export function FeatureExplanation({
         <span className="font-mono text-sm tracking-wider uppercase">
           AWAITING_OFFICIAL_RESOLUTION_
         </span>
-        <TechButton
+        <Silian_TechButton
           variant="ghost"
           size="sm"
-          onClick={() => setIsEditing(true)}
+          onClick={() => Silian_setIsEditing(true)}
           className="
             border border-tech-accent/40 text-tech-accent
             hover:bg-tech-accent/10
           ">
           PROVIDE EXPLANATION
-        </TechButton>
+        </Silian_TechButton>
       </div>
-    </TechCard>
+    </Silian_TechCard>
   )
 }

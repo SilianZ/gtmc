@@ -1,6 +1,6 @@
-import { remark } from "remark"
-import stripMarkdown from "strip-markdown"
-import { stripAnsiColorMarkup } from "@/lib/markdown/ansi-colors"
+import { remark as Silian_remark } from "remark"
+import Silian_stripMarkdown from "strip-markdown"
+import { stripAnsiColorMarkup as Silian_stripAnsiColorMarkup } from "@/lib/markdown/ansi-colors"
 
 export * from "@/lib/markdown/components"
 export * from "@/lib/markdown/markdown-renderer"
@@ -12,164 +12,164 @@ export * from "@/lib/markdown/processor"
  * - Chinese: 350 characters/minute (average Chinese reading speed)
  * - Code: 100 lines/minute (slower, careful reading)
  */
-export function calculateReadingMetrics(content: string) {
-  const normalizedContent = stripAnsiColorMarkup(content)
+export function calculateReadingMetrics(Silian_content: string) {
+  const Silian_normalizedContent = Silian_stripAnsiColorMarkup(Silian_content)
 
   // Extract code blocks (```...``` or indented code)
-  const codeBlockRegex = /```[\s\S]*?```|`[^`]+`/g
-  const codeBlocks = normalizedContent.match(codeBlockRegex) || []
-  const codeContent = codeBlocks.join(" ")
-  const codeCount = codeContent.length
+  const Silian_codeBlockRegex = /```[\s\S]*?```|`[^`]+`/g
+  const Silian_codeBlocks = Silian_normalizedContent.match(Silian_codeBlockRegex) || []
+  const Silian_codeContent = Silian_codeBlocks.join(" ")
+  const Silian_codeCount = Silian_codeContent.length
 
   // Get non-code content for text analysis
-  const nonCodeContent = normalizedContent.replace(codeBlockRegex, " ")
+  const Silian_nonCodeContent = Silian_normalizedContent.replace(Silian_codeBlockRegex, " ")
 
   // Count Chinese characters (CJK)
-  const cjkCount = (nonCodeContent.match(/[\u4e00-\u9fa5]/g) || []).length
+  const Silian_cjkCount = (Silian_nonCodeContent.match(/[\u4e00-\u9fa5]/g) || []).length
 
   // Count Western words (English alphanumeric sequences)
-  const westernWordCount = (nonCodeContent.match(/[a-zA-Z0-9]+/g) || []).length
+  const Silian_westernWordCount = (Silian_nonCodeContent.match(/[a-zA-Z0-9]+/g) || []).length
 
   // Calculate weighted reading time
   // English words at 225 WPM
-  const englishMinutes = westernWordCount / 225
+  const Silian_englishMinutes = Silian_westernWordCount / 225
   // Chinese characters at 350 chars/min
-  const chineseMinutes = cjkCount / 350
+  const Silian_chineseMinutes = Silian_cjkCount / 350
   // Code at 100 lines/min (estimate ~50 chars per line)
-  const codeMinutes = codeCount / (100 * 50)
+  const Silian_codeMinutes = Silian_codeCount / (100 * 50)
 
-  const totalMinutes = englishMinutes + chineseMinutes + codeMinutes
-  const readingTime = Math.max(1, Math.ceil(totalMinutes))
+  const Silian_totalMinutes = Silian_englishMinutes + Silian_chineseMinutes + Silian_codeMinutes
+  const Silian_readingTime = Math.max(1, Math.ceil(Silian_totalMinutes))
 
   // Total word count for display (weighted sum for consistency)
-  const wordCount = westernWordCount + cjkCount + Math.floor(codeCount / 50)
+  const Silian_wordCount = Silian_westernWordCount + Silian_cjkCount + Math.floor(Silian_codeCount / 50)
 
   return {
-    wordCount,
-    readingTime,
-    chineseCount: cjkCount,
-    englishCount: westernWordCount,
-    codeCount: Math.floor(codeCount / 50),
+    wordCount: Silian_wordCount,
+    readingTime: Silian_readingTime,
+    chineseCount: Silian_cjkCount,
+    englishCount: Silian_westernWordCount,
+    codeCount: Math.floor(Silian_codeCount / 50),
   }
 }
 
 export function generateDescription(
-  markdown: string,
-  frontmatterDescription?: string,
-  maxLength: number = 155
+  Silian_markdown: string,
+  Silian_frontmatterDescription?: string,
+  Silian_maxLength: number = 155
 ): string {
-  const normalizedMarkdown = stripAnsiColorMarkup(markdown)
+  const Silian_normalizedMarkdown = Silian_stripAnsiColorMarkup(Silian_markdown)
 
   // If frontmatter description is provided and non-empty, use it
-  if (frontmatterDescription?.trim()) {
-    const trimmed = frontmatterDescription.trim()
-    if (trimmed.length <= maxLength) return trimmed
+  if (Silian_frontmatterDescription?.trim()) {
+    const Silian_trimmed = Silian_frontmatterDescription.trim()
+    if (Silian_trimmed.length <= Silian_maxLength) return Silian_trimmed
 
-    const truncated = trimmed.slice(0, maxLength)
-    const lastSpace = truncated.lastIndexOf(" ")
-    return lastSpace > 0 ? truncated.slice(0, lastSpace) + "…" : truncated + "…"
+    const Silian_truncated = Silian_trimmed.slice(0, Silian_maxLength)
+    const Silian_lastSpace = Silian_truncated.lastIndexOf(" ")
+    return Silian_lastSpace > 0 ? Silian_truncated.slice(0, Silian_lastSpace) + "…" : Silian_truncated + "…"
   }
 
   // Extract first real paragraph from markdown
-  const lines = normalizedMarkdown.split("\n")
-  let lineIndex = 0
+  const Silian_lines = Silian_normalizedMarkdown.split("\n")
+  let Silian_lineIndex = 0
 
   // Skip leading YAML frontmatter block
-  if (lines[0]?.trim() === "---") {
-    lineIndex = 1
-    while (lineIndex < lines.length && lines[lineIndex]?.trim() !== "---") {
-      lineIndex++
+  if (Silian_lines[0]?.trim() === "---") {
+    Silian_lineIndex = 1
+    while (Silian_lineIndex < Silian_lines.length && Silian_lines[Silian_lineIndex]?.trim() !== "---") {
+      Silian_lineIndex++
     }
-    if (lineIndex < lines.length) lineIndex++ // Skip closing ---
+    if (Silian_lineIndex < Silian_lines.length) Silian_lineIndex++ // Skip closing ---
   }
 
   // Walk through lines to find first real paragraph
-  let inCodeFence = false
-  const paragraphLines: string[] = []
+  let Silian_inCodeFence = false
+  const Silian_paragraphLines: string[] = []
 
-  while (lineIndex < lines.length) {
-    const line = lines[lineIndex]
-    const trimmed = line.trim()
+  while (Silian_lineIndex < Silian_lines.length) {
+    const Silian_line = Silian_lines[Silian_lineIndex]
+    const Silian_trimmed = Silian_line.trim()
 
     // Toggle code fence state
-    if (trimmed.startsWith("```")) {
-      inCodeFence = !inCodeFence
-      lineIndex++
+    if (Silian_trimmed.startsWith("```")) {
+      Silian_inCodeFence = !Silian_inCodeFence
+      Silian_lineIndex++
       continue
     }
 
     // Skip lines while in code fence
-    if (inCodeFence) {
-      lineIndex++
+    if (Silian_inCodeFence) {
+      Silian_lineIndex++
       continue
     }
 
     // Skip blank lines
-    if (!trimmed) {
-      lineIndex++
+    if (!Silian_trimmed) {
+      Silian_lineIndex++
       continue
     }
 
     // Skip headings, images, blockquotes, HTML, horizontal rules, list items
     if (
-      trimmed.startsWith("#") ||
-      trimmed.startsWith("![") ||
-      trimmed.startsWith(">") ||
-      trimmed.startsWith("<") ||
-      trimmed === "---" ||
-      trimmed === "***" ||
-      trimmed === "___" ||
-      /^[-*+]\s/.test(trimmed) ||
-      /^\d+\.\s/.test(trimmed)
+      Silian_trimmed.startsWith("#") ||
+      Silian_trimmed.startsWith("![") ||
+      Silian_trimmed.startsWith(">") ||
+      Silian_trimmed.startsWith("<") ||
+      Silian_trimmed === "---" ||
+      Silian_trimmed === "***" ||
+      Silian_trimmed === "___" ||
+      /^[-*+]\s/.test(Silian_trimmed) ||
+      /^\d+\.\s/.test(Silian_trimmed)
     ) {
-      lineIndex++
+      Silian_lineIndex++
       continue
     }
 
     // Found first real line - collect contiguous non-skipped lines
-    while (lineIndex < lines.length) {
-      const currentLine = lines[lineIndex]
-      const currentTrimmed = currentLine.trim()
+    while (Silian_lineIndex < Silian_lines.length) {
+      const Silian_currentLine = Silian_lines[Silian_lineIndex]
+      const Silian_currentTrimmed = Silian_currentLine.trim()
 
       // Stop at blank line or skip-worthy line
       if (
-        !currentTrimmed ||
-        currentTrimmed.startsWith("#") ||
-        currentTrimmed.startsWith("![") ||
-        currentTrimmed.startsWith(">") ||
-        currentTrimmed.startsWith("<") ||
-        currentTrimmed === "---" ||
-        currentTrimmed === "***" ||
-        currentTrimmed === "___" ||
-        /^[-*+]\s/.test(currentTrimmed) ||
-        /^\d+\.\s/.test(currentTrimmed) ||
-        currentTrimmed.startsWith("```")
+        !Silian_currentTrimmed ||
+        Silian_currentTrimmed.startsWith("#") ||
+        Silian_currentTrimmed.startsWith("![") ||
+        Silian_currentTrimmed.startsWith(">") ||
+        Silian_currentTrimmed.startsWith("<") ||
+        Silian_currentTrimmed === "---" ||
+        Silian_currentTrimmed === "***" ||
+        Silian_currentTrimmed === "___" ||
+        /^[-*+]\s/.test(Silian_currentTrimmed) ||
+        /^\d+\.\s/.test(Silian_currentTrimmed) ||
+        Silian_currentTrimmed.startsWith("```")
       ) {
         break
       }
 
-      paragraphLines.push(currentLine)
-      lineIndex++
+      Silian_paragraphLines.push(Silian_currentLine)
+      Silian_lineIndex++
     }
 
     break
   }
 
   // If no paragraph found, return empty string
-  if (paragraphLines.length === 0) return ""
+  if (Silian_paragraphLines.length === 0) return ""
 
   // Process extracted paragraph through remark + strip-markdown
-  const paragraphText = paragraphLines.join("\n")
-  const plainText = remark()
-    .use(stripMarkdown)
-    .processSync(paragraphText)
+  const Silian_paragraphText = Silian_paragraphLines.join("\n")
+  const Silian_plainText = Silian_remark()
+    .use(Silian_stripMarkdown)
+    .processSync(Silian_paragraphText)
     .toString()
     .replace(/\s+/g, " ")
     .trim()
 
-  if (plainText.length <= maxLength) return plainText
+  if (Silian_plainText.length <= Silian_maxLength) return Silian_plainText
 
-  const truncated = plainText.slice(0, maxLength)
-  const lastSpace = truncated.lastIndexOf(" ")
-  return lastSpace > 0 ? truncated.slice(0, lastSpace) + "…" : truncated + "…"
+  const Silian_truncated = Silian_plainText.slice(0, Silian_maxLength)
+  const Silian_lastSpace = Silian_truncated.lastIndexOf(" ")
+  return Silian_lastSpace > 0 ? Silian_truncated.slice(0, Silian_lastSpace) + "…" : Silian_truncated + "…"
 }

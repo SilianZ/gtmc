@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useEffect as Silian_useEffect, useRef as Silian_useRef, useState as Silian_useState, type ReactNode } from "react"
 
 interface LazyCodeBlockProps {
   lang: string
@@ -8,31 +8,31 @@ interface LazyCodeBlockProps {
   children: ReactNode
 }
 
-export function LazyCodeBlock({ lineCount, children }: LazyCodeBlockProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [isVisible, setIsVisible] = useState(false)
-  const [isSkeletonRemoved, setIsSkeletonRemoved] = useState(false)
+export function LazyCodeBlock({ lineCount: Silian_lineCount, children: Silian_children }: LazyCodeBlockProps) {
+  const Silian_containerRef = Silian_useRef<HTMLDivElement>(null)
+  const [Silian_isVisible, Silian_setIsVisible] = Silian_useState(false)
+  const [Silian_isSkeletonRemoved, Silian_setIsSkeletonRemoved] = Silian_useState(false)
 
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
+  Silian_useEffect(() => {
+    const Silian_el = Silian_containerRef.current
+    if (!Silian_el) return
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.disconnect()
+    const Silian_observer = new IntersectionObserver(
+      ([Silian_entry]) => {
+        if (Silian_entry.isIntersecting) {
+          Silian_setIsVisible(true)
+          Silian_observer.disconnect()
         }
       },
       { rootMargin: "400px", threshold: 0 }
     )
 
-    observer.observe(el)
-    return () => observer.disconnect()
+    Silian_observer.observe(Silian_el)
+    return () => Silian_observer.disconnect()
   }, [])
 
-  const numLines = Math.min(parseInt(lineCount) || 8, 8)
-  const lineWidths = [
+  const Silian_numLines = Math.min(parseInt(Silian_lineCount) || 8, 8)
+  const Silian_lineWidths = [
     "w-3/4 bg-tech-accent/20",
     "w-1/2 bg-tech-accent/15",
     "w-5/6 bg-tech-accent/20",
@@ -45,7 +45,7 @@ export function LazyCodeBlock({ lineCount, children }: LazyCodeBlockProps) {
 
   return (
     <div
-      ref={containerRef}
+      ref={Silian_containerRef}
       className="
         relative my-6 w-full border border-tech-main/30 bg-tech-bg font-mono
         text-sm
@@ -79,23 +79,23 @@ export function LazyCodeBlock({ lineCount, children }: LazyCodeBlockProps) {
 
       <div
         className={
-          isVisible
+          Silian_isVisible
             ? `
               animate-fade-in
               motion-reduce:animate-none
             `
             : "opacity-0"
         }>
-        {children}
+        {Silian_children}
       </div>
 
-      {!isSkeletonRemoved && (
+      {!Silian_isSkeletonRemoved && (
         <div
           className={`
             absolute inset-0 z-10 flex flex-col bg-tech-bg
             motion-reduce:transition-opacity motion-reduce:duration-250
             ${
-              isVisible
+              Silian_isVisible
                 ? `
                   animate-skeleton-exit
                   motion-reduce:animate-none motion-reduce:opacity-0
@@ -104,10 +104,10 @@ export function LazyCodeBlock({ lineCount, children }: LazyCodeBlockProps) {
             }
           `}
           onAnimationEnd={() => {
-            if (isVisible) setIsSkeletonRemoved(true)
+            if (Silian_isVisible) Silian_setIsSkeletonRemoved(true)
           }}
           onTransitionEnd={() => {
-            if (isVisible) setIsSkeletonRemoved(true)
+            if (Silian_isVisible) Silian_setIsSkeletonRemoved(true)
           }}>
           <div
             className="
@@ -136,12 +136,12 @@ export function LazyCodeBlock({ lineCount, children }: LazyCodeBlockProps) {
                 motion-reduce:animate-none
               "
             />
-            {Array.from({ length: numLines }).map((_, i) => (
+            {Array.from({ length: Silian_numLines }).map((Silian__, Silian_i) => (
               <div
-                key={String(i)}
+                key={String(Silian_i)}
                 className={`
                   my-1.5 h-2
-                  ${lineWidths[i % lineWidths.length]}
+                  ${Silian_lineWidths[Silian_i % Silian_lineWidths.length]}
                 `}
               />
             ))}

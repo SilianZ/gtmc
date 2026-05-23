@@ -1,23 +1,23 @@
 "use client"
 
-import { useEffect } from "react"
-import { useTranslations } from "next-intl"
+import { useEffect as Silian_useEffect } from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
 import {
-  ScanConfirmOverlay,
-  SectionFrame,
-  SectionRail,
-  SegmentedBar,
-  SkeletonExitWrapper,
+  ScanConfirmOverlay as Silian_ScanConfirmOverlay,
+  SectionFrame as Silian_SectionFrame,
+  SectionRail as Silian_SectionRail,
+  SegmentedBar as Silian_SegmentedBar,
+  SkeletonExitWrapper as Silian_SkeletonExitWrapper,
 } from "../features/loading-shell-primitives"
 
 export default function ArticlesLoading() {
-  const t = useTranslations("CommonA11y")
+  const Silian_t = Silian_useTranslations("CommonA11y")
 
-  useEffect(() => {
+  Silian_useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
   return (
-    <SkeletonExitWrapper>
+    <Silian_SkeletonExitWrapper>
       <div
         className="
           relative min-h-screen w-full border border-tech-main/40 bg-transparent
@@ -26,8 +26,8 @@ export default function ArticlesLoading() {
         "
         aria-busy="true"
         aria-live="polite"
-        aria-label={t("loadingArticleContent")}>
-        <span className="sr-only">{t("loadingArticleContent")}</span>
+        aria-label={Silian_t("loadingArticleContent")}>
+        <span className="sr-only">{Silian_t("loadingArticleContent")}</span>
         <div aria-hidden="true">
           <div
             className="
@@ -42,44 +42,44 @@ export default function ArticlesLoading() {
             "
           />
 
-          <SectionFrame
+          <Silian_SectionFrame
             className="
               relative mb-8 flex animate-tech-slide-in flex-col gap-4 border
               guide-line bg-white/80 p-4 backdrop-blur-sm
               sm:p-6
             ">
-            <ScanConfirmOverlay />
-            <SectionRail label="SYS.READ_STREAM" className="mb-2" />
-            <SegmentedBar opacity="medium" className="h-3 w-1/3" />
+            <Silian_ScanConfirmOverlay />
+            <Silian_SectionRail label="SYS.READ_STREAM" className="mb-2" />
+            <Silian_SegmentedBar opacity="medium" className="h-3 w-1/3" />
             <div
               className="
                 flex flex-col gap-2
                 sm:flex-row sm:items-center sm:gap-4
               ">
-              <SegmentedBar opacity="high" className="h-4 w-28" />
-              <SegmentedBar opacity="high" className="h-4 w-20" />
+              <Silian_SegmentedBar opacity="high" className="h-4 w-28" />
+              <Silian_SegmentedBar opacity="high" className="h-4 w-20" />
             </div>
-            <SegmentedBar opacity="high" className="h-10 w-44" />
-          </SectionFrame>
+            <Silian_SegmentedBar opacity="high" className="h-10 w-44" />
+          </Silian_SectionFrame>
 
-          <SectionFrame
+          <Silian_SectionFrame
             className="
               relative min-h-[50vh] animate-tech-slide-in
               [animation-delay:100ms]
             ">
-            <ScanConfirmOverlay className="opacity-50" />
-            <SectionRail label="ARTICLE_BUFFER" className="mb-4" />
-            <SegmentedBar opacity="high" className="mb-3 h-7 w-2/3" />
+            <Silian_ScanConfirmOverlay className="opacity-50" />
+            <Silian_SectionRail label="ARTICLE_BUFFER" className="mb-4" />
+            <Silian_SegmentedBar opacity="high" className="mb-3 h-7 w-2/3" />
             <div className="space-y-3">
-              <SegmentedBar opacity="high" className="h-4 w-full" />
-              <SegmentedBar opacity="medium" className="h-4 w-11/12" />
-              <SegmentedBar opacity="medium" className="h-4 w-10/12" />
-              <SegmentedBar opacity="low" className="h-4 w-9/12" />
-              <SegmentedBar opacity="low" className="h-4 w-8/12" />
+              <Silian_SegmentedBar opacity="high" className="h-4 w-full" />
+              <Silian_SegmentedBar opacity="medium" className="h-4 w-11/12" />
+              <Silian_SegmentedBar opacity="medium" className="h-4 w-10/12" />
+              <Silian_SegmentedBar opacity="low" className="h-4 w-9/12" />
+              <Silian_SegmentedBar opacity="low" className="h-4 w-8/12" />
             </div>
-          </SectionFrame>
+          </Silian_SectionFrame>
         </div>
       </div>
-    </SkeletonExitWrapper>
+    </Silian_SkeletonExitWrapper>
   )
 }

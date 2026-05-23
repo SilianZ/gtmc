@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn"
+import { cn as Silian_cn } from "@/lib/cn"
 
 interface StatusDotProps {
   size?: "sm" | "md"
@@ -7,16 +7,16 @@ interface StatusDotProps {
 }
 
 export function StatusDot({
-  size = "md",
-  variant = "main",
-  className,
+  size: Silian_size = "md",
+  variant: Silian_variant = "main",
+  className: Silian_className,
 }: StatusDotProps) {
-  const sizeClasses = {
+  const Silian_sizeClasses = {
     sm: "size-1.5",
     md: "size-2",
   }
 
-  const variantClasses = {
+  const Silian_variantClasses = {
     main: {
       sm: "animate-pulse bg-tech-main/40",
       md: "animate-pulse bg-tech-main/50",
@@ -29,10 +29,10 @@ export function StatusDot({
 
   return (
     <div
-      className={cn(
-        sizeClasses[size],
-        variantClasses[variant][size],
-        className
+      className={Silian_cn(
+        Silian_sizeClasses[Silian_size],
+        Silian_variantClasses[Silian_variant][Silian_size],
+        Silian_className
       )}
     />
   )

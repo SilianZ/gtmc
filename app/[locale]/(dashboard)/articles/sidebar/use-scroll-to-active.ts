@@ -1,8 +1,8 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
-import { articleUrl } from "@/lib/article-url"
-import { HIGHLIGHT_TIMEOUT_MS, LOCATE_FALLBACK_MS } from "./constants"
+import { useCallback as Silian_useCallback, useEffect as Silian_useEffect, useRef as Silian_useRef, useState as Silian_useState } from "react"
+import { articleUrl as Silian_articleUrl } from "@/lib/article-url"
+import { HIGHLIGHT_TIMEOUT_MS as Silian_HIGHLIGHT_TIMEOUT_MS, LOCATE_FALLBACK_MS as Silian_LOCATE_FALLBACK_MS } from "./constants"
 import type { TreeNode } from "./tree-node"
 
 type LocateState =
@@ -15,15 +15,15 @@ type LocateState =
   | { phase: "scrolling" }
 
 export function useScrollToActive({
-  tree,
-  pathname,
-  mounted,
-  expandedFolders,
-  expandedFoldersRef,
-  setExpandedFolders,
-  scrollContainerRef,
-  activeItemRef,
-  folderGridRefs,
+  tree: Silian_tree,
+  pathname: Silian_pathname,
+  mounted: Silian_mounted,
+  expandedFolders: Silian_expandedFolders,
+  expandedFoldersRef: Silian_expandedFoldersRef,
+  setExpandedFolders: Silian_setExpandedFolders,
+  scrollContainerRef: Silian_scrollContainerRef,
+  activeItemRef: Silian_activeItemRef,
+  folderGridRefs: Silian_folderGridRefs,
 }: {
   tree: TreeNode[]
   pathname: string
@@ -35,240 +35,240 @@ export function useScrollToActive({
   activeItemRef: React.RefObject<HTMLLIElement | null>
   folderGridRefs: React.RefObject<Map<string, HTMLDivElement>>
 }) {
-  const [highlightActive, setHighlightActive] = useState(false)
-  const locateStateRef = useRef<LocateState>({ phase: "idle" })
-  const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const transitionCleanupRef = useRef<(() => void) | null>(null)
+  const [Silian_highlightActive, Silian_setHighlightActive] = Silian_useState(false)
+  const Silian_locateStateRef = Silian_useRef<LocateState>({ phase: "idle" })
+  const Silian_highlightTimerRef = Silian_useRef<ReturnType<typeof setTimeout> | null>(null)
+  const Silian_transitionCleanupRef = Silian_useRef<(() => void) | null>(null)
 
-  const clearHighlightTimer = useCallback(() => {
-    if (highlightTimerRef.current !== null) {
-      clearTimeout(highlightTimerRef.current)
-      highlightTimerRef.current = null
+  const Silian_clearHighlightTimer = Silian_useCallback(() => {
+    if (Silian_highlightTimerRef.current !== null) {
+      clearTimeout(Silian_highlightTimerRef.current)
+      Silian_highlightTimerRef.current = null
     }
   }, [])
 
-  const clearTransitionListeners = useCallback(() => {
-    if (transitionCleanupRef.current !== null) {
-      transitionCleanupRef.current()
-      transitionCleanupRef.current = null
+  const Silian_clearTransitionListeners = Silian_useCallback(() => {
+    if (Silian_transitionCleanupRef.current !== null) {
+      Silian_transitionCleanupRef.current()
+      Silian_transitionCleanupRef.current = null
     }
   }, [])
 
-  const resetLocateState = useCallback(() => {
-    const state = locateStateRef.current
-    if (state.phase === "expanding") {
-      clearTimeout(state.fallbackTimer)
+  const Silian_resetLocateState = Silian_useCallback(() => {
+    const Silian_state = Silian_locateStateRef.current
+    if (Silian_state.phase === "expanding") {
+      clearTimeout(Silian_state.fallbackTimer)
     }
-    clearTransitionListeners()
-    locateStateRef.current = { phase: "idle" }
-  }, [clearTransitionListeners])
+    Silian_clearTransitionListeners()
+    Silian_locateStateRef.current = { phase: "idle" }
+  }, [Silian_clearTransitionListeners])
 
-  useEffect(() => {
+  Silian_useEffect(() => {
     return () => {
-      clearHighlightTimer()
-      resetLocateState()
+      Silian_clearHighlightTimer()
+      Silian_resetLocateState()
     }
-  }, [clearHighlightTimer, resetLocateState])
+  }, [Silian_clearHighlightTimer, Silian_resetLocateState])
 
-  const getEffectivePathname = useCallback(() => {
+  const Silian_getEffectivePathname = Silian_useCallback(() => {
     if (
-      pathname === "/" ||
-      pathname === "/articles" ||
-      pathname === "/articles/"
+      Silian_pathname === "/" ||
+      Silian_pathname === "/articles" ||
+      Silian_pathname === "/articles/"
     ) {
       return "/articles/preface"
     }
-    return pathname
-  }, [pathname])
+    return Silian_pathname
+  }, [Silian_pathname])
 
-  const findItemAndParents = useCallback(
+  const Silian_findItemAndParents = Silian_useCallback(
     (
-      items: TreeNode[],
-      target: string
+      Silian_items: TreeNode[],
+      Silian_target: string
     ): { item: TreeNode | null; parentIds: string[] } => {
-      const decodedTarget = decodeURIComponent(target)
+      const Silian_decodedTarget = decodeURIComponent(Silian_target)
 
-      const walk = (
-        nodes: TreeNode[],
-        parents: string[] = []
+      const Silian_walk = (
+        Silian_nodes: TreeNode[],
+        Silian_parents: string[] = []
       ): { item: TreeNode | null; parentIds: string[] } => {
-        for (const item of nodes) {
-          const slug = articleUrl(item.slug)
-          const decodedSlug = decodeURIComponent(slug)
+        for (const Silian_item of Silian_nodes) {
+          const Silian_slug = Silian_articleUrl(Silian_item.slug)
+          const Silian_decodedSlug = decodeURIComponent(Silian_slug)
           if (
-            decodedSlug.toLowerCase() === decodedTarget.toLowerCase() ||
-            `${decodedSlug}/`.toLowerCase() === decodedTarget.toLowerCase()
+            Silian_decodedSlug.toLowerCase() === Silian_decodedTarget.toLowerCase() ||
+            `${Silian_decodedSlug}/`.toLowerCase() === Silian_decodedTarget.toLowerCase()
           ) {
-            return { item, parentIds: parents }
+            return { item: Silian_item, parentIds: Silian_parents }
           }
 
-          if (item.children?.length) {
-            const result = walk(item.children, [...parents, item.id])
-            if (result.item) return result
+          if (Silian_item.children?.length) {
+            const Silian_result = Silian_walk(Silian_item.children, [...Silian_parents, Silian_item.id])
+            if (Silian_result.item) return Silian_result
           }
         }
 
         return { item: null, parentIds: [] }
       }
 
-      return walk(items)
+      return Silian_walk(Silian_items)
     },
     []
   )
 
-  const scrollActiveItem = useCallback(() => {
-    const item = activeItemRef.current
-    const container = scrollContainerRef.current
-    if (!item) return
+  const Silian_scrollActiveItem = Silian_useCallback(() => {
+    const Silian_item = Silian_activeItemRef.current
+    const Silian_container = Silian_scrollContainerRef.current
+    if (!Silian_item) return
 
-    if (container) {
-      const ir = item.getBoundingClientRect()
-      const cr = container.getBoundingClientRect()
-      const top = ir.top - cr.top + container.scrollTop - cr.height / 4
-      container.scrollTo({ top: Math.max(0, top), behavior: "smooth" })
+    if (Silian_container) {
+      const Silian_ir = Silian_item.getBoundingClientRect()
+      const Silian_cr = Silian_container.getBoundingClientRect()
+      const Silian_top = Silian_ir.top - Silian_cr.top + Silian_container.scrollTop - Silian_cr.height / 4
+      Silian_container.scrollTo({ top: Math.max(0, Silian_top), behavior: "smooth" })
     } else {
-      item.scrollIntoView({ block: "start", behavior: "smooth" })
+      Silian_item.scrollIntoView({ block: "start", behavior: "smooth" })
     }
 
-    setHighlightActive(true)
-    clearHighlightTimer()
-    highlightTimerRef.current = setTimeout(() => {
-      setHighlightActive(false)
-      highlightTimerRef.current = null
-    }, HIGHLIGHT_TIMEOUT_MS)
-  }, [clearHighlightTimer, scrollContainerRef, activeItemRef])
+    Silian_setHighlightActive(true)
+    Silian_clearHighlightTimer()
+    Silian_highlightTimerRef.current = setTimeout(() => {
+      Silian_setHighlightActive(false)
+      Silian_highlightTimerRef.current = null
+    }, Silian_HIGHLIGHT_TIMEOUT_MS)
+  }, [Silian_clearHighlightTimer, Silian_scrollContainerRef, Silian_activeItemRef])
 
-  const enterScrollingPhase = useCallback(() => {
-    locateStateRef.current = { phase: "scrolling" }
-    scrollActiveItem()
-    locateStateRef.current = { phase: "idle" }
-  }, [scrollActiveItem])
+  const Silian_enterScrollingPhase = Silian_useCallback(() => {
+    Silian_locateStateRef.current = { phase: "scrolling" }
+    Silian_scrollActiveItem()
+    Silian_locateStateRef.current = { phase: "idle" }
+  }, [Silian_scrollActiveItem])
 
-  const finishExpansionAndScroll = useCallback(() => {
-    const state = locateStateRef.current
-    if (state.phase !== "expanding") return
+  const Silian_finishExpansionAndScroll = Silian_useCallback(() => {
+    const Silian_state = Silian_locateStateRef.current
+    if (Silian_state.phase !== "expanding") return
 
-    clearTimeout(state.fallbackTimer)
-    clearTransitionListeners()
-    enterScrollingPhase()
-  }, [clearTransitionListeners, enterScrollingPhase])
+    clearTimeout(Silian_state.fallbackTimer)
+    Silian_clearTransitionListeners()
+    Silian_enterScrollingPhase()
+  }, [Silian_clearTransitionListeners, Silian_enterScrollingPhase])
 
-  const runLocateFlow = useCallback(() => {
-    const { parentIds } = findItemAndParents(tree, getEffectivePathname())
-    const pendingIds = parentIds.filter(
-      (id) => !expandedFoldersRef.current.has(id)
+  const Silian_runLocateFlow = Silian_useCallback(() => {
+    const { parentIds: Silian_parentIds } = Silian_findItemAndParents(Silian_tree, Silian_getEffectivePathname())
+    const Silian_pendingIds = Silian_parentIds.filter(
+      (Silian_id) => !Silian_expandedFoldersRef.current.has(Silian_id)
     )
 
-    resetLocateState()
+    Silian_resetLocateState()
 
-    if (pendingIds.length === 0) {
-      enterScrollingPhase()
+    if (Silian_pendingIds.length === 0) {
+      Silian_enterScrollingPhase()
       return
     }
 
-    setExpandedFolders((prev) => {
-      const next = new Set(prev)
-      pendingIds.forEach((id) => {
-        next.add(id)
+    Silian_setExpandedFolders((Silian_prev) => {
+      const Silian_next = new Set(Silian_prev)
+      Silian_pendingIds.forEach((Silian_id) => {
+        Silian_next.add(Silian_id)
       })
-      return next
+      return Silian_next
     })
 
-    const fallbackTimer = setTimeout(() => {
-      finishExpansionAndScroll()
-    }, LOCATE_FALLBACK_MS)
+    const Silian_fallbackTimer = setTimeout(() => {
+      Silian_finishExpansionAndScroll()
+    }, Silian_LOCATE_FALLBACK_MS)
 
-    locateStateRef.current = {
+    Silian_locateStateRef.current = {
       phase: "expanding",
-      pendingIds,
-      fallbackTimer,
+      pendingIds: Silian_pendingIds,
+      fallbackTimer: Silian_fallbackTimer,
     }
   }, [
-    enterScrollingPhase,
-    expandedFoldersRef,
-    findItemAndParents,
-    finishExpansionAndScroll,
-    getEffectivePathname,
-    resetLocateState,
-    setExpandedFolders,
-    tree,
+    Silian_enterScrollingPhase,
+    Silian_expandedFoldersRef,
+    Silian_findItemAndParents,
+    Silian_finishExpansionAndScroll,
+    Silian_getEffectivePathname,
+    Silian_resetLocateState,
+    Silian_setExpandedFolders,
+    Silian_tree,
   ])
 
-  useEffect(() => {
-    void expandedFolders
+  Silian_useEffect(() => {
+    void Silian_expandedFolders
 
-    const state = locateStateRef.current
-    if (state.phase !== "expanding") return
+    const Silian_state = Silian_locateStateRef.current
+    if (Silian_state.phase !== "expanding") return
 
-    const watchEntries = state.pendingIds
-      .map((id) => [id, folderGridRefs.current.get(id)] as const)
-      .filter((entry): entry is readonly [string, HTMLDivElement] => !!entry[1])
+    const Silian_watchEntries = Silian_state.pendingIds
+      .map((Silian_id) => [Silian_id, Silian_folderGridRefs.current.get(Silian_id)] as const)
+      .filter((Silian_entry): Silian_entry is readonly [string, HTMLDivElement] => !!Silian_entry[1])
 
-    if (watchEntries.length === 0) {
-      const immediateFinishTimer = window.setTimeout(() => {
-        finishExpansionAndScroll()
+    if (Silian_watchEntries.length === 0) {
+      const Silian_immediateFinishTimer = window.setTimeout(() => {
+        Silian_finishExpansionAndScroll()
       }, 0)
       return () => {
-        clearTimeout(immediateFinishTimer)
+        clearTimeout(Silian_immediateFinishTimer)
       }
     }
 
-    const remainingIds = new Set(watchEntries.map(([id]) => id))
+    const Silian_remainingIds = new Set(Silian_watchEntries.map(([Silian_id]) => Silian_id))
 
-    const onTransitionEnd = (event: TransitionEvent) => {
-      if (event.propertyName !== "grid-template-rows") return
+    const Silian_onTransitionEnd = (Silian_event: TransitionEvent) => {
+      if (Silian_event.propertyName !== "grid-template-rows") return
 
-      const finishedId = watchEntries.find(
-        ([, grid]) => grid === event.currentTarget
+      const Silian_finishedId = Silian_watchEntries.find(
+        ([, Silian_grid]) => Silian_grid === Silian_event.currentTarget
       )?.[0]
-      if (!finishedId || !remainingIds.has(finishedId)) return
+      if (!Silian_finishedId || !Silian_remainingIds.has(Silian_finishedId)) return
 
-      remainingIds.delete(finishedId)
-      if (remainingIds.size === 0) {
-        finishExpansionAndScroll()
+      Silian_remainingIds.delete(Silian_finishedId)
+      if (Silian_remainingIds.size === 0) {
+        Silian_finishExpansionAndScroll()
       }
     }
 
-    watchEntries.forEach(([, grid]) => {
-      grid.addEventListener("transitionend", onTransitionEnd)
+    Silian_watchEntries.forEach(([, Silian_grid]) => {
+      Silian_grid.addEventListener("transitionend", Silian_onTransitionEnd)
     })
 
-    const cleanup = () => {
-      watchEntries.forEach(([, grid]) => {
-        grid.removeEventListener("transitionend", onTransitionEnd)
+    const Silian_cleanup = () => {
+      Silian_watchEntries.forEach(([, Silian_grid]) => {
+        Silian_grid.removeEventListener("transitionend", Silian_onTransitionEnd)
       })
     }
 
-    transitionCleanupRef.current = cleanup
+    Silian_transitionCleanupRef.current = Silian_cleanup
 
     return () => {
-      if (transitionCleanupRef.current === cleanup) {
-        cleanup()
-        transitionCleanupRef.current = null
+      if (Silian_transitionCleanupRef.current === Silian_cleanup) {
+        Silian_cleanup()
+        Silian_transitionCleanupRef.current = null
       }
     }
-  }, [expandedFolders, finishExpansionAndScroll, folderGridRefs])
+  }, [Silian_expandedFolders, Silian_finishExpansionAndScroll, Silian_folderGridRefs])
 
-  useEffect(() => {
-    void pathname
+  Silian_useEffect(() => {
+    void Silian_pathname
 
-    if (!mounted || tree.length === 0) return
-    const routeLocateTimer = window.setTimeout(() => {
-      runLocateFlow()
+    if (!Silian_mounted || Silian_tree.length === 0) return
+    const Silian_routeLocateTimer = window.setTimeout(() => {
+      Silian_runLocateFlow()
     }, 0)
 
     return () => {
-      clearTimeout(routeLocateTimer)
+      clearTimeout(Silian_routeLocateTimer)
     }
-  }, [pathname, mounted, tree, runLocateFlow])
+  }, [Silian_pathname, Silian_mounted, Silian_tree, Silian_runLocateFlow])
 
-  const scrollToCurrent = useCallback(() => {
-    runLocateFlow()
-  }, [runLocateFlow])
+  const Silian_scrollToCurrent = Silian_useCallback(() => {
+    Silian_runLocateFlow()
+  }, [Silian_runLocateFlow])
 
   return {
-    highlightActive,
-    getEffectivePathname,
-    scrollToCurrent,
+    highlightActive: Silian_highlightActive,
+    getEffectivePathname: Silian_getEffectivePathname,
+    scrollToCurrent: Silian_scrollToCurrent,
   }
 }

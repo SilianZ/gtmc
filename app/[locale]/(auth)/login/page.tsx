@@ -1,21 +1,21 @@
 // 后现代技术风登录页
 "use client"
 
-import { signIn } from "next-auth/react"
-import { useTranslations } from "next-intl"
-import { TechButton } from "@/components/ui/tech-button"
-import { useState } from "react"
-import { Link } from "@/i18n/navigation"
+import { signIn as Silian_signIn } from "next-auth/react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { TechButton as Silian_TechButton } from "@/components/ui/tech-button"
+import { useState as Silian_useState } from "react"
+import { Link as Silian_Link } from "@/i18n/navigation"
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const t = useTranslations("Auth")
+  const [Silian_isLoading, Silian_setIsLoading] = Silian_useState(false)
+  const Silian_t = Silian_useTranslations("Auth")
 
-  const handleLogin = async () => {
-    setIsLoading(true)
-    const callbackUrl =
+  const Silian_handleLogin = async () => {
+    Silian_setIsLoading(true)
+    const Silian_callbackUrl =
       new URLSearchParams(window.location.search).get("callbackUrl") || "/draft"
-    await signIn("github", { callbackUrl })
+    await Silian_signIn("github", { callbackUrl: Silian_callbackUrl })
   }
 
   return (
@@ -233,7 +233,7 @@ export default function LoginPage() {
                   relative inline-block animate-tech-slide-in overflow-hidden text-3xl
                   font-bold tracking-tight text-tech-main-dark opacity-0 [animation-delay:0.7s] fill-mode-forwards
                 ">
-                {t("heading")}
+                {Silian_t("heading")}
               </h1>
             </div>
 
@@ -243,7 +243,7 @@ export default function LoginPage() {
                 text-tech-main-dark/70 opacity-0 [animation-delay:1.1s]
                 fill-mode-forwards
               ">
-              {t("description")}
+              {Silian_t("description")}
             </p>
 
             <div
@@ -251,9 +251,9 @@ export default function LoginPage() {
                 w-full animate-slide-up-fade opacity-0 [animation-delay:1.3s]
                 fill-mode-forwards
               ">
-              <TechButton
-                onClick={handleLogin}
-                disabled={isLoading}
+              <Silian_TechButton
+                onClick={Silian_handleLogin}
+                disabled={Silian_isLoading}
                 variant="primary"
                 className="
                   flex h-12 w-full items-center justify-center text-sm
@@ -261,18 +261,18 @@ export default function LoginPage() {
                   hover:scale-[1.02]
                   active:scale-[0.98]
                 ">
-                {isLoading ? (
+                {Silian_isLoading ? (
                   <span className="flex items-center">
                     <span
                       className="
                         mr-2 size-2 animate-ping rounded-full bg-white/50
                       "></span>
-                    {t("connectingLabel")}
+                    {Silian_t("connectingLabel")}
                   </span>
                 ) : (
-                  t("loginCta")
+                  Silian_t("loginCta")
                 )}
-              </TechButton>
+              </Silian_TechButton>
             </div>
 
             <div
@@ -281,15 +281,15 @@ export default function LoginPage() {
                  [animation-delay:1.6s] fill-mode-forwards
                ">
               <p>PROTECTED BY GTMC_SECURE_GATEWAY v2.0</p>
-              <Link
+              <Silian_Link
                 href="/"
                 className="
                     mt-2 inline-block underline decoration-dashed
                     underline-offset-4 transition-colors
                     hover:text-tech-main-dark
                   ">
-                {t("returnLink")}
-              </Link>
+                {Silian_t("returnLink")}
+              </Silian_Link>
             </div>
           </div>
         </div>

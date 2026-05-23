@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useRef, useState, type MouseEvent } from "react"
-import { CornerBrackets } from "@/components/ui/corner-brackets"
+import { useEffect as Silian_useEffect, useRef as Silian_useRef, useState as Silian_useState, type MouseEvent } from "react"
+import { CornerBrackets as Silian_CornerBrackets } from "@/components/ui/corner-brackets"
 
 // Interfaces for schematic-renderer library
 interface SchematicManager {
@@ -73,92 +73,92 @@ export interface LitematicaViewerProps {
 }
 
 export default function LitematicaViewer({
-  url,
-  height = 400,
+  url: Silian_url,
+  height: Silian_height = 400,
 }: LitematicaViewerProps) {
-  const ACTIVE_TARGET_FPS = 60
-  const IDLE_TARGET_FPS = 24
-  const canvasRef = useRef<CanvasWithPatch | null>(null)
-  const rendererRef = useRef<LitematicaRenderer | null>(null)
-  const schematicIdRef = useRef<string | null>(null)
-  const loadTokenRef = useRef(0)
-  const lastPointerUnlockAtRef = useRef(Number.NEGATIVE_INFINITY)
+  const Silian_ACTIVE_TARGET_FPS = 60
+  const Silian_IDLE_TARGET_FPS = 24
+  const Silian_canvasRef = Silian_useRef<CanvasWithPatch | null>(null)
+  const Silian_rendererRef = Silian_useRef<LitematicaRenderer | null>(null)
+  const Silian_schematicIdRef = Silian_useRef<string | null>(null)
+  const Silian_loadTokenRef = Silian_useRef(0)
+  const Silian_lastPointerUnlockAtRef = Silian_useRef(Number.NEGATIVE_INFINITY)
 
-  const [maxLayer, setMaxLayer] = useState(0)
-  const [sliderLayer, setSliderLayer] = useState(0)
-  const [targetLayer, setTargetLayer] = useState<number | "all">("all")
-  const [layerMode, setLayerMode] = useState<"single" | "below">("below")
-  const [schematicReady, setSchematicReady] = useState(false)
-  const [isFlyMode, setIsFlyMode] = useState(false)
-  const [isFlyEnabled, setIsFlyEnabled] = useState(false)
+  const [Silian_maxLayer, Silian_setMaxLayer] = Silian_useState(0)
+  const [Silian_sliderLayer, Silian_setSliderLayer] = Silian_useState(0)
+  const [Silian_targetLayer, Silian_setTargetLayer] = Silian_useState<number | "all">("all")
+  const [Silian_layerMode, Silian_setLayerMode] = Silian_useState<"single" | "below">("below")
+  const [Silian_schematicReady, Silian_setSchematicReady] = Silian_useState(false)
+  const [Silian_isFlyMode, Silian_setIsFlyMode] = Silian_useState(false)
+  const [Silian_isFlyEnabled, Silian_setIsFlyEnabled] = Silian_useState(false)
 
-  const POINTER_LOCK_COOLDOWN_MS = 350
+  const Silian_POINTER_LOCK_COOLDOWN_MS = 350
 
-  const resolveLoadedSchematicId = (renderer: LitematicaRenderer) => {
-    const loadedSchematics = renderer?.getLoadedSchematics?.()
+  const Silian_resolveLoadedSchematicId = (Silian_renderer: LitematicaRenderer) => {
+    const Silian_loadedSchematics = Silian_renderer?.getLoadedSchematics?.()
 
-    if (Array.isArray(loadedSchematics) && loadedSchematics.length > 0) {
+    if (Array.isArray(Silian_loadedSchematics) && Silian_loadedSchematics.length > 0) {
       if (
-        schematicIdRef.current &&
-        loadedSchematics.includes(schematicIdRef.current)
+        Silian_schematicIdRef.current &&
+        Silian_loadedSchematics.includes(Silian_schematicIdRef.current)
       ) {
-        return schematicIdRef.current
+        return Silian_schematicIdRef.current
       }
 
-      return loadedSchematics[0]
+      return Silian_loadedSchematics[0]
     }
 
-    return renderer?.schematicManager?.getFirstSchematic?.()?.id ?? null
+    return Silian_renderer?.schematicManager?.getFirstSchematic?.()?.id ?? null
   }
 
-  const normalizeUrlInput = (input: string) => {
-    let value = input
+  const Silian_normalizeUrlInput = (Silian_input: string) => {
+    let Silian_value = Silian_input
       .replace(/\r?\n/g, "")
       .trim()
       .replace(/^['"]|['"]$/g, "")
 
     // Some markdown pipelines may hand us pre-encoded strings.
-    for (let i = 0; i < 2; i++) {
+    for (let Silian_i = 0; Silian_i < 2; Silian_i++) {
       try {
-        const decoded = decodeURIComponent(value)
-        if (decoded === value) break
-        value = decoded
+        const Silian_decoded = decodeURIComponent(Silian_value)
+        if (Silian_decoded === Silian_value) break
+        Silian_value = Silian_decoded
       } catch {
         break
       }
     }
 
-    return value
+    return Silian_value
   }
 
-  const suppressNativeFpOverlays = (instance: LitematicaRenderer) => {
-    const ui = instance?.uiManager
-    const cm = instance?.cameraManager
+  const Silian_suppressNativeFpOverlays = (Silian_instance: LitematicaRenderer) => {
+    const Silian_ui = Silian_instance?.uiManager
+    const Silian_cm = Silian_instance?.cameraManager
 
     try {
-      if (ui) {
-        ui.showFPVOverlay = () => {}
-        if (ui.fpvOverlay) {
-          ui.fpvOverlay.style.setProperty("display", "none", "important")
-          ui.fpvOverlay.style.setProperty("pointer-events", "none", "important")
-          ui.fpvOverlay.style.setProperty("opacity", "0", "important")
+      if (Silian_ui) {
+        Silian_ui.showFPVOverlay = () => {}
+        if (Silian_ui.fpvOverlay) {
+          Silian_ui.fpvOverlay.style.setProperty("display", "none", "important")
+          Silian_ui.fpvOverlay.style.setProperty("pointer-events", "none", "important")
+          Silian_ui.fpvOverlay.style.setProperty("opacity", "0", "important")
         }
       }
 
-      if (cm?.flyControls) {
-        cm.flyControls.setOverlayVisible = () => {}
-        if (cm.flyControls.overlayElement) {
-          cm.flyControls.overlayElement.style.setProperty(
+      if (Silian_cm?.flyControls) {
+        Silian_cm.flyControls.setOverlayVisible = () => {}
+        if (Silian_cm.flyControls.overlayElement) {
+          Silian_cm.flyControls.overlayElement.style.setProperty(
             "display",
             "none",
             "important"
           )
-          cm.flyControls.overlayElement.style.setProperty(
+          Silian_cm.flyControls.overlayElement.style.setProperty(
             "pointer-events",
             "none",
             "important"
           )
-          cm.flyControls.overlayElement.style.setProperty("opacity", "0", "important")
+          Silian_cm.flyControls.overlayElement.style.setProperty("opacity", "0", "important")
         }
       }
     } catch {
@@ -166,37 +166,37 @@ export default function LitematicaViewer({
     }
   }
 
-  const patchFlyLockWithCooldown = (cameraManager: CameraManager) => {
-    const flyControls = cameraManager?.flyControls
-    if (!flyControls) return
-    if (flyControls.__gtmcSafeLockPatched) return
+  const Silian_patchFlyLockWithCooldown = (Silian_cameraManager: CameraManager) => {
+    const Silian_flyControls = Silian_cameraManager?.flyControls
+    if (!Silian_flyControls) return
+    if (Silian_flyControls.__gtmcSafeLockPatched) return
 
-    const originalLock =
-      typeof flyControls.lock === "function" ? flyControls.lock.bind(flyControls) : null
-    if (!originalLock) return
+    const Silian_originalLock =
+      typeof Silian_flyControls.lock === "function" ? Silian_flyControls.lock.bind(Silian_flyControls) : null
+    if (!Silian_originalLock) return
 
-    const pointerLockControls = flyControls.getPointerLockControls?.()
-    const pointerLockElement = pointerLockControls?.domElement || canvasRef.current
+    const Silian_pointerLockControls = Silian_flyControls.getPointerLockControls?.()
+    const Silian_pointerLockElement = Silian_pointerLockControls?.domElement || Silian_canvasRef.current
 
-    flyControls.lock = () => {
-      if (!flyControls.enabled || flyControls.isLocked) return
+    Silian_flyControls.lock = () => {
+      if (!Silian_flyControls.enabled || Silian_flyControls.isLocked) return
 
-      if (document.pointerLockElement === canvasRef.current) return
+      if (document.pointerLockElement === Silian_canvasRef.current) return
 
-      const elapsedSinceUnlock = performance.now() - lastPointerUnlockAtRef.current
-      if (elapsedSinceUnlock < POINTER_LOCK_COOLDOWN_MS) {
+      const Silian_elapsedSinceUnlock = performance.now() - Silian_lastPointerUnlockAtRef.current
+      if (Silian_elapsedSinceUnlock < Silian_POINTER_LOCK_COOLDOWN_MS) {
         return
       }
 
       try {
         if (
-          pointerLockElement &&
-          typeof pointerLockElement.requestPointerLock === "function"
+          Silian_pointerLockElement &&
+          typeof Silian_pointerLockElement.requestPointerLock === "function"
         ) {
-          const lockResult = pointerLockElement.requestPointerLock()
+          const Silian_lockResult = Silian_pointerLockElement.requestPointerLock()
 
-          if (lockResult && typeof lockResult.catch === "function") {
-            lockResult.catch(() => {
+          if (Silian_lockResult && typeof Silian_lockResult.catch === "function") {
+            Silian_lockResult.catch(() => {
               // Swallow rejected pointer lock promises; state is handled by events.
             })
           }
@@ -204,121 +204,121 @@ export default function LitematicaViewer({
           return
         }
 
-        originalLock()
+        Silian_originalLock()
       } catch {
         // Ignore lock failures; pointerlockerror handler updates UI state.
       }
     }
 
-    flyControls.__gtmcSafeLockPatched = true
+    Silian_flyControls.__gtmcSafeLockPatched = true
   }
 
-  const patchCanvasPointerCapture = (canvas: CanvasWithPatch) => {
-    if (canvas.__gtmcPointerCapturePatched) return
+  const Silian_patchCanvasPointerCapture = (Silian_canvas: CanvasWithPatch) => {
+    if (Silian_canvas.__gtmcPointerCapturePatched) return
 
-    const canvasAny = canvas as unknown as CanvasWithPatch & Record<string, unknown>
-    const originalSetPointerCapture =
-      typeof canvas.setPointerCapture === "function"
-        ? canvas.setPointerCapture.bind(canvas)
+    const Silian_canvasAny = Silian_canvas as unknown as CanvasWithPatch & Record<string, unknown>
+    const Silian_originalSetPointerCapture =
+      typeof Silian_canvas.setPointerCapture === "function"
+        ? Silian_canvas.setPointerCapture.bind(Silian_canvas)
         : null
-    const originalReleasePointerCapture =
-      typeof canvas.releasePointerCapture === "function"
-        ? canvas.releasePointerCapture.bind(canvas)
+    const Silian_originalReleasePointerCapture =
+      typeof Silian_canvas.releasePointerCapture === "function"
+        ? Silian_canvas.releasePointerCapture.bind(Silian_canvas)
         : null
 
-    if (originalSetPointerCapture) {
-      canvasAny.setPointerCapture = (pointerId: number) => {
+    if (Silian_originalSetPointerCapture) {
+      Silian_canvasAny.setPointerCapture = (Silian_pointerId: number) => {
         try {
-          originalSetPointerCapture(pointerId)
+          Silian_originalSetPointerCapture(Silian_pointerId)
         } catch {
           // Ignore invalid pointer capture states from transient pointer lifecycle races.
         }
       }
     }
 
-    if (originalReleasePointerCapture) {
-      canvasAny.releasePointerCapture = (pointerId: number) => {
+    if (Silian_originalReleasePointerCapture) {
+      Silian_canvasAny.releasePointerCapture = (Silian_pointerId: number) => {
         try {
-          originalReleasePointerCapture(pointerId)
+          Silian_originalReleasePointerCapture(Silian_pointerId)
         } catch {
           // Ignore invalid pointer release states for symmetry with setPointerCapture.
         }
       }
     }
 
-    canvasAny.__gtmcOriginalSetPointerCapture = originalSetPointerCapture
-    canvasAny.__gtmcOriginalReleasePointerCapture = originalReleasePointerCapture
-    canvasAny.__gtmcPointerCapturePatched = true
+    Silian_canvasAny.__gtmcOriginalSetPointerCapture = Silian_originalSetPointerCapture
+    Silian_canvasAny.__gtmcOriginalReleasePointerCapture = Silian_originalReleasePointerCapture
+    Silian_canvasAny.__gtmcPointerCapturePatched = true
   }
 
-  const restoreCanvasPointerCapture = (canvas: CanvasWithPatch | null) => {
-    if (!canvas) return
-    if (!canvas.__gtmcPointerCapturePatched) return
+  const Silian_restoreCanvasPointerCapture = (Silian_canvas: CanvasWithPatch | null) => {
+    if (!Silian_canvas) return
+    if (!Silian_canvas.__gtmcPointerCapturePatched) return
 
-    const canvasAny = canvas as unknown as CanvasWithPatch & Record<string, unknown>
-    if ((canvas as CanvasWithPatch & { __gtmcOriginalSetPointerCapture?: unknown })
+    const Silian_canvasAny = Silian_canvas as unknown as CanvasWithPatch & Record<string, unknown>
+    if ((Silian_canvas as CanvasWithPatch & { __gtmcOriginalSetPointerCapture?: unknown })
       .__gtmcOriginalSetPointerCapture) {
-      canvas.setPointerCapture = (canvas as CanvasWithPatch & { __gtmcOriginalSetPointerCapture?: typeof canvas.setPointerCapture })
+      Silian_canvas.setPointerCapture = (Silian_canvas as CanvasWithPatch & { __gtmcOriginalSetPointerCapture?: typeof Silian_canvas.setPointerCapture })
         .__gtmcOriginalSetPointerCapture!
     }
-    if (canvasAny.__gtmcOriginalReleasePointerCapture) {
-      canvas.releasePointerCapture = canvasAny.__gtmcOriginalReleasePointerCapture as typeof canvas.releasePointerCapture
+    if (Silian_canvasAny.__gtmcOriginalReleasePointerCapture) {
+      Silian_canvas.releasePointerCapture = Silian_canvasAny.__gtmcOriginalReleasePointerCapture as typeof Silian_canvas.releasePointerCapture
     }
 
-    delete canvasAny.__gtmcOriginalSetPointerCapture
-    delete canvasAny.__gtmcOriginalReleasePointerCapture
-    delete canvasAny.__gtmcPointerCapturePatched
+    delete Silian_canvasAny.__gtmcOriginalSetPointerCapture
+    delete Silian_canvasAny.__gtmcOriginalReleasePointerCapture
+    delete Silian_canvasAny.__gtmcPointerCapturePatched
   }
 
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    patchCanvasPointerCapture(canvas)
+  Silian_useEffect(() => {
+    const Silian_canvas = Silian_canvasRef.current
+    if (!Silian_canvas) return
+    Silian_patchCanvasPointerCapture(Silian_canvas)
 
-    const loadToken = ++loadTokenRef.current
-    let isActive = true
-    const schematicRequestController = new AbortController()
+    const Silian_loadToken = ++Silian_loadTokenRef.current
+    let Silian_isActive = true
+    const Silian_schematicRequestController = new AbortController()
 
-    setSchematicReady(false)
-    schematicIdRef.current = null
-    setTargetLayer("all")
-    setIsFlyMode(false)
-    setIsFlyEnabled(false)
+    Silian_setSchematicReady(false)
+    Silian_schematicIdRef.current = null
+    Silian_setTargetLayer("all")
+    Silian_setIsFlyMode(false)
+    Silian_setIsFlyEnabled(false)
 
-    const isCurrentLoad = () => isActive && loadToken === loadTokenRef.current
+    const Silian_isCurrentLoad = () => Silian_isActive && Silian_loadToken === Silian_loadTokenRef.current
 
-    const cleanUrl = normalizeUrlInput(url)
-    let renderer: LitematicaRenderer | null = null
+    const Silian_cleanUrl = Silian_normalizeUrlInput(Silian_url)
+    let Silian_renderer: LitematicaRenderer | null = null
 
-    const proxyUrl = `/api/litematica-download?${new URLSearchParams({
-      url: cleanUrl,
+    const Silian_proxyUrl = `/api/litematica-download?${new URLSearchParams({
+      url: Silian_cleanUrl,
       ts: String(Date.now()),
     }).toString()}`
 
-    const initRenderer = async () => {
+    const Silian_initRenderer = async () => {
       try {
-        const mod = await import("schematic-renderer") as unknown as {
+        const Silian_mod = await import("schematic-renderer") as unknown as {
           SchematicRenderer?: new (canvas: HTMLCanvasElement, opts: unknown, fetchFn: unknown, config: unknown) => LitematicaRenderer
           default?: { SchematicRenderer?: new (canvas: HTMLCanvasElement, opts: unknown, fetchFn: unknown, config: unknown) => LitematicaRenderer }
         }
-        const SR =
-          typeof mod.SchematicRenderer === "function"
-            ? mod.SchematicRenderer
-            : typeof mod.default === "function"
-              ? mod.default
-              : mod.default?.SchematicRenderer
+        const Silian_SR =
+          typeof Silian_mod.SchematicRenderer === "function"
+            ? Silian_mod.SchematicRenderer
+            : typeof Silian_mod.default === "function"
+              ? Silian_mod.default
+              : Silian_mod.default?.SchematicRenderer
 
-        if (!SR) {
+        if (!Silian_SR) {
           throw new Error("SchematicRenderer constructor not found in module exports")
         }
 
-        renderer = new SR(
-          canvas,
+        Silian_renderer = new Silian_SR(
+          Silian_canvas,
           {},
           {
             default: async () => {
-              const res = await fetch("/pack.zip")
-              return await res.blob()
+              const Silian_res = await fetch("/pack.zip")
+              return await Silian_res.blob()
             },
           },
           {
@@ -344,255 +344,255 @@ export default function LitematicaViewer({
               enableZoomInOnLoad: false,
             },
             callbacks: {
-              onRendererInitialized: async (r: LitematicaRenderer) => {
-                if (!isCurrentLoad()) {
-                  r.dispose?.()
+              onRendererInitialized: async (Silian_r: LitematicaRenderer) => {
+                if (!Silian_isCurrentLoad()) {
+                  Silian_r.dispose?.()
                   return
                 }
 
                 try {
-                  suppressNativeFpOverlays(r)
+                  Silian_suppressNativeFpOverlays(Silian_r)
 
-                  const res = await fetch(proxyUrl, {
+                  const Silian_res = await fetch(Silian_proxyUrl, {
                     cache: "no-store",
-                    signal: schematicRequestController.signal,
+                    signal: Silian_schematicRequestController.signal,
                   })
-                  if (!res.ok) {
-                    throw new Error("Failed to fetch proxy: " + res.status)
+                  if (!Silian_res.ok) {
+                    throw new Error("Failed to fetch proxy: " + Silian_res.status)
                   }
-                  let arrayBuffer = await res.arrayBuffer()
+                  let Silian_arrayBuffer = await Silian_res.arrayBuffer()
 
-                  const fileName = cleanUrl.split("/").pop() || "schem.litematic"
-                  await r.schematicManager?.loadSchematic?.(fileName, arrayBuffer)
-                  arrayBuffer = new ArrayBuffer(0)
+                  const Silian_fileName = Silian_cleanUrl.split("/").pop() || "schem.litematic"
+                  await Silian_r.schematicManager?.loadSchematic?.(Silian_fileName, Silian_arrayBuffer)
+                  Silian_arrayBuffer = new ArrayBuffer(0)
 
-                  if (!isCurrentLoad()) {
-                    r.dispose?.()
+                  if (!Silian_isCurrentLoad()) {
+                    Silian_r.dispose?.()
                     return
                   }
 
-                  const resolvedSchematicId = resolveLoadedSchematicId(r)
-                  if (!resolvedSchematicId) {
+                  const Silian_resolvedSchematicId = Silian_resolveLoadedSchematicId(Silian_r)
+                  if (!Silian_resolvedSchematicId) {
                     throw new Error("No loaded schematic ID found after loadSchematic")
                   }
-                  schematicIdRef.current = resolvedSchematicId
+                  Silian_schematicIdRef.current = Silian_resolvedSchematicId
 
-                  const dim = r.schematicManager?.getMaxSchematicDimensions?.()
-                  if (dim) {
-                    const topLayer = Math.max(0, Math.ceil(dim.y) - 1)
-                    setMaxLayer(topLayer)
-                    setSliderLayer(topLayer)
+                  const Silian_dim = Silian_r.schematicManager?.getMaxSchematicDimensions?.()
+                  if (Silian_dim) {
+                    const Silian_topLayer = Math.max(0, Math.ceil(Silian_dim.y) - 1)
+                    Silian_setMaxLayer(Silian_topLayer)
+                    Silian_setSliderLayer(Silian_topLayer)
                   }
 
                   // Avoid camera animation/auto orbit fighting with first-person controls.
-                  await r.cameraManager?.focusOnSchematic?.({
+                  await Silian_r.cameraManager?.focusOnSchematic?.({
                     animationDuration: 0,
                     skipPathFitting: true,
                   })
-                  r.cameraManager?.stopAnimation?.()
-                  r.cameraManager?.stopAutoOrbit?.()
-                  r.cameraManager?.setAutoOrbitAfterZoom?.(false)
+                  Silian_r.cameraManager?.stopAnimation?.()
+                  Silian_r.cameraManager?.stopAutoOrbit?.()
+                  Silian_r.cameraManager?.setAutoOrbitAfterZoom?.(false)
 
-                  suppressNativeFpOverlays(r)
-                  if (!isCurrentLoad()) return
+                  Silian_suppressNativeFpOverlays(Silian_r)
+                  if (!Silian_isCurrentLoad()) return
 
-                  r.targetFPS = ACTIVE_TARGET_FPS
-                  r.idleFPS = IDLE_TARGET_FPS
-                  r.enableAdaptiveFPS = true
+                  Silian_r.targetFPS = Silian_ACTIVE_TARGET_FPS
+                  Silian_r.idleFPS = Silian_IDLE_TARGET_FPS
+                  Silian_r.enableAdaptiveFPS = true
 
-                  setSchematicReady(true)
-                } catch (err) {
-                  if (err instanceof Error && err.name === "AbortError") {
+                  Silian_setSchematicReady(true)
+                } catch (Silian_err) {
+                  if (Silian_err instanceof Error && Silian_err.name === "AbortError") {
                     return
                   }
 
-                  console.error("Error loading schematic:", err)
+                  console.error("Error loading schematic:", Silian_err)
                 }
               },
-              onSchematicFileLoadFailure: (err: Error) => {
-                console.error("Failed to load schematic file:", err)
+              onSchematicFileLoadFailure: (Silian_err: Error) => {
+                console.error("Failed to load schematic file:", Silian_err)
               },
             },
           }
         )
 
-        if (!isCurrentLoad()) {
-          renderer?.dispose?.()
+        if (!Silian_isCurrentLoad()) {
+          Silian_renderer?.dispose?.()
           return
         }
 
-        rendererRef.current = renderer
-      } catch (e) {
-        console.error("Error setting up schematic-renderer:", e)
+        Silian_rendererRef.current = Silian_renderer
+      } catch (Silian_e) {
+        console.error("Error setting up schematic-renderer:", Silian_e)
       }
     }
 
-    const handlePointerLockChange = () => {
-      const current = rendererRef.current
-      if (!current) return
+    const Silian_handlePointerLockChange = () => {
+      const Silian_current = Silian_rendererRef.current
+      if (!Silian_current) return
 
-      suppressNativeFpOverlays(current)
+      Silian_suppressNativeFpOverlays(Silian_current)
 
-      const cm = current.cameraManager
-      const locked = cm?.isFlyControlsLocked?.() ?? document.pointerLockElement === canvas
-      const flyEnabled = Boolean(cm?.isFlyControlsEnabled?.())
+      const Silian_cm = Silian_current.cameraManager
+      const Silian_locked = Silian_cm?.isFlyControlsLocked?.() ?? document.pointerLockElement === Silian_canvas
+      const Silian_flyEnabled = Boolean(Silian_cm?.isFlyControlsEnabled?.())
 
-      if (!locked) {
-        lastPointerUnlockAtRef.current = performance.now()
+      if (!Silian_locked) {
+        Silian_lastPointerUnlockAtRef.current = performance.now()
       }
 
-      setIsFlyEnabled(flyEnabled)
-      setIsFlyMode(Boolean(locked && flyEnabled))
+      Silian_setIsFlyEnabled(Silian_flyEnabled)
+      Silian_setIsFlyMode(Boolean(Silian_locked && Silian_flyEnabled))
     }
 
-    const handlePointerLockError = (event: Event) => {
-      const current = rendererRef.current
-      const cm = current?.cameraManager
-      if (!cm?.isFlyControlsEnabled?.()) {
+    const Silian_handlePointerLockError = (Silian_event: Event) => {
+      const Silian_current = Silian_rendererRef.current
+      const Silian_cm = Silian_current?.cameraManager
+      if (!Silian_cm?.isFlyControlsEnabled?.()) {
         return
       }
 
-      lastPointerUnlockAtRef.current = performance.now()
+      Silian_lastPointerUnlockAtRef.current = performance.now()
 
-      cm.disableFlyControls?.()
-      setIsFlyMode(false)
-      setIsFlyEnabled(false)
+      Silian_cm.disableFlyControls?.()
+      Silian_setIsFlyMode(false)
+      Silian_setIsFlyEnabled(false)
 
       // Prevent PointerLockControls' internal error listener from logging noisy errors.
-      event.stopImmediatePropagation()
+      Silian_event.stopImmediatePropagation()
     }
 
-    const handleEscapeKeyDown = (event: KeyboardEvent) => {
-      if (event.code !== "Escape") return
+    const Silian_handleEscapeKeyDown = (Silian_event: KeyboardEvent) => {
+      if (Silian_event.code !== "Escape") return
 
-      const current = rendererRef.current
-      const cm = current?.cameraManager
-      if (cm?.isFlyControlsEnabled?.()) {
+      const Silian_current = Silian_rendererRef.current
+      const Silian_cm = Silian_current?.cameraManager
+      if (Silian_cm?.isFlyControlsEnabled?.()) {
         // ESC acts as explicit exit from first-person mode.
-        lastPointerUnlockAtRef.current = performance.now()
-        cm.disableFlyControls?.()
-        setIsFlyMode(false)
-        setIsFlyEnabled(false)
+        Silian_lastPointerUnlockAtRef.current = performance.now()
+        Silian_cm.disableFlyControls?.()
+        Silian_setIsFlyMode(false)
+        Silian_setIsFlyEnabled(false)
       }
     }
 
-    document.addEventListener("pointerlockchange", handlePointerLockChange)
-    document.addEventListener("pointerlockerror", handlePointerLockError, true)
-    document.addEventListener("keydown", handleEscapeKeyDown, true)
-    initRenderer()
+    document.addEventListener("pointerlockchange", Silian_handlePointerLockChange)
+    document.addEventListener("pointerlockerror", Silian_handlePointerLockError, true)
+    document.addEventListener("keydown", Silian_handleEscapeKeyDown, true)
+    Silian_initRenderer()
 
     return () => {
-      isActive = false
-      schematicRequestController.abort()
-      document.removeEventListener("pointerlockchange", handlePointerLockChange)
-      document.removeEventListener("pointerlockerror", handlePointerLockError, true)
-      document.removeEventListener("keydown", handleEscapeKeyDown, true)
-      setSchematicReady(false)
-      schematicIdRef.current = null
-      setIsFlyMode(false)
-      setIsFlyEnabled(false)
+      Silian_isActive = false
+      Silian_schematicRequestController.abort()
+      document.removeEventListener("pointerlockchange", Silian_handlePointerLockChange)
+      document.removeEventListener("pointerlockerror", Silian_handlePointerLockError, true)
+      document.removeEventListener("keydown", Silian_handleEscapeKeyDown, true)
+      Silian_setSchematicReady(false)
+      Silian_schematicIdRef.current = null
+      Silian_setIsFlyMode(false)
+      Silian_setIsFlyEnabled(false)
 
       if (
-        rendererRef.current?.cameraManager?.isFlyControlsEnabled?.() &&
-        typeof rendererRef.current.cameraManager.disableFlyControls === "function"
+        Silian_rendererRef.current?.cameraManager?.isFlyControlsEnabled?.() &&
+        typeof Silian_rendererRef.current.cameraManager.disableFlyControls === "function"
       ) {
-        rendererRef.current.cameraManager.disableFlyControls()
+        Silian_rendererRef.current.cameraManager.disableFlyControls()
       }
 
-      if (rendererRef.current && typeof rendererRef.current.dispose === "function") {
-        rendererRef.current.dispose()
+      if (Silian_rendererRef.current && typeof Silian_rendererRef.current.dispose === "function") {
+        Silian_rendererRef.current.dispose()
       }
 
-      restoreCanvasPointerCapture(canvas)
+      Silian_restoreCanvasPointerCapture(Silian_canvas)
 
-      rendererRef.current = null
+      Silian_rendererRef.current = null
     }
-  }, [url])
+  }, [Silian_url])
 
-  useEffect(() => {
-    if (!schematicReady || !rendererRef.current) {
+  Silian_useEffect(() => {
+    if (!Silian_schematicReady || !Silian_rendererRef.current) {
       return
     }
 
-    const renderer = rendererRef.current
-    if (!renderer) return
+    const Silian_renderer = Silian_rendererRef.current
+    if (!Silian_renderer) return
 
-    const sm = renderer.schematicManager
-    if (!sm) return
+    const Silian_sm = Silian_renderer.schematicManager
+    if (!Silian_sm) return
 
-    const schematicId = resolveLoadedSchematicId(renderer)
-    if (!schematicId) return
+    const Silian_schematicId = Silian_resolveLoadedSchematicId(Silian_renderer)
+    if (!Silian_schematicId) return
 
-    schematicIdRef.current = schematicId
-    if (!sm.getSchematic?.(schematicId)) return
+    Silian_schematicIdRef.current = Silian_schematicId
+    if (!Silian_sm.getSchematic?.(Silian_schematicId)) return
 
-    const dim = sm.getMaxSchematicDimensions?.()
-    if (!dim) return
+    const Silian_dim = Silian_sm.getMaxSchematicDimensions?.()
+    if (!Silian_dim) return
 
-    const maxX = Math.max(1, Math.ceil(dim.x))
-    const maxY = Math.max(1, Math.ceil(dim.y))
-    const maxZ = Math.max(1, Math.ceil(dim.z))
+    const Silian_maxX = Math.max(1, Math.ceil(Silian_dim.x))
+    const Silian_maxY = Math.max(1, Math.ceil(Silian_dim.y))
+    const Silian_maxZ = Math.max(1, Math.ceil(Silian_dim.z))
 
     try {
-      if (targetLayer === "all") {
-        renderer?.resetRenderingBounds?.(schematicId, true)
+      if (Silian_targetLayer === "all") {
+        Silian_renderer?.resetRenderingBounds?.(Silian_schematicId, true)
       } else {
-        const y = Math.max(0, Math.min(targetLayer, maxY - 1))
+        const Silian_y = Math.max(0, Math.min(Silian_targetLayer, Silian_maxY - 1))
 
-        if (layerMode === "single") {
-          renderer?.setRenderingBounds?.(
-            schematicId,
-            [0, y, 0],
-            [maxX, y + 1, maxZ],
+        if (Silian_layerMode === "single") {
+          Silian_renderer?.setRenderingBounds?.(
+            Silian_schematicId,
+            [0, Silian_y, 0],
+            [Silian_maxX, Silian_y + 1, Silian_maxZ],
             false
           )
         } else {
-          renderer?.setRenderingBounds?.(
-            schematicId,
+          Silian_renderer?.setRenderingBounds?.(
+            Silian_schematicId,
             [0, 0, 0],
-            [maxX, y + 1, maxZ],
+            [Silian_maxX, Silian_y + 1, Silian_maxZ],
             false
           )
         }
       }
 
-      renderer?.renderManager?.render?.()
-    } catch (error) {
-      console.error("Failed to update rendering bounds:", error)
+      Silian_renderer?.renderManager?.render?.()
+    } catch (Silian_error) {
+      console.error("Failed to update rendering bounds:", Silian_error)
     }
-  }, [schematicReady, targetLayer, layerMode])
+  }, [Silian_schematicReady, Silian_targetLayer, Silian_layerMode])
 
-  const commitLayerSelection = () => {
-    if (!schematicReady) return
-    setTargetLayer(sliderLayer)
+  const Silian_commitLayerSelection = () => {
+    if (!Silian_schematicReady) return
+    Silian_setTargetLayer(Silian_sliderLayer)
   }
 
-  const toggleFlyMode = (event: MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation()
+  const Silian_toggleFlyMode = (Silian_event: MouseEvent<HTMLButtonElement>) => {
+    Silian_event.stopPropagation()
 
-    const current = rendererRef.current
-    if (!current?.cameraManager) return
+    const Silian_current = Silian_rendererRef.current
+    if (!Silian_current?.cameraManager) return
 
-    const cm = current.cameraManager
-    suppressNativeFpOverlays(current)
+    const Silian_cm = Silian_current.cameraManager
+    Silian_suppressNativeFpOverlays(Silian_current)
 
-    cm.stopAnimation?.()
-    cm.stopAutoOrbit?.()
-    cm.setAutoOrbitAfterZoom?.(false)
-    cm.setZoomInOnLoad?.(false)
+    Silian_cm.stopAnimation?.()
+    Silian_cm.stopAutoOrbit?.()
+    Silian_cm.setAutoOrbitAfterZoom?.(false)
+    Silian_cm.setZoomInOnLoad?.(false)
 
-    const flyEnabled = Boolean(cm.isFlyControlsEnabled?.())
+    const Silian_flyEnabled = Boolean(Silian_cm.isFlyControlsEnabled?.())
 
-    if (flyEnabled) {
-      lastPointerUnlockAtRef.current = performance.now()
-      cm.disableFlyControls?.()
-      setIsFlyMode(false)
-      setIsFlyEnabled(false)
+    if (Silian_flyEnabled) {
+      Silian_lastPointerUnlockAtRef.current = performance.now()
+      Silian_cm.disableFlyControls?.()
+      Silian_setIsFlyMode(false)
+      Silian_setIsFlyEnabled(false)
       return
     }
 
-    cm.enableFlyControls?.()
-    cm.setFlyControlsSettings?.({
+    Silian_cm.enableFlyControls?.()
+    Silian_cm.setFlyControlsSettings?.({
       moveSpeed: 16,
       sprintMultiplier: 2.4,
       keybinds: {
@@ -602,12 +602,12 @@ export default function LitematicaViewer({
       },
     })
 
-    patchFlyLockWithCooldown(cm)
+    Silian_patchFlyLockWithCooldown(Silian_cm)
     // If already enabled but unlocked, this acts as a reliable re-lock action.
-    cm.flyControls?.lock?.()
+    Silian_cm.flyControls?.lock?.()
 
-    setIsFlyEnabled(true)
-    setIsFlyMode(Boolean(cm.isFlyControlsLocked?.()))
+    Silian_setIsFlyEnabled(true)
+    Silian_setIsFlyMode(Boolean(Silian_cm.isFlyControlsLocked?.()))
   }
 
   return (
@@ -617,27 +617,27 @@ export default function LitematicaViewer({
       font-mono
     "
     >
-      <CornerBrackets size="size-4" color="border-tech-main/40" />
+      <Silian_CornerBrackets size="size-4" color="border-tech-main/40" />
 
       <canvas
-        ref={canvasRef}
+        ref={Silian_canvasRef}
         className="block w-full outline-none"
         style={{
-          cursor: isFlyMode ? "crosshair" : "pointer",
-          height: typeof height === "number" ? height + "px" : height,
+          cursor: Silian_isFlyMode ? "crosshair" : "pointer",
+          height: typeof Silian_height === "number" ? Silian_height + "px" : Silian_height,
         }}
       />
 
       <button
         type="button"
-        onClick={toggleFlyMode}
+        onClick={Silian_toggleFlyMode}
         className={`absolute top-4 right-4 z-20 border px-3 py-1 text-[11px] font-bold tracking-widest uppercase transition-colors ${
-          isFlyEnabled
+          Silian_isFlyEnabled
             ? "border-tech-main bg-tech-main text-white"
             : "border-tech-main/60 bg-white/90 text-tech-main hover:bg-tech-main hover:text-white"
         }`}
       >
-        {isFlyEnabled ? "SYS.EXIT_FLY" : "SYS.FIRST_PERSON"}
+        {Silian_isFlyEnabled ? "SYS.EXIT_FLY" : "SYS.FIRST_PERSON"}
       </button>
 
       <div
@@ -663,10 +663,10 @@ export default function LitematicaViewer({
         </span>
       </div>
 
-      {maxLayer > 0 && (
+      {Silian_maxLayer > 0 && (
         <div
           className={`absolute right-4 bottom-16 z-10 w-[250px] border border-tech-main/60 bg-white/90 p-3 text-tech-main shadow-sm backdrop-blur-md transition-all ${
-            isFlyEnabled ? "pointer-events-none translate-x-2 opacity-0" : "opacity-100"
+            Silian_isFlyEnabled ? "pointer-events-none translate-x-2 opacity-0" : "opacity-100"
           }`}
         >
           <div className="mb-2 flex items-center justify-between border-b guide-line pb-1">
@@ -677,8 +677,8 @@ export default function LitematicaViewer({
             <button
               type="button"
               onClick={() => {
-                setTargetLayer("all")
-                setSliderLayer(maxLayer)
+                Silian_setTargetLayer("all")
+                Silian_setSliderLayer(Silian_maxLayer)
               }}
               className="border border-tech-main/30 px-1.5 py-0.5 text-[10px] font-bold uppercase transition-colors hover:bg-tech-main hover:text-white"
             >
@@ -687,18 +687,18 @@ export default function LitematicaViewer({
           </div>
 
           <div className="mb-2 flex items-center justify-between text-xs font-bold">
-            <span>LAYER {targetLayer === "all" ? "ALL" : targetLayer}</span>
-            {targetLayer !== "all" && targetLayer !== sliderLayer && (
-              <span className="text-[10px] opacity-70">PENDING {sliderLayer}</span>
+            <span>LAYER {Silian_targetLayer === "all" ? "ALL" : Silian_targetLayer}</span>
+            {Silian_targetLayer !== "all" && Silian_targetLayer !== Silian_sliderLayer && (
+              <span className="text-[10px] opacity-70">PENDING {Silian_sliderLayer}</span>
             )}
           </div>
 
           <div className="mb-3 flex border border-tech-main/40 text-[10px] font-bold uppercase">
             <button
               type="button"
-              onClick={() => setLayerMode("single")}
+              onClick={() => Silian_setLayerMode("single")}
               className={`flex-1 py-1 transition-colors ${
-                layerMode === "single"
+                Silian_layerMode === "single"
                   ? "bg-tech-main text-white"
                   : "bg-white text-tech-main hover:bg-tech-main/10"
               }`}
@@ -708,9 +708,9 @@ export default function LitematicaViewer({
 
             <button
               type="button"
-              onClick={() => setLayerMode("below")}
+              onClick={() => Silian_setLayerMode("below")}
               className={`flex-1 border-l border-tech-main/40 py-1 transition-colors ${
-                layerMode === "below"
+                Silian_layerMode === "below"
                   ? "bg-tech-main text-white"
                   : "bg-white text-tech-main hover:bg-tech-main/10"
               }`}
@@ -722,20 +722,20 @@ export default function LitematicaViewer({
           <input
             type="range"
             min={0}
-            max={maxLayer}
-            value={sliderLayer}
-            onChange={(e) => setSliderLayer(Number(e.target.value))}
-            onPointerUp={commitLayerSelection}
-            onMouseUp={commitLayerSelection}
-            onTouchEnd={commitLayerSelection}
-            onKeyUp={commitLayerSelection}
+            max={Silian_maxLayer}
+            value={Silian_sliderLayer}
+            onChange={(Silian_e) => Silian_setSliderLayer(Number(Silian_e.target.value))}
+            onPointerUp={Silian_commitLayerSelection}
+            onMouseUp={Silian_commitLayerSelection}
+            onTouchEnd={Silian_commitLayerSelection}
+            onKeyUp={Silian_commitLayerSelection}
             data-litematica-layer-slider className="w-full cursor-ew-resize"
           />
 
           <div className="mt-2 flex justify-end">
             <button
               type="button"
-              onClick={commitLayerSelection}
+              onClick={Silian_commitLayerSelection}
               className="border border-tech-main px-2 py-0.5 text-[10px] font-bold uppercase transition-colors hover:bg-tech-main hover:text-white"
             >
               APPLY
@@ -788,7 +788,7 @@ export default function LitematicaViewer({
           backdrop-blur-md
         "
         >
-          {isFlyEnabled ? (
+          {Silian_isFlyEnabled ? (
             <>
               <span className="flex items-center gap-1.5">
                 <kbd className="rounded-[2px] border border-tech-main/30 bg-white px-1.5 py-0.5 font-sans text-[10px] font-semibold text-tech-main shadow-sm">
@@ -817,7 +817,7 @@ export default function LitematicaViewer({
                 </kbd>{" "}
                 Unlock
               </span>
-              {!isFlyMode && (
+              {!Silian_isFlyMode && (
                 <>
                   <span className="flex items-center gap-1.5 opacity-60">|</span>
                   <span className="flex items-center gap-1.5">

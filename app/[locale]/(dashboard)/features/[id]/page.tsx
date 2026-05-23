@@ -1,170 +1,170 @@
 import type { Metadata } from "next"
-import { getTranslations } from "next-intl/server"
-import { auth } from "@/lib/auth"
-import { getCurrentUserAuthContext } from "@/lib/auth-context"
+import { getTranslations as Silian_getTranslations } from "next-intl/server"
+import { auth as Silian_auth } from "@/lib/auth"
+import { getCurrentUserAuthContext as Silian_getCurrentUserAuthContext } from "@/lib/auth-context"
 import {
-  EXPLANATION_MARKER,
-  SYSTEM_COMMENT_MARKER,
-  getIssue,
-  labelsToStatus,
-  labelsToTags,
-  listIssueComments,
-  parseCommentBody,
-  parseIssueBody,
+  EXPLANATION_MARKER as Silian_EXPLANATION_MARKER,
+  SYSTEM_COMMENT_MARKER as Silian_SYSTEM_COMMENT_MARKER,
+  getIssue as Silian_getIssue,
+  labelsToStatus as Silian_labelsToStatus,
+  labelsToTags as Silian_labelsToTags,
+  listIssueComments as Silian_listIssueComments,
+  parseCommentBody as Silian_parseCommentBody,
+  parseIssueBody as Silian_parseIssueBody,
 } from "@/lib/github"
-import { generateDescription } from "@/lib/markdown"
-import { FeatureEditor } from "@/components/editor/feature-editor"
-import { notFound } from "next/navigation"
-import { TechCard } from "@/components/ui/tech-card"
-import { FeatureActions } from "./feature-actions"
-import { FeatureComments } from "./feature-comments"
-import { FeatureExplanation } from "./feature-explanation"
-import { FeatureReadonlyView } from "./feature-readonly-view"
-import { FeatureStatusBadge } from "@/components/ui/status-badge"
-import { RevealSection } from "../reveal-helpers"
-import { toAbsoluteUrl } from "@/lib/site-url"
-import { MetadataRow } from "./metadata-row"
+import { generateDescription as Silian_generateDescription } from "@/lib/markdown"
+import { FeatureEditor as Silian_FeatureEditor } from "@/components/editor/feature-editor"
+import { notFound as Silian_notFound } from "next/navigation"
+import { TechCard as Silian_TechCard } from "@/components/ui/tech-card"
+import { FeatureActions as Silian_FeatureActions } from "./feature-actions"
+import { FeatureComments as Silian_FeatureComments } from "./feature-comments"
+import { FeatureExplanation as Silian_FeatureExplanation } from "./feature-explanation"
+import { FeatureReadonlyView as Silian_FeatureReadonlyView } from "./feature-readonly-view"
+import { FeatureStatusBadge as Silian_FeatureStatusBadge } from "@/components/ui/status-badge"
+import { RevealSection as Silian_RevealSection } from "../reveal-helpers"
+import { toAbsoluteUrl as Silian_toAbsoluteUrl } from "@/lib/site-url"
+import { MetadataRow as Silian_MetadataRow } from "./metadata-row"
 
 export const revalidate = 60
 
 export async function generateMetadata({
-  params,
+  params: Silian_params,
 }: {
   params: Promise<{ id: string }>
 }): Promise<Metadata> {
-  const { id } = await params
-  const issueNumber = Number.parseInt(id, 10)
-  if (isNaN(issueNumber)) return { title: "Feature Not Found" }
+  const { id: Silian_id } = await Silian_params
+  const Silian_issueNumber = Number.parseInt(Silian_id, 10)
+  if (isNaN(Silian_issueNumber)) return { title: "Feature Not Found" }
 
-  const issue = await getIssue(issueNumber)
-  if (!issue) return { title: "Feature Not Found" }
+  const Silian_issue = await Silian_getIssue(Silian_issueNumber)
+  if (!Silian_issue) return { title: "Feature Not Found" }
 
-  const canonical = toAbsoluteUrl(`/features/${issue.number}`)
-  const description = generateDescription(issue.body ?? "", undefined, 155)
+  const Silian_canonical = Silian_toAbsoluteUrl(`/features/${Silian_issue.number}`)
+  const Silian_description = Silian_generateDescription(Silian_issue.body ?? "", undefined, 155)
 
   return {
-    title: issue.title,
-    description,
+    title: Silian_issue.title,
+    description: Silian_description,
     alternates: {
-      canonical,
+      canonical: Silian_canonical,
       languages: {
-        zh: toAbsoluteUrl(`/zh/features/${issue.number}`),
-        en: toAbsoluteUrl(`/en/features/${issue.number}`),
-        "x-default": toAbsoluteUrl(`/zh/features/${issue.number}`),
+        zh: Silian_toAbsoluteUrl(`/zh/features/${Silian_issue.number}`),
+        en: Silian_toAbsoluteUrl(`/en/features/${Silian_issue.number}`),
+        "x-default": Silian_toAbsoluteUrl(`/zh/features/${Silian_issue.number}`),
       },
     },
     openGraph: {
-      title: `${issue.title} — Feature Request`,
-      description,
+      title: `${Silian_issue.title} — Feature Request`,
+      description: Silian_description,
       type: "article",
-      url: canonical,
+      url: Silian_canonical,
       images: [
         {
           url: "/opengraph-image",
           width: 1200,
           height: 630,
-          alt: issue.title,
+          alt: Silian_issue.title,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${issue.title} — Feature Request`,
-      description,
+      title: `${Silian_issue.title} — Feature Request`,
+      description: Silian_description,
       images: ["/opengraph-image"],
     },
   }
 }
 
 export default async function FeatureDetailPage({
-  params,
+  params: Silian_params,
 }: {
   params: Promise<{ id: string }>
 }) {
-  const t = await getTranslations("Feature")
-  const { id } = await params
-  const issueNumber = Number.parseInt(id, 10)
-  if (Number.isNaN(issueNumber) || issueNumber <= 0) {
-    notFound()
+  const Silian_t = await Silian_getTranslations("Feature")
+  const { id: Silian_id } = await Silian_params
+  const Silian_issueNumber = Number.parseInt(Silian_id, 10)
+  if (Number.isNaN(Silian_issueNumber) || Silian_issueNumber <= 0) {
+    Silian_notFound()
   }
 
-  const session = await auth()
-  let isAdmin = false
+  const Silian_session = await Silian_auth()
+  let Silian_isAdmin = false
 
-  if (session?.user?.id) {
+  if (Silian_session?.user?.id) {
     try {
-      const ctx = await getCurrentUserAuthContext(session.user.id)
-      isAdmin = ctx.role === "ADMIN"
+      const Silian_ctx = await Silian_getCurrentUserAuthContext(Silian_session.user.id)
+      Silian_isAdmin = Silian_ctx.role === "ADMIN"
     } catch {
-      isAdmin = false
+      Silian_isAdmin = false
     }
   }
 
-  const issue = await getIssue(issueNumber)
-  if (!issue) {
-    notFound()
+  const Silian_issue = await Silian_getIssue(Silian_issueNumber)
+  if (!Silian_issue) {
+    Silian_notFound()
   }
 
-  const canonical = toAbsoluteUrl(`/features/${issue.number}`)
-  const description = generateDescription(issue.body ?? "", undefined, 155)
+  const Silian_canonical = Silian_toAbsoluteUrl(`/features/${Silian_issue.number}`)
+  const Silian_description = Silian_generateDescription(Silian_issue.body ?? "", undefined, 155)
 
-  const isClosed = issue.state === "closed"
+  const Silian_isClosed = Silian_issue.state === "closed"
 
-  const parsedIssue = parseIssueBody(issue.body)
-  const rawComments = await listIssueComments(issue.number)
+  const Silian_parsedIssue = Silian_parseIssueBody(Silian_issue.body)
+  const Silian_rawComments = await Silian_listIssueComments(Silian_issue.number)
 
-  const comments = rawComments
+  const Silian_comments = Silian_rawComments
     .filter(
-      (comment) =>
-        !comment.body.includes(EXPLANATION_MARKER) &&
-        !comment.body.includes(SYSTEM_COMMENT_MARKER)
+      (Silian_comment) =>
+        !Silian_comment.body.includes(Silian_EXPLANATION_MARKER) &&
+        !Silian_comment.body.includes(Silian_SYSTEM_COMMENT_MARKER)
     )
-    .map((comment) => {
-      const parsedComment = parseCommentBody(comment.body)
+    .map((Silian_comment) => {
+      const Silian_parsedComment = Silian_parseCommentBody(Silian_comment.body)
       return {
-        id: String(comment.id),
-        content: parsedComment.content,
-        createdAt: new Date(comment.createdAt),
+        id: String(Silian_comment.id),
+        content: Silian_parsedComment.content,
+        createdAt: new Date(Silian_comment.createdAt),
         author: {
-          name: parsedComment.metadata?.authorName ?? null,
-          email: parsedComment.metadata?.authorEmail ?? null,
+          name: Silian_parsedComment.metadata?.authorName ?? null,
+          email: Silian_parsedComment.metadata?.authorEmail ?? null,
           image: null,
         },
-        emailRedacted: parsedComment.metadata?.emailRedacted ?? false,
+        emailRedacted: Silian_parsedComment.metadata?.emailRedacted ?? false,
       }
     })
 
-  const feature = {
-    id: String(issue.number),
-    issueNumber: issue.number,
-    htmlUrl: issue.htmlUrl,
-    title: issue.title,
-    status: labelsToStatus(issue.labels),
-    tags: labelsToTags(issue.labels),
-    createdAt: new Date(issue.createdAt),
-    content: parsedIssue.userContent,
-    explanation: parsedIssue.explanation,
-    authorId: parsedIssue.metadata?.appUserId ?? "",
-    assigneeId: parsedIssue.metadata?.assigneeId ?? null,
+  const Silian_feature = {
+    id: String(Silian_issue.number),
+    issueNumber: Silian_issue.number,
+    htmlUrl: Silian_issue.htmlUrl,
+    title: Silian_issue.title,
+    status: Silian_labelsToStatus(Silian_issue.labels),
+    tags: Silian_labelsToTags(Silian_issue.labels),
+    createdAt: new Date(Silian_issue.createdAt),
+    content: Silian_parsedIssue.userContent,
+    explanation: Silian_parsedIssue.explanation,
+    authorId: Silian_parsedIssue.metadata?.appUserId ?? "",
+    assigneeId: Silian_parsedIssue.metadata?.assigneeId ?? null,
     author: {
-      name: parsedIssue.metadata?.authorName ?? null,
-      email: parsedIssue.metadata?.authorEmail ?? null,
+      name: Silian_parsedIssue.metadata?.authorName ?? null,
+      email: Silian_parsedIssue.metadata?.authorEmail ?? null,
       image: null,
     },
-    assignee: parsedIssue.metadata?.assigneeId
+    assignee: Silian_parsedIssue.metadata?.assigneeId
       ? {
-          name: parsedIssue.metadata?.assigneeName ?? null,
-          email: parsedIssue.metadata?.assigneeEmail ?? null,
+          name: Silian_parsedIssue.metadata?.assigneeName ?? null,
+          email: Silian_parsedIssue.metadata?.assigneeEmail ?? null,
           image: null,
         }
       : null,
-    comments,
+    comments: Silian_comments,
   }
 
-  const isAuthor = session?.user?.id === feature.authorId
-  const isAssignee = session?.user?.id === feature.assigneeId
+  const Silian_isAuthor = Silian_session?.user?.id === Silian_feature.authorId
+  const Silian_isAssignee = Silian_session?.user?.id === Silian_feature.assigneeId
 
-  const canEdit = isAuthor || isAdmin
+  const Silian_canEdit = Silian_isAuthor || Silian_isAdmin
 
   return (
     <div
@@ -173,7 +173,7 @@ export default async function FeatureDetailPage({
         sm:p-6
         md:p-8
       ">
-      <RevealSection delay={0}>
+      <Silian_RevealSection delay={0}>
         <div className="flex flex-col gap-4">
           <div>
             <h1
@@ -183,24 +183,24 @@ export default async function FeatureDetailPage({
                 sm:text-2xl
                 md:text-3xl
               ">
-              {t("detailTitle")}
+              {Silian_t("detailTitle")}
             </h1>
           </div>
 
           {/* Status Actions for logged in users */}
-          {session?.user && !isClosed && (
-            <FeatureActions
-              featureId={feature.id}
-              status={feature.status}
-              isAssignee={isAssignee}
-              isAdmin={isAdmin}
-              hasAssignee={!!feature.assigneeId}
+          {Silian_session?.user && !Silian_isClosed && (
+            <Silian_FeatureActions
+              featureId={Silian_feature.id}
+              status={Silian_feature.status}
+              isAssignee={Silian_isAssignee}
+              isAdmin={Silian_isAdmin}
+              hasAssignee={!!Silian_feature.assigneeId}
             />
           )}
         </div>
-      </RevealSection>
+      </Silian_RevealSection>
 
-      {isClosed && (
+      {Silian_isClosed && (
         <div
           className="
             relative border border-red-500/50 bg-red-500/5 p-4 font-mono text-xs
@@ -247,8 +247,8 @@ export default async function FeatureDetailPage({
         </div>
       )}
 
-      <RevealSection delay={100}>
-        <TechCard
+      <Silian_RevealSection delay={100}>
+        <Silian_TechCard
           className="
             mb-8 p-4
             sm:p-6
@@ -258,44 +258,44 @@ export default async function FeatureDetailPage({
               flex flex-col gap-2 font-mono text-xs
               sm:text-sm
             ">
-            <MetadataRow
-              label={`${t("detailStatus")}:`}
-              value={<FeatureStatusBadge status={feature.status} />}
+            <Silian_MetadataRow
+              label={`${Silian_t("detailStatus")}:`}
+              value={<Silian_FeatureStatusBadge status={Silian_feature.status} />}
             />
-            <MetadataRow
+            <Silian_MetadataRow
               label="Author:"
               value={
                 <span className="wrap-break-word">
-                  {feature.author.name || feature.author.email || "Unknown"}
+                  {Silian_feature.author.name || Silian_feature.author.email || "Unknown"}
                 </span>
               }
             />
-            <MetadataRow
-              label={`${t("detailAssignee")}:`}
+            <Silian_MetadataRow
+              label={`${Silian_t("detailAssignee")}:`}
               value={
                 <span className="wrap-break-word">
-                  {feature.assignee
-                    ? feature.assignee.name || feature.assignee.email
-                    : t("unknownUser")}
+                  {Silian_feature.assignee
+                    ? Silian_feature.assignee.name || Silian_feature.assignee.email
+                    : Silian_t("unknownUser")}
                 </span>
               }
             />
-            <MetadataRow
+            <Silian_MetadataRow
               label="Created:"
               value={
                 <span suppressHydrationWarning>
-                  {new Date(feature.createdAt).toLocaleString()}
+                  {new Date(Silian_feature.createdAt).toLocaleString()}
                 </span>
               }
             />
-            {feature.issueNumber && feature.htmlUrl && (
-              <MetadataRow
+            {Silian_feature.issueNumber && Silian_feature.htmlUrl && (
+              <Silian_MetadataRow
                 label="GitHub:"
                 value={
                   <div className="flex flex-wrap items-center gap-1">
                     Linked to
                     <a
-                      href={feature.htmlUrl}
+                      href={Silian_feature.htmlUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="
@@ -303,56 +303,56 @@ export default async function FeatureDetailPage({
                         text-tech-main transition-colors
                         hover:bg-tech-main/80 hover:text-white
                       ">
-                      Issue #{feature.issueNumber}
+                      Issue #{Silian_feature.issueNumber}
                     </a>
                   </div>
                 }
               />
             )}
           </div>
-        </TechCard>
-      </RevealSection>
+        </Silian_TechCard>
+      </Silian_RevealSection>
 
-      <RevealSection delay={200}>
-        <FeatureExplanation
-          featureId={feature.id}
-          initialExplanation={feature.explanation}
-          isAssignee={isAssignee}
-          isAdmin={isAdmin}
-          isClosed={isClosed}
+      <Silian_RevealSection delay={200}>
+        <Silian_FeatureExplanation
+          featureId={Silian_feature.id}
+          initialExplanation={Silian_feature.explanation}
+          isAssignee={Silian_isAssignee}
+          isAdmin={Silian_isAdmin}
+          isClosed={Silian_isClosed}
         />
-      </RevealSection>
+      </Silian_RevealSection>
 
-      <RevealSection delay={300}>
+      <Silian_RevealSection delay={300}>
         <div>
-          {!isClosed && canEdit ? (
-            <FeatureEditor
+          {!Silian_isClosed && Silian_canEdit ? (
+            <Silian_FeatureEditor
               initialData={{
-                id: feature.id,
-                title: feature.title,
-                content: feature.content,
-                tags: feature.tags,
-                status: feature.status,
+                id: Silian_feature.id,
+                title: Silian_feature.title,
+                content: Silian_feature.content,
+                tags: Silian_feature.tags,
+                status: Silian_feature.status,
               }}
             />
           ) : (
-            <FeatureReadonlyView
-              title={feature.title}
-              content={feature.content}
-              tags={feature.tags}
+            <Silian_FeatureReadonlyView
+              title={Silian_feature.title}
+              content={Silian_feature.content}
+              tags={Silian_feature.tags}
             />
           )}
         </div>
-      </RevealSection>
+      </Silian_RevealSection>
 
-      <RevealSection delay={400}>
-        <FeatureComments
-          featureId={feature.id}
-          initialComments={feature.comments}
-          userId={session?.user?.id}
-          isClosed={isClosed}
+      <Silian_RevealSection delay={400}>
+        <Silian_FeatureComments
+          featureId={Silian_feature.id}
+          initialComments={Silian_feature.comments}
+          userId={Silian_session?.user?.id}
+          isClosed={Silian_isClosed}
         />
-      </RevealSection>
+      </Silian_RevealSection>
 
       <script
         type="application/ld+json"
@@ -360,11 +360,11 @@ export default async function FeatureDetailPage({
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
-            name: issue.title,
-            description,
-            url: canonical,
-            datePublished: new Date(issue.createdAt).toISOString(),
-            dateModified: new Date(issue.updatedAt).toISOString(),
+            name: Silian_issue.title,
+            description: Silian_description,
+            url: Silian_canonical,
+            datePublished: new Date(Silian_issue.createdAt).toISOString(),
+            dateModified: new Date(Silian_issue.updatedAt).toISOString(),
             inLanguage: ["zh", "en"],
           }),
         }}

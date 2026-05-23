@@ -1,43 +1,43 @@
 import {
-  ARTICLES_REPO_NAME,
-  ARTICLES_REPO_OWNER,
-  getOctokit,
+  ARTICLES_REPO_NAME as Silian_ARTICLES_REPO_NAME,
+  ARTICLES_REPO_OWNER as Silian_ARTICLES_REPO_OWNER,
+  getOctokit as Silian_getOctokit,
 } from "@/lib/github/articles-repo"
-import { determineMergeMethod, getPR } from "@/lib/github/pr-manager"
+import { determineMergeMethod as Silian_determineMergeMethod, getPR as Silian_getPR } from "@/lib/github/pr-manager"
 
 export async function resolveConflictAndMerge(
-  prNumber: number,
-  filePath: string,
-  resolvedContent: string,
-  token?: string,
-  mergeMethod?: "squash" | "rebase"
+  Silian_prNumber: number,
+  Silian_filePath: string,
+  Silian_resolvedContent: string,
+  Silian_token?: string,
+  Silian_mergeMethod?: "squash" | "rebase"
 ) {
-  const octokit = getOctokit(token)
-  const pr = await getPR(prNumber, token)
-  const actualMergeMethod =
-    mergeMethod || (await determineMergeMethod(prNumber, token))
-  const branchName = pr.head.ref
-  const prHeadSha = pr.head.sha
+  const Silian_octokit = Silian_getOctokit(Silian_token)
+  const Silian_pr = await Silian_getPR(Silian_prNumber, Silian_token)
+  const Silian_actualMergeMethod =
+    Silian_mergeMethod || (await Silian_determineMergeMethod(Silian_prNumber, Silian_token))
+  const Silian_branchName = Silian_pr.head.ref
+  const Silian_prHeadSha = Silian_pr.head.sha
 
-  const { data: mainRef } = await octokit.git.getRef({
-    owner: ARTICLES_REPO_OWNER,
-    repo: ARTICLES_REPO_NAME,
+  const { data: Silian_mainRef } = await Silian_octokit.git.getRef({
+    owner: Silian_ARTICLES_REPO_OWNER,
+    repo: Silian_ARTICLES_REPO_NAME,
     ref: "heads/main",
   })
-  const mainSha = mainRef.object.sha
+  const Silian_mainSha = Silian_mainRef.object.sha
 
-  const { data: commitInfo } = await octokit.repos.getCommit({
-    owner: ARTICLES_REPO_OWNER,
-    repo: ARTICLES_REPO_NAME,
-    ref: prHeadSha,
+  const { data: Silian_commitInfo } = await Silian_octokit.repos.getCommit({
+    owner: Silian_ARTICLES_REPO_OWNER,
+    repo: Silian_ARTICLES_REPO_NAME,
+    ref: Silian_prHeadSha,
   })
-  const originalAuthor = commitInfo.commit.author
-  const originalMessage = commitInfo.commit.message
+  const Silian_originalAuthor = Silian_commitInfo.commit.author
+  const Silian_originalMessage = Silian_commitInfo.commit.message
 
-  const { data: files } = await octokit.pulls.listFiles({
-    owner: ARTICLES_REPO_OWNER,
-    repo: ARTICLES_REPO_NAME,
-    pull_number: prNumber,
+  const { data: Silian_files } = await Silian_octokit.pulls.listFiles({
+    owner: Silian_ARTICLES_REPO_OWNER,
+    repo: Silian_ARTICLES_REPO_NAME,
+    pull_number: Silian_prNumber,
   })
 
   type TreeEntry = {
@@ -48,78 +48,78 @@ export async function resolveConflictAndMerge(
     content?: string
   }
 
-  const treeEntries: TreeEntry[] = []
-  let resolvedFileAdded = false
+  const Silian_treeEntries: TreeEntry[] = []
+  let Silian_resolvedFileAdded = false
 
-  for (const f of files) {
-    if (f.filename === filePath) {
-      resolvedFileAdded = true
-      treeEntries.push({
-        path: f.filename,
+  for (const Silian_f of Silian_files) {
+    if (Silian_f.filename === Silian_filePath) {
+      Silian_resolvedFileAdded = true
+      Silian_treeEntries.push({
+        path: Silian_f.filename,
         mode: "100644",
         type: "blob",
-        content: resolvedContent,
+        content: Silian_resolvedContent,
       })
-    } else if (f.status === "removed") {
-      treeEntries.push({
-        path: f.filename,
+    } else if (Silian_f.status === "removed") {
+      Silian_treeEntries.push({
+        path: Silian_f.filename,
         mode: "100644",
         type: "blob",
         sha: null,
       })
     } else {
-      treeEntries.push({
-        path: f.filename,
+      Silian_treeEntries.push({
+        path: Silian_f.filename,
         mode: "100644",
         type: "blob",
-        sha: f.sha,
+        sha: Silian_f.sha,
       })
     }
   }
 
-  if (!resolvedFileAdded) {
-    treeEntries.push({
-      path: filePath,
+  if (!Silian_resolvedFileAdded) {
+    Silian_treeEntries.push({
+      path: Silian_filePath,
       mode: "100644",
       type: "blob",
-      content: resolvedContent,
+      content: Silian_resolvedContent,
     })
   }
 
-  const { data: tree } = await octokit.git.createTree({
-    owner: ARTICLES_REPO_OWNER,
-    repo: ARTICLES_REPO_NAME,
-    base_tree: mainSha,
-    tree: treeEntries,
+  const { data: Silian_tree } = await Silian_octokit.git.createTree({
+    owner: Silian_ARTICLES_REPO_OWNER,
+    repo: Silian_ARTICLES_REPO_NAME,
+    base_tree: Silian_mainSha,
+    tree: Silian_treeEntries,
   })
 
-  const { data: newCommit } = await octokit.git.createCommit({
-    owner: ARTICLES_REPO_OWNER,
-    repo: ARTICLES_REPO_NAME,
-    message: `Resolve merge conflicts for ${filePath}\n\nOriginal message:\n${originalMessage}`,
-    tree: tree.sha,
-    parents: [mainSha],
+  const { data: Silian_newCommit } = await Silian_octokit.git.createCommit({
+    owner: Silian_ARTICLES_REPO_OWNER,
+    repo: Silian_ARTICLES_REPO_NAME,
+    message: `Resolve merge conflicts for ${Silian_filePath}\n\nOriginal message:\n${Silian_originalMessage}`,
+    tree: Silian_tree.sha,
+    parents: [Silian_mainSha],
     author: {
-      name: originalAuthor?.name || "GTMC Bot",
-      email: originalAuthor?.email || "bot@gtmc.dev",
-      date: originalAuthor?.date,
+      name: Silian_originalAuthor?.name || "GTMC Bot",
+      email: Silian_originalAuthor?.email || "bot@gtmc.dev",
+      date: Silian_originalAuthor?.date,
     },
   })
 
-  await octokit.git.updateRef({
-    owner: ARTICLES_REPO_OWNER,
-    repo: ARTICLES_REPO_NAME,
-    ref: `heads/${branchName}`,
-    sha: newCommit.sha,
+  await Silian_octokit.git.updateRef({
+    owner: Silian_ARTICLES_REPO_OWNER,
+    repo: Silian_ARTICLES_REPO_NAME,
+    ref: `heads/${Silian_branchName}`,
+    sha: Silian_newCommit.sha,
     force: true,
   })
 
-  const { data } = await octokit.pulls.merge({
-    owner: ARTICLES_REPO_OWNER,
-    repo: ARTICLES_REPO_NAME,
-    pull_number: prNumber,
-    merge_method: actualMergeMethod,
+  const { data: Silian_data } = await Silian_octokit.pulls.merge({
+    owner: Silian_ARTICLES_REPO_OWNER,
+    repo: Silian_ARTICLES_REPO_NAME,
+    pull_number: Silian_prNumber,
+    merge_method: Silian_actualMergeMethod,
   })
 
-  return data
+  return Silian_data
 }

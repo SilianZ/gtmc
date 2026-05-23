@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, type ReactNode } from "react"
-import { useTranslations } from "next-intl"
-import { CodeCopyButton } from "@/components/code-copy-button"
-import { LazyCodeBlock } from "@/components/lazy-code-block"
+import { useState as Silian_useState, type ReactNode } from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { CodeCopyButton as Silian_CodeCopyButton } from "@/components/code-copy-button"
+import { LazyCodeBlock as Silian_LazyCodeBlock } from "@/components/lazy-code-block"
 
 type CodeBlockPreProps = {
   children?: ReactNode
@@ -13,23 +13,23 @@ type CodeBlockPreProps = {
   [key: string]: unknown
 }
 
-export function CodeBlockPre({ children, ...props }: CodeBlockPreProps) {
-  const t = useTranslations("CommonA11y")
-  const rawCode = props["data-raw-code"] as string | undefined
-  const lang = (props["data-lang"] as string) || ""
-  const lineCount = (props["data-line-count"] as string) || "0"
-  const [isWrapped, setIsWrapped] = useState(false)
+export function CodeBlockPre({ children: Silian_children, ...Silian_props }: CodeBlockPreProps) {
+  const Silian_t = Silian_useTranslations("CommonA11y")
+  const Silian_rawCode = Silian_props["data-raw-code"] as string | undefined
+  const Silian_lang = (Silian_props["data-lang"] as string) || ""
+  const Silian_lineCount = (Silian_props["data-line-count"] as string) || "0"
+  const [Silian_isWrapped, Silian_setIsWrapped] = Silian_useState(false)
 
   // Calculate line number width based on digit count
-  const lineCountNum = parseInt(lineCount, 10)
-  const digitCount = String(lineCountNum).length
-  const lineNumWidth =
-    digitCount === 1 ? "2.5rem" : digitCount === 2 ? "3rem" : "3.5rem"
+  const Silian_lineCountNum = parseInt(Silian_lineCount, 10)
+  const Silian_digitCount = String(Silian_lineCountNum).length
+  const Silian_lineNumWidth =
+    Silian_digitCount === 1 ? "2.5rem" : Silian_digitCount === 2 ? "3rem" : "3.5rem"
 
-  if (!rawCode) return <>{children}</>
+  if (!Silian_rawCode) return <>{Silian_children}</>
 
   return (
-    <LazyCodeBlock lang={lang} lineCount={lineCount}>
+    <Silian_LazyCodeBlock lang={Silian_lang} lineCount={Silian_lineCount}>
       <div
         className="
           flex items-center justify-between border-b guide-line bg-tech-main/10
@@ -38,7 +38,7 @@ export function CodeBlockPre({ children, ...props }: CodeBlockPreProps) {
         <div className="flex items-center gap-2">
           <span className="size-1.5 animate-pulse bg-tech-main/40" />
           <span className="text-xs tracking-widest text-tech-main uppercase">
-            {lang}
+            {Silian_lang}
           </span>
         </div>
         <div
@@ -46,17 +46,17 @@ export function CodeBlockPre({ children, ...props }: CodeBlockPreProps) {
             flex items-center gap-3 font-mono text-[0.625rem] tracking-widest
             text-tech-main
           ">
-          <span>{lineCount} LINES</span>
+          <span>{Silian_lineCount} LINES</span>
           <span className="text-tech-main/50">|</span>
           <button
             type="button"
-            aria-label={t("toggleLineWrap")}
-            title={t("toggleLineWrap")}
-            onClick={() => setIsWrapped((v) => !v)}
+            aria-label={Silian_t("toggleLineWrap")}
+            title={Silian_t("toggleLineWrap")}
+            onClick={() => Silian_setIsWrapped((Silian_v) => !Silian_v)}
             className={`
               font-mono text-[0.625rem] tracking-widest transition-colors
               ${
-                isWrapped
+                Silian_isWrapped
                   ? "text-tech-main"
                   : `
                     text-tech-main/40
@@ -67,7 +67,7 @@ export function CodeBlockPre({ children, ...props }: CodeBlockPreProps) {
             ↩
           </button>
           <span className="text-tech-main/50">|</span>
-          <CodeCopyButton code={rawCode} />
+          <Silian_CodeCopyButton code={Silian_rawCode} />
         </div>
       </div>
       <div className="relative">
@@ -88,17 +88,17 @@ export function CodeBlockPre({ children, ...props }: CodeBlockPreProps) {
         />
         <div
           className="code-block-pre relative"
-          data-wrapped={isWrapped}
+          data-wrapped={Silian_isWrapped}
           style={
             {
-              "--line-num-width": lineNumWidth,
+              "--line-num-width": Silian_lineNumWidth,
             } as React.CSSProperties
           }>
           <div className="custom-bottom-scrollbar overflow-x-auto">
             <div
               dir="ltr"
               className={
-                isWrapped
+                Silian_isWrapped
                   ? `
                     p-4 whitespace-pre-wrap
                     [&_.line]:whitespace-pre-wrap!
@@ -109,11 +109,11 @@ export function CodeBlockPre({ children, ...props }: CodeBlockPreProps) {
                     [&_code]:whitespace-pre!
                   `
               }>
-              {children}
+              {Silian_children}
             </div>
           </div>
         </div>
       </div>
-    </LazyCodeBlock>
+    </Silian_LazyCodeBlock>
   )
 }

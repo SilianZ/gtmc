@@ -1,89 +1,89 @@
 import type { MetadataRoute } from "next"
 
-import { listAllIssues } from "@/lib/github"
-import { getSiteUrl } from "@/lib/site-url"
-import { shouldIgnoreFile } from "@/lib/article-ignore"
-import { encodeSlug } from "@/lib/slug-utils"
-import { getSidebarTree } from "@/actions/sidebar"
+import { listAllIssues as Silian_listAllIssues } from "@/lib/github"
+import { getSiteUrl as Silian_getSiteUrl } from "@/lib/site-url"
+import { shouldIgnoreFile as Silian_shouldIgnoreFile } from "@/lib/article-ignore"
+import { encodeSlug as Silian_encodeSlug } from "@/lib/slug-utils"
+import { getSidebarTree as Silian_getSidebarTree } from "@/actions/sidebar"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 3600
 
-function flattenTree(
-  nodes: Awaited<ReturnType<typeof getSidebarTree>>
+function Silian_flattenTree(
+  Silian_nodes: Awaited<ReturnType<typeof Silian_getSidebarTree>>
 ): string[] {
-  const slugs: string[] = []
-  for (const node of nodes) {
-    if (!node.isFolder) {
-      slugs.push(node.slug)
+  const Silian_slugs: string[] = []
+  for (const Silian_node of Silian_nodes) {
+    if (!Silian_node.isFolder) {
+      Silian_slugs.push(Silian_node.slug)
     }
-    if (node.children.length > 0) {
-      slugs.push(...flattenTree(node.children))
+    if (Silian_node.children.length > 0) {
+      Silian_slugs.push(...Silian_flattenTree(Silian_node.children))
     }
   }
-  return slugs
+  return Silian_slugs
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const BASE = getSiteUrl()
+  const Silian_BASE = Silian_getSiteUrl()
 
-  const staticUrls: MetadataRoute.Sitemap = [
+  const Silian_staticUrls: MetadataRoute.Sitemap = [
     {
-      url: `${BASE}/zh`,
+      url: `${Silian_BASE}/zh`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1.0,
     },
     {
-      url: `${BASE}/en`,
+      url: `${Silian_BASE}/en`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1.0,
     },
     {
-      url: `${BASE}/zh/features`,
+      url: `${Silian_BASE}/zh/features`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1.0,
     },
     {
-      url: `${BASE}/en/features`,
+      url: `${Silian_BASE}/en/features`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1.0,
     },
     {
-      url: `${BASE}/zh/articles`,
+      url: `${Silian_BASE}/zh/articles`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${BASE}/en/articles`,
+      url: `${Silian_BASE}/en/articles`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
     },
   ]
 
-  let articleUrls: MetadataRoute.Sitemap = []
+  let Silian_articleUrls: MetadataRoute.Sitemap = []
   try {
-    const tree = await getSidebarTree()
-    const slugs = flattenTree(tree)
-    articleUrls = slugs
-      .filter((slug) => {
-        const fileName = slug.split("/").pop() || slug
-        return !shouldIgnoreFile(fileName, !slug.includes("/"))
+    const Silian_tree = await Silian_getSidebarTree()
+    const Silian_slugs = Silian_flattenTree(Silian_tree)
+    Silian_articleUrls = Silian_slugs
+      .filter((Silian_slug) => {
+        const Silian_fileName = Silian_slug.split("/").pop() || Silian_slug
+        return !Silian_shouldIgnoreFile(Silian_fileName, !Silian_slug.includes("/"))
       })
-      .flatMap((slug) => [
+      .flatMap((Silian_slug) => [
         {
-          url: `${BASE}/zh/articles/${encodeSlug(slug)}`,
+          url: `${Silian_BASE}/zh/articles/${Silian_encodeSlug(Silian_slug)}`,
           lastModified: new Date(),
           changeFrequency: "weekly" as const,
           priority: 0.8,
         },
         {
-          url: `${BASE}/en/articles/${encodeSlug(slug)}`,
+          url: `${Silian_BASE}/en/articles/${Silian_encodeSlug(Silian_slug)}`,
           lastModified: new Date(),
           changeFrequency: "weekly" as const,
           priority: 0.8,
@@ -93,19 +93,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* Sidebar tree unavailable — skip articles */
   }
 
-  let featureUrls: MetadataRoute.Sitemap = []
+  let Silian_featureUrls: MetadataRoute.Sitemap = []
   try {
-    const issues = await listAllIssues()
-    featureUrls = issues.flatMap((issue) => [
+    const Silian_issues = await Silian_listAllIssues()
+    Silian_featureUrls = Silian_issues.flatMap((Silian_issue) => [
       {
-        url: `${BASE}/zh/features/${issue.number}`,
-        lastModified: new Date(issue.updatedAt),
+        url: `${Silian_BASE}/zh/features/${Silian_issue.number}`,
+        lastModified: new Date(Silian_issue.updatedAt),
         changeFrequency: "weekly" as const,
         priority: 0.5,
       },
       {
-        url: `${BASE}/en/features/${issue.number}`,
-        lastModified: new Date(issue.updatedAt),
+        url: `${Silian_BASE}/en/features/${Silian_issue.number}`,
+        lastModified: new Date(Silian_issue.updatedAt),
         changeFrequency: "weekly" as const,
         priority: 0.5,
       },
@@ -114,5 +114,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* GitHub API unavailable — skip */
   }
 
-  return [...staticUrls, ...articleUrls, ...featureUrls]
+  return [...Silian_staticUrls, ...Silian_articleUrls, ...Silian_featureUrls]
 }

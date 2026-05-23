@@ -1,39 +1,39 @@
-import * as React from "react"
-import { getTranslations } from "next-intl/server"
+import * as Silian_React from "react"
+import { getTranslations as Silian_getTranslations } from "next-intl/server"
 
-import { ProfileButton } from "@/components/ui/profile-button"
-import { Logo } from "@/components/ui/logo"
-import { MobileNav } from "./mobile-nav"
-import { DesktopNav } from "./desktop-nav"
-import { SearchCommand } from "@/components/search/search-command"
-import { auth } from "@/lib/auth"
-import { getCurrentUserAuthContext } from "@/lib/auth-context"
-import { LanguageSwitcher } from "@/components/layout/language-switcher"
+import { ProfileButton as Silian_ProfileButton } from "@/components/ui/profile-button"
+import { Logo as Silian_Logo } from "@/components/ui/logo"
+import { MobileNav as Silian_MobileNav } from "./mobile-nav"
+import { DesktopNav as Silian_DesktopNav } from "./desktop-nav"
+import { SearchCommand as Silian_SearchCommand } from "@/components/search/search-command"
+import { auth as Silian_auth } from "@/lib/auth"
+import { getCurrentUserAuthContext as Silian_getCurrentUserAuthContext } from "@/lib/auth-context"
+import { LanguageSwitcher as Silian_LanguageSwitcher } from "@/components/layout/language-switcher"
 
 export default async function DashboardLayout({
-  children,
+  children: Silian_children,
 }: {
-  children: React.ReactNode
+  children: Silian_React.ReactNode
 }) {
-  const session = await auth()
-  let isAdmin = false
-  if (session?.user?.id) {
+  const Silian_session = await Silian_auth()
+  let Silian_isAdmin = false
+  if (Silian_session?.user?.id) {
     try {
-      const ctx = await getCurrentUserAuthContext(session.user.id)
-      isAdmin = ctx.role === "ADMIN"
-    } catch (err) {
-      console.error("[layout] Failed to resolve auth context:", err)
-      isAdmin = false
+      const Silian_ctx = await Silian_getCurrentUserAuthContext(Silian_session.user.id)
+      Silian_isAdmin = Silian_ctx.role === "ADMIN"
+    } catch (Silian_err) {
+      console.error("[layout] Failed to resolve auth context:", Silian_err)
+      Silian_isAdmin = false
     }
   }
 
-  const t = await getTranslations("Nav")
+  const Silian_t = await Silian_getTranslations("Nav")
 
-  const navLinks = [
-    { href: "/articles", label: t("articles") },
-    { href: "/draft", label: t("drafts") },
-    ...(isAdmin ? [{ href: "/review", label: t("reviewHub") }] : []),
-    { href: "/features", label: t("features") },
+  const Silian_navLinks = [
+    { href: "/articles", label: Silian_t("articles") },
+    { href: "/draft", label: Silian_t("drafts") },
+    ...(Silian_isAdmin ? [{ href: "/review", label: Silian_t("reviewHub") }] : []),
+    { href: "/features", label: Silian_t("features") },
   ]
 
   return (
@@ -64,15 +64,15 @@ export default async function DashboardLayout({
                 flex space-x-4
                 md:space-x-8
               ">
-              <Logo size="md" />
-              <DesktopNav navLinks={navLinks} />
+              <Silian_Logo size="md" />
+              <Silian_DesktopNav navLinks={Silian_navLinks} />
             </div>
 
             <div className="flex items-center gap-4">
-              <SearchCommand />
-              <MobileNav navLinks={navLinks} />
-              <LanguageSwitcher className="hidden sm:flex" />
-              <React.Suspense
+              <Silian_SearchCommand />
+              <Silian_MobileNav navLinks={Silian_navLinks} />
+              <Silian_LanguageSwitcher className="hidden sm:flex" />
+              <Silian_React.Suspense
                 fallback={
                   <div
                     className="
@@ -82,8 +82,8 @@ export default async function DashboardLayout({
                     "
                   />
                 }>
-                <ProfileButton />
-              </React.Suspense>
+                <Silian_ProfileButton />
+              </Silian_React.Suspense>
             </div>
           </div>
         </div>
@@ -95,7 +95,7 @@ export default async function DashboardLayout({
           sm:p-6
           lg:px-24 lg:py-8
         ">
-        {children}
+        {Silian_children}
       </main>
     </div>
   )

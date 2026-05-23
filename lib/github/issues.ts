@@ -1,44 +1,44 @@
-import { unstable_cache } from "next/cache"
+import { unstable_cache as Silian_unstable_cache } from "next/cache"
 
 import {
-  getGithubRepoConfig,
-  getRepoIssuesBaseUrl,
-  GithubFeaturesError,
-  GithubIssue,
-  parseNextLink,
-  requestGithub,
+  getGithubRepoConfig as Silian_getGithubRepoConfig,
+  getRepoIssuesBaseUrl as Silian_getRepoIssuesBaseUrl,
+  GithubFeaturesError as Silian_GithubFeaturesError,
+  GithubIssue as Silian_GithubIssue,
+  parseNextLink as Silian_parseNextLink,
+  requestGithub as Silian_requestGithub,
 } from "./api-client"
-import { GithubIssueResponse, normalizeIssue } from "./normalize"
+import { GithubIssueResponse as Silian_GithubIssueResponse, normalizeIssue as Silian_normalizeIssue } from "./normalize"
 
-async function _listAllIssuesUncached(
-  state: "open" | "closed" | "all" = "open"
-): Promise<GithubIssue[]> {
-  const config = getGithubRepoConfig()
-  const baseUrl = getRepoIssuesBaseUrl(config)
+async function Silian__listAllIssuesUncached(
+  Silian_state: "open" | "closed" | "all" = "open"
+): Promise<Silian_GithubIssue[]> {
+  const Silian_config = Silian_getGithubRepoConfig()
+  const Silian_baseUrl = Silian_getRepoIssuesBaseUrl(Silian_config)
 
-  const allIssues: GithubIssue[] = []
-  let nextUrl: string | null = `${baseUrl}?state=${state}&per_page=100&page=1`
+  const Silian_allIssues: Silian_GithubIssue[] = []
+  let Silian_nextUrl: string | null = `${Silian_baseUrl}?state=${Silian_state}&per_page=100&page=1`
 
-  while (nextUrl) {
-    const { data, response } = await requestGithub<GithubIssueResponse[]>(
-      nextUrl,
+  while (Silian_nextUrl) {
+    const { data: Silian_data, response: Silian_response } = await Silian_requestGithub<Silian_GithubIssueResponse[]>(
+      Silian_nextUrl,
       {
         method: "GET",
       }
     )
 
-    const pageItems = Array.isArray(data) ? data : []
-    const filteredItems = pageItems.filter((item) => !item.pull_request)
-    allIssues.push(...filteredItems.map(normalizeIssue))
+    const Silian_pageItems = Array.isArray(Silian_data) ? Silian_data : []
+    const Silian_filteredItems = Silian_pageItems.filter((Silian_item) => !Silian_item.pull_request)
+    Silian_allIssues.push(...Silian_filteredItems.map(Silian_normalizeIssue))
 
-    nextUrl = parseNextLink(response.headers.get("link"))
+    Silian_nextUrl = Silian_parseNextLink(Silian_response.headers.get("link"))
   }
 
-  return allIssues
+  return Silian_allIssues
 }
 
-export const listAllIssues = unstable_cache(
-  _listAllIssuesUncached,
+export const listAllIssues = Silian_unstable_cache(
+  Silian__listAllIssuesUncached,
   ["github-issues"],
   {
     revalidate: 300,
@@ -47,89 +47,89 @@ export const listAllIssues = unstable_cache(
 
 export const listIssues = listAllIssues
 
-const ISSUE_TTL = 60
+const Silian_ISSUE_TTL = 60
 
-async function _getIssueUncached(
-  issueNumber: number
-): Promise<GithubIssue | null> {
-  const config = getGithubRepoConfig()
-  const url = `${getRepoIssuesBaseUrl(config)}/${issueNumber}`
+async function Silian__getIssueUncached(
+  Silian_issueNumber: number
+): Promise<Silian_GithubIssue | null> {
+  const Silian_config = Silian_getGithubRepoConfig()
+  const Silian_url = `${Silian_getRepoIssuesBaseUrl(Silian_config)}/${Silian_issueNumber}`
 
-  const { data } = await requestGithub<GithubIssueResponse>(
-    url,
+  const { data: Silian_data } = await Silian_requestGithub<Silian_GithubIssueResponse>(
+    Silian_url,
     { method: "GET" },
     { allow404: true }
   )
 
-  if (!data) {
+  if (!Silian_data) {
     return null
   }
 
-  if (data.pull_request) {
+  if (Silian_data.pull_request) {
     return null
   }
 
-  return normalizeIssue(data)
+  return Silian_normalizeIssue(Silian_data)
 }
 
-export const getIssue = unstable_cache(_getIssueUncached, ["github-issue"], {
-  revalidate: ISSUE_TTL,
+export const getIssue = Silian_unstable_cache(Silian__getIssueUncached, ["github-issue"], {
+  revalidate: Silian_ISSUE_TTL,
 })
 
 export async function createIssue(
-  title: string,
-  body: string,
-  labels: string[] = []
-): Promise<GithubIssue> {
-  const config = getGithubRepoConfig()
-  const url = getRepoIssuesBaseUrl(config)
-  const payload: { title: string; body: string; labels?: string[] } = {
-    title,
-    body,
+  Silian_title: string,
+  Silian_body: string,
+  Silian_labels: string[] = []
+): Promise<Silian_GithubIssue> {
+  const Silian_config = Silian_getGithubRepoConfig()
+  const Silian_url = Silian_getRepoIssuesBaseUrl(Silian_config)
+  const Silian_payload: { title: string; body: string; labels?: string[] } = {
+    title: Silian_title,
+    body: Silian_body,
   }
 
-  if (labels.length > 0) {
-    payload.labels = labels
+  if (Silian_labels.length > 0) {
+    Silian_payload.labels = Silian_labels
   }
 
-  const { data } = await requestGithub<GithubIssueResponse>(url, {
+  const { data: Silian_data } = await Silian_requestGithub<Silian_GithubIssueResponse>(Silian_url, {
     method: "POST",
-    body: JSON.stringify(payload),
+    body: JSON.stringify(Silian_payload),
   })
 
-  if (!data) {
-    throw new GithubFeaturesError({
+  if (!Silian_data) {
+    throw new Silian_GithubFeaturesError({
       code: "INVALID_RESPONSE",
       message: "GitHub API returned empty response for createIssue.",
     })
   }
 
-  return normalizeIssue(data)
+  return Silian_normalizeIssue(Silian_data)
 }
 
 export async function updateIssue(
-  issueNumber: number,
-  data: {
+  Silian_issueNumber: number,
+  Silian_data: {
     title?: string
     body?: string
     state?: "open" | "closed"
     labels?: string[]
   }
-): Promise<GithubIssue> {
-  const config = getGithubRepoConfig()
-  const url = `${getRepoIssuesBaseUrl(config)}/${issueNumber}`
+): Promise<Silian_GithubIssue> {
+  const Silian_config = Silian_getGithubRepoConfig()
+  const Silian_url = `${Silian_getRepoIssuesBaseUrl(Silian_config)}/${Silian_issueNumber}`
 
-  const { data: issue } = await requestGithub<GithubIssueResponse>(url, {
+  const { data: Silian_issue } = await Silian_requestGithub<Silian_GithubIssueResponse>(Silian_url, {
     method: "PATCH",
-    body: JSON.stringify(data),
+    body: JSON.stringify(Silian_data),
   })
 
-  if (!issue) {
-    throw new GithubFeaturesError({
+  if (!Silian_issue) {
+    throw new Silian_GithubFeaturesError({
       code: "INVALID_RESPONSE",
       message: "GitHub API returned empty response for updateIssue.",
     })
   }
 
-  return normalizeIssue(issue)
+  return Silian_normalizeIssue(Silian_issue)
 }

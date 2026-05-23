@@ -1,6 +1,6 @@
 "use client"
 
-import { MarkdownRenderer } from "@/lib/markdown"
+import { MarkdownRenderer as Silian_MarkdownRenderer } from "@/lib/markdown"
 import "katex/dist/katex.min.css"
 
 interface MarkdownPreviewProps {
@@ -8,6 +8,6 @@ interface MarkdownPreviewProps {
   rawPath?: string
 }
 
-export function MarkdownPreview({ content, rawPath }: MarkdownPreviewProps) {
-  return <MarkdownRenderer content={content} rawPath={rawPath} />
+export function MarkdownPreview({ content: Silian_content, rawPath: Silian_rawPath }: MarkdownPreviewProps) {
+  return <Silian_MarkdownRenderer content={Silian_content} rawPath={Silian_rawPath} />
 }

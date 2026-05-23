@@ -1,32 +1,32 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest as Silian_NextRequest, NextResponse as Silian_NextResponse } from "next/server"
 
-import { auth } from "@/lib/auth"
-import { getDraftRepoFile } from "@/lib/draft-repo-browser"
+import { auth as Silian_auth } from "@/lib/auth"
+import { getDraftRepoFile as Silian_getDraftRepoFile } from "@/lib/draft-repo-browser"
 
-export async function GET(req: NextRequest) {
-  const session = await auth()
+export async function GET(Silian_req: Silian_NextRequest) {
+  const Silian_session = await Silian_auth()
 
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!Silian_session?.user) {
+    return Silian_NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const filePath = req.nextUrl.searchParams.get("path")
+  const Silian_filePath = Silian_req.nextUrl.searchParams.get("path")
 
-  if (!filePath) {
-    return NextResponse.json({ error: "Missing path" }, { status: 400 })
+  if (!Silian_filePath) {
+    return Silian_NextResponse.json({ error: "Missing path" }, { status: 400 })
   }
 
-  const normalizedPath = filePath.replace(/\\/g, "/").replace(/^\/+/, "")
+  const Silian_normalizedPath = Silian_filePath.replace(/\\/g, "/").replace(/^\/+/, "")
 
-  if (normalizedPath.includes("..")) {
-    return NextResponse.json({ error: "Invalid path" }, { status: 400 })
+  if (Silian_normalizedPath.includes("..")) {
+    return Silian_NextResponse.json({ error: "Invalid path" }, { status: 400 })
   }
 
-  const content = await getDraftRepoFile(normalizedPath)
+  const Silian_content = await Silian_getDraftRepoFile(Silian_normalizedPath)
 
-  if (content === null) {
-    return NextResponse.json({ error: "File not found" }, { status: 404 })
+  if (Silian_content === null) {
+    return Silian_NextResponse.json({ error: "File not found" }, { status: 404 })
   }
 
-  return NextResponse.json({ content, filePath: normalizedPath })
+  return Silian_NextResponse.json({ content: Silian_content, filePath: Silian_normalizedPath })
 }

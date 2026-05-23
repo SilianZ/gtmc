@@ -1,5 +1,5 @@
-import path from "path"
-import { createHash } from "crypto"
+import Silian_path from "path"
+import { createHash as Silian_createHash } from "crypto"
 
 export interface ParsedImageRef {
   url: string
@@ -21,9 +21,9 @@ export interface MigrationAssetInput {
   contentHash?: string | null
 }
 
-const MARKDOWN_IMAGE_RE = /!\[[^\]]*\]\(([^)]+)\)/g
+const Silian_MARKDOWN_IMAGE_RE = /!\[[^\]]*\]\(([^)]+)\)/g
 
-const EXT_TO_MIME: Record<string, string> = {
+const Silian_EXT_TO_MIME: Record<string, string> = {
   png: "image/png",
   jpg: "image/jpeg",
   jpeg: "image/jpeg",
@@ -33,214 +33,214 @@ const EXT_TO_MIME: Record<string, string> = {
   avif: "image/avif",
 }
 
-function splitDestinationAndTitle(raw: string) {
-  const trimmed = raw.trim()
+function Silian_splitDestinationAndTitle(Silian_raw: string) {
+  const Silian_trimmed = Silian_raw.trim()
 
-  if (trimmed.startsWith("<")) {
-    const closing = trimmed.indexOf(">")
-    if (closing > 0) {
+  if (Silian_trimmed.startsWith("<")) {
+    const Silian_closing = Silian_trimmed.indexOf(">")
+    if (Silian_closing > 0) {
       return {
-        destinationToken: trimmed.slice(0, closing + 1),
-        trailing: trimmed.slice(closing + 1),
+        destinationToken: Silian_trimmed.slice(0, Silian_closing + 1),
+        trailing: Silian_trimmed.slice(Silian_closing + 1),
       }
     }
   }
 
-  const whitespaceIdx = trimmed.search(/\s/)
-  if (whitespaceIdx < 0) {
+  const Silian_whitespaceIdx = Silian_trimmed.search(/\s/)
+  if (Silian_whitespaceIdx < 0) {
     return {
-      destinationToken: trimmed,
+      destinationToken: Silian_trimmed,
       trailing: "",
     }
   }
 
   return {
-    destinationToken: trimmed.slice(0, whitespaceIdx),
-    trailing: trimmed.slice(whitespaceIdx),
+    destinationToken: Silian_trimmed.slice(0, Silian_whitespaceIdx),
+    trailing: Silian_trimmed.slice(Silian_whitespaceIdx),
   }
 }
 
-function unwrapDestinationToken(token: string): string {
-  const trimmed = token.trim()
-  if (trimmed.startsWith("<") && trimmed.endsWith(">")) {
-    return trimmed.slice(1, -1)
+function Silian_unwrapDestinationToken(Silian_token: string): string {
+  const Silian_trimmed = Silian_token.trim()
+  if (Silian_trimmed.startsWith("<") && Silian_trimmed.endsWith(">")) {
+    return Silian_trimmed.slice(1, -1)
   }
-  return trimmed
+  return Silian_trimmed
 }
 
-function inferMimeTypeFromFilename(filename: string): string | undefined {
-  const ext = path.posix.extname(filename).toLowerCase().slice(1)
-  return EXT_TO_MIME[ext]
+function Silian_inferMimeTypeFromFilename(Silian_filename: string): string | undefined {
+  const Silian_ext = Silian_path.posix.extname(Silian_filename).toLowerCase().slice(1)
+  return Silian_EXT_TO_MIME[Silian_ext]
 }
 
-function stripQueryAndHash(url: string): string {
-  const hashIdx = url.indexOf("#")
-  const queryIdx = url.indexOf("?")
+function Silian_stripQueryAndHash(Silian_url: string): string {
+  const Silian_hashIdx = Silian_url.indexOf("#")
+  const Silian_queryIdx = Silian_url.indexOf("?")
 
-  let end = url.length
-  if (hashIdx >= 0) end = Math.min(end, hashIdx)
-  if (queryIdx >= 0) end = Math.min(end, queryIdx)
-  return url.slice(0, end)
+  let Silian_end = Silian_url.length
+  if (Silian_hashIdx >= 0) Silian_end = Math.min(Silian_end, Silian_hashIdx)
+  if (Silian_queryIdx >= 0) Silian_end = Math.min(Silian_end, Silian_queryIdx)
+  return Silian_url.slice(0, Silian_end)
 }
 
-function extractStoragePathFromUrl(url: string, normalizedPrefix: string) {
-  const cleanUrl = stripQueryAndHash(url)
-  const marker = `/${normalizedPrefix}/`
-  const markerIdx = cleanUrl.indexOf(marker)
+function Silian_extractStoragePathFromUrl(Silian_url: string, Silian_normalizedPrefix: string) {
+  const Silian_cleanUrl = Silian_stripQueryAndHash(Silian_url)
+  const Silian_marker = `/${Silian_normalizedPrefix}/`
+  const Silian_markerIdx = Silian_cleanUrl.indexOf(Silian_marker)
 
-  if (markerIdx < 0) return null
+  if (Silian_markerIdx < 0) return null
 
-  const storagePath = cleanUrl.slice(markerIdx + 1)
-  if (!storagePath.startsWith(`${normalizedPrefix}/`)) return null
+  const Silian_storagePath = Silian_cleanUrl.slice(Silian_markerIdx + 1)
+  if (!Silian_storagePath.startsWith(`${Silian_normalizedPrefix}/`)) return null
 
-  return storagePath
+  return Silian_storagePath
 }
 
-function stableSuffixFromStoragePath(storagePath: string): string {
-  return createHash("sha256").update(storagePath).digest("hex").slice(0, 12)
+function Silian_stableSuffixFromStoragePath(Silian_storagePath: string): string {
+  return Silian_createHash("sha256").update(Silian_storagePath).digest("hex").slice(0, 12)
 }
 
-function withDeterministicSuffix(filename: string, suffix: string): string {
-  const safeFilename = path.posix.basename(filename)
-  const ext = path.posix.extname(safeFilename)
-  const stem = ext ? safeFilename.slice(0, -ext.length) : safeFilename
-  return `${stem}-${suffix}${ext}`
+function Silian_withDeterministicSuffix(Silian_filename: string, Silian_suffix: string): string {
+  const Silian_safeFilename = Silian_path.posix.basename(Silian_filename)
+  const Silian_ext = Silian_path.posix.extname(Silian_safeFilename)
+  const Silian_stem = Silian_ext ? Silian_safeFilename.slice(0, -Silian_ext.length) : Silian_safeFilename
+  return `${Silian_stem}-${Silian_suffix}${Silian_ext}`
 }
 
 export function parseDraftTempImageRefs(
-  markdown: string,
-  storageTempPrefix: string
+  Silian_markdown: string,
+  Silian_storageTempPrefix: string
 ): ParsedImageRef[] {
-  const normalizedPrefix = storageTempPrefix.replace(/^\/+|\/+$/g, "")
-  if (!normalizedPrefix) return []
+  const Silian_normalizedPrefix = Silian_storageTempPrefix.replace(/^\/+|\/+$/g, "")
+  if (!Silian_normalizedPrefix) return []
 
-  const refs: ParsedImageRef[] = []
+  const Silian_refs: ParsedImageRef[] = []
 
-  for (const match of markdown.matchAll(MARKDOWN_IMAGE_RE)) {
-    const rawDestination = match[1]
-    if (!rawDestination) continue
+  for (const Silian_match of Silian_markdown.matchAll(Silian_MARKDOWN_IMAGE_RE)) {
+    const Silian_rawDestination = Silian_match[1]
+    if (!Silian_rawDestination) continue
 
-    const { destinationToken } = splitDestinationAndTitle(rawDestination)
-    const url = unwrapDestinationToken(destinationToken)
-    const storagePath = extractStoragePathFromUrl(url, normalizedPrefix)
-    if (!storagePath) continue
+    const { destinationToken: Silian_destinationToken } = Silian_splitDestinationAndTitle(Silian_rawDestination)
+    const Silian_url = Silian_unwrapDestinationToken(Silian_destinationToken)
+    const Silian_storagePath = Silian_extractStoragePathFromUrl(Silian_url, Silian_normalizedPrefix)
+    if (!Silian_storagePath) continue
 
-    const filename = decodeURIComponent(path.posix.basename(storagePath))
-    refs.push({
-      url,
-      storagePath,
-      filename,
-      mimeType: inferMimeTypeFromFilename(filename),
+    const Silian_filename = decodeURIComponent(Silian_path.posix.basename(Silian_storagePath))
+    Silian_refs.push({
+      url: Silian_url,
+      storagePath: Silian_storagePath,
+      filename: Silian_filename,
+      mimeType: Silian_inferMimeTypeFromFilename(Silian_filename),
     })
   }
 
-  return refs
+  return Silian_refs
 }
 
 export function computeChapterImagePath(
-  articleFilePath: string,
-  assetFilename: string
+  Silian_articleFilePath: string,
+  Silian_assetFilename: string
 ): string {
-  const normalizedArticlePath = articleFilePath.replace(/^\/+/, "")
-  const articleDir = path.posix.dirname(normalizedArticlePath)
-  const safeFilename = path.posix.basename(assetFilename)
-  const imgDir = articleDir === "." ? "img" : path.posix.join(articleDir, "img")
-  return path.posix.join(imgDir, safeFilename)
+  const Silian_normalizedArticlePath = Silian_articleFilePath.replace(/^\/+/, "")
+  const Silian_articleDir = Silian_path.posix.dirname(Silian_normalizedArticlePath)
+  const Silian_safeFilename = Silian_path.posix.basename(Silian_assetFilename)
+  const Silian_imgDir = Silian_articleDir === "." ? "img" : Silian_path.posix.join(Silian_articleDir, "img")
+  return Silian_path.posix.join(Silian_imgDir, Silian_safeFilename)
 }
 
 export function rewriteDraftTempUrls(
-  markdown: string,
-  urlToRepoPath: Map<string, string>
+  Silian_markdown: string,
+  Silian_urlToRepoPath: Map<string, string>
 ): string {
-  if (urlToRepoPath.size === 0) return markdown
+  if (Silian_urlToRepoPath.size === 0) return Silian_markdown
 
-  return markdown.replace(
-    MARKDOWN_IMAGE_RE,
-    (fullMatch, rawDestination: string) => {
-      const { destinationToken, trailing } =
-        splitDestinationAndTitle(rawDestination)
-      const originalUrl = unwrapDestinationToken(destinationToken)
-      const rewrittenPath = urlToRepoPath.get(originalUrl)
+  return Silian_markdown.replace(
+    Silian_MARKDOWN_IMAGE_RE,
+    (Silian_fullMatch, Silian_rawDestination: string) => {
+      const { destinationToken: Silian_destinationToken, trailing: Silian_trailing } =
+        Silian_splitDestinationAndTitle(Silian_rawDestination)
+      const Silian_originalUrl = Silian_unwrapDestinationToken(Silian_destinationToken)
+      const Silian_rewrittenPath = Silian_urlToRepoPath.get(Silian_originalUrl)
 
-      if (!rewrittenPath) return fullMatch
+      if (!Silian_rewrittenPath) return Silian_fullMatch
 
-      const nextToken = destinationToken.trim().startsWith("<")
-        ? `<${rewrittenPath}>`
-        : rewrittenPath
+      const Silian_nextToken = Silian_destinationToken.trim().startsWith("<")
+        ? `<${Silian_rewrittenPath}>`
+        : Silian_rewrittenPath
 
-      return fullMatch.replace(rawDestination, `${nextToken}${trailing}`)
+      return Silian_fullMatch.replace(Silian_rawDestination, `${Silian_nextToken}${Silian_trailing}`)
     }
   )
 }
 
 export function buildMigrationTargets(
-  articleFilePath: string,
-  assets: MigrationAssetInput[]
+  Silian_articleFilePath: string,
+  Silian_assets: MigrationAssetInput[]
 ): MigrationTarget[] {
-  const byBasePath = new Map<string, MigrationAssetInput[]>()
+  const Silian_byBasePath = new Map<string, MigrationAssetInput[]>()
 
-  for (const asset of assets) {
-    const basePath = computeChapterImagePath(articleFilePath, asset.filename)
-    const key = basePath.toLowerCase()
-    const group = byBasePath.get(key)
-    if (group) {
-      group.push(asset)
+  for (const Silian_asset of Silian_assets) {
+    const Silian_basePath = computeChapterImagePath(Silian_articleFilePath, Silian_asset.filename)
+    const Silian_key = Silian_basePath.toLowerCase()
+    const Silian_group = Silian_byBasePath.get(Silian_key)
+    if (Silian_group) {
+      Silian_group.push(Silian_asset)
     } else {
-      byBasePath.set(key, [asset])
+      Silian_byBasePath.set(Silian_key, [Silian_asset])
     }
   }
 
-  const targets: MigrationTarget[] = []
+  const Silian_targets: MigrationTarget[] = []
 
-  for (const group of byBasePath.values()) {
-    if (group.length === 1) {
-      const only = group[0]
-      targets.push({
-        storagePath: only.storagePath,
-        assetId: only.id,
-        repoPath: computeChapterImagePath(articleFilePath, only.filename),
+  for (const Silian_group of Silian_byBasePath.values()) {
+    if (Silian_group.length === 1) {
+      const Silian_only = Silian_group[0]
+      Silian_targets.push({
+        storagePath: Silian_only.storagePath,
+        assetId: Silian_only.id,
+        repoPath: computeChapterImagePath(Silian_articleFilePath, Silian_only.filename),
       })
       continue
     }
 
-    const sorted = [...group].sort((a, b) => {
-      const aKey = `${a.contentHash ?? ""}:${a.storagePath}:${a.id}`
-      const bKey = `${b.contentHash ?? ""}:${b.storagePath}:${b.id}`
-      return aKey.localeCompare(bKey)
+    const Silian_sorted = [...Silian_group].sort((Silian_a, Silian_b) => {
+      const Silian_aKey = `${Silian_a.contentHash ?? ""}:${Silian_a.storagePath}:${Silian_a.id}`
+      const Silian_bKey = `${Silian_b.contentHash ?? ""}:${Silian_b.storagePath}:${Silian_b.id}`
+      return Silian_aKey.localeCompare(Silian_bKey)
     })
 
-    const usedRepoPaths = new Set<string>()
+    const Silian_usedRepoPaths = new Set<string>()
 
-    for (const asset of sorted) {
-      const baseSuffix = (
-        asset.contentHash || stableSuffixFromStoragePath(asset.storagePath)
+    for (const Silian_asset of Silian_sorted) {
+      const Silian_baseSuffix = (
+        Silian_asset.contentHash || Silian_stableSuffixFromStoragePath(Silian_asset.storagePath)
       ).slice(0, 12)
 
-      let attempt = 1
-      let repoPath = computeChapterImagePath(
-        articleFilePath,
-        withDeterministicSuffix(
-          asset.filename,
-          attempt === 1 ? baseSuffix : `${baseSuffix}-${attempt}`
+      let Silian_attempt = 1
+      let Silian_repoPath = computeChapterImagePath(
+        Silian_articleFilePath,
+        Silian_withDeterministicSuffix(
+          Silian_asset.filename,
+          Silian_attempt === 1 ? Silian_baseSuffix : `${Silian_baseSuffix}-${Silian_attempt}`
         )
       )
 
-      while (usedRepoPaths.has(repoPath.toLowerCase())) {
-        attempt += 1
-        repoPath = computeChapterImagePath(
-          articleFilePath,
-          withDeterministicSuffix(asset.filename, `${baseSuffix}-${attempt}`)
+      while (Silian_usedRepoPaths.has(Silian_repoPath.toLowerCase())) {
+        Silian_attempt += 1
+        Silian_repoPath = computeChapterImagePath(
+          Silian_articleFilePath,
+          Silian_withDeterministicSuffix(Silian_asset.filename, `${Silian_baseSuffix}-${Silian_attempt}`)
         )
       }
 
-      usedRepoPaths.add(repoPath.toLowerCase())
-      targets.push({
-        storagePath: asset.storagePath,
-        assetId: asset.id,
-        repoPath,
+      Silian_usedRepoPaths.add(Silian_repoPath.toLowerCase())
+      Silian_targets.push({
+        storagePath: Silian_asset.storagePath,
+        assetId: Silian_asset.id,
+        repoPath: Silian_repoPath,
       })
     }
   }
 
-  return targets
+  return Silian_targets
 }

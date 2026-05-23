@@ -1,52 +1,52 @@
 "use client"
 
-import * as React from "react"
-import { createPortal } from "react-dom"
-import { useTranslations } from "next-intl"
-import { CornerBrackets } from "@/components/ui/corner-brackets"
+import * as Silian_React from "react"
+import { createPortal as Silian_createPortal } from "react-dom"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { CornerBrackets as Silian_CornerBrackets } from "@/components/ui/corner-brackets"
 
 interface MobileTreeCardProps {
   isOpen: boolean
   onClose: () => void
-  children: React.ReactNode
+  children: Silian_React.ReactNode
   isFloating?: boolean
 }
 
 export function MobileTreeCard({
-  isOpen,
-  onClose,
-  children,
-  isFloating,
+  isOpen: Silian_isOpen,
+  onClose: Silian_onClose,
+  children: Silian_children,
+  isFloating: Silian_isFloating,
 }: MobileTreeCardProps) {
-  const t = useTranslations("CommonA11y")
-  const [isMounted, setIsMounted] = React.useState(false)
+  const Silian_t = Silian_useTranslations("CommonA11y")
+  const [Silian_isMounted, Silian_setIsMounted] = Silian_React.useState(false)
 
-  React.useEffect(() => {
-    setIsMounted(true)
+  Silian_React.useEffect(() => {
+    Silian_setIsMounted(true)
   }, [])
 
-  React.useEffect(() => {
-    if (!isOpen || !isFloating) return
+  Silian_React.useEffect(() => {
+    if (!Silian_isOpen || !Silian_isFloating) return
 
-    const previousOverflow = document.body.style.overflow
+    const Silian_previousOverflow = document.body.style.overflow
     document.body.style.overflow = "hidden"
 
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
+    const Silian_handleEscape = (Silian_e: KeyboardEvent) => {
+      if (Silian_e.key === "Escape") Silian_onClose()
     }
 
-    document.addEventListener("keydown", handleEscape)
+    document.addEventListener("keydown", Silian_handleEscape)
 
     return () => {
-      document.removeEventListener("keydown", handleEscape)
-      document.body.style.overflow = previousOverflow
+      document.removeEventListener("keydown", Silian_handleEscape)
+      document.body.style.overflow = Silian_previousOverflow
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, onClose])
+  }, [Silian_isOpen, Silian_onClose])
 
-  if (!isMounted || !isOpen || !isFloating) return null
+  if (!Silian_isMounted || !Silian_isOpen || !Silian_isFloating) return null
 
-  return createPortal(
+  return Silian_createPortal(
     <div
       className="
         fixed inset-0 z-59
@@ -56,7 +56,7 @@ export function MobileTreeCard({
         className="
           absolute inset-0 animate-fade-in bg-tech-main-dark/20 backdrop-blur-xs
         "
-        onClick={onClose}
+        onClick={Silian_onClose}
         data-testid="mobile-tree-card-backdrop"
         aria-hidden="true"
       />
@@ -68,7 +68,7 @@ export function MobileTreeCard({
           flex-col border border-tech-main/40 bg-white/95 backdrop-blur-md
         "
         data-testid="mobile-tree-card">
-        <CornerBrackets />
+        <Silian_CornerBrackets />
 
         <div
           className="
@@ -85,14 +85,14 @@ export function MobileTreeCard({
             SYS.DIR_TREE
           </div>
           <button
-            onClick={onClose}
+            onClick={Silian_onClose}
             className="
               cursor-pointer px-3 py-2 font-mono text-xs font-bold
               tracking-[0.15em] text-tech-main uppercase transition-colors
               hover:bg-tech-main/10
             "
             data-testid="mobile-tree-card-close"
-            aria-label={t("closeTree")}>
+            aria-label={Silian_t("closeTree")}>
             CLOSE
           </button>
         </div>
@@ -102,7 +102,7 @@ export function MobileTreeCard({
             min-h-0 overflow-y-auto p-4
             sm:p-6
           ">
-          {children}
+          {Silian_children}
         </div>
       </div>
     </div>,

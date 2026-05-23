@@ -1,27 +1,27 @@
 "use client"
 
-import * as React from "react"
-import { useTranslations } from "next-intl"
-import { TechButton } from "../ui/tech-button"
-import { InputBox } from "../ui/input-box"
-import { useRouter } from "@/i18n/navigation"
-import { updateFeature } from "@/actions/feature"
-import { useBadge } from "@/hooks/use-badge"
+import * as Silian_React from "react"
+import { useTranslations as Silian_useTranslations } from "next-intl"
+import { TechButton as Silian_TechButton } from "../ui/tech-button"
+import { InputBox as Silian_InputBox } from "../ui/input-box"
+import { useRouter as Silian_useRouter } from "@/i18n/navigation"
+import { updateFeature as Silian_updateFeature } from "@/actions/feature"
+import { useBadge as Silian_useBadge } from "@/hooks/use-badge"
 import {
-  LoadingIndicator,
-  PENDING_LABELS,
+  LoadingIndicator as Silian_LoadingIndicator,
+  PENDING_LABELS as Silian_PENDING_LABELS,
 } from "@/components/ui/loading-indicator"
-import { EditorToolbar } from "@/components/editor/editor-toolbar"
-import { EditorBadge } from "@/components/editor/editor-badge"
+import { EditorToolbar as Silian_EditorToolbar } from "@/components/editor/editor-toolbar"
+import { EditorBadge as Silian_EditorBadge } from "@/components/editor/editor-badge"
 import {
-  EditorTabStrip,
+  EditorTabStrip as Silian_EditorTabStrip,
   type TabType,
 } from "@/components/editor/editor-tab-strip"
-import { EditorTextarea } from "@/components/editor/editor-textarea"
-import { EditorFileUploadInput } from "@/components/editor/editor-file-upload-input"
-import { LazyMarkdownPreview } from "@/components/editor/lazy-markdown-preview"
-import { CornerBrackets } from "@/components/ui/corner-brackets"
-import { useEditorUpload } from "@/hooks/use-editor-upload"
+import { EditorTextarea as Silian_EditorTextarea } from "@/components/editor/editor-textarea"
+import { EditorFileUploadInput as Silian_EditorFileUploadInput } from "@/components/editor/editor-file-upload-input"
+import { LazyMarkdownPreview as Silian_LazyMarkdownPreview } from "@/components/editor/lazy-markdown-preview"
+import { CornerBrackets as Silian_CornerBrackets } from "@/components/ui/corner-brackets"
+import { useEditorUpload as Silian_useEditorUpload } from "@/hooks/use-editor-upload"
 
 interface FeatureEditorProps {
   initialData?: {
@@ -33,240 +33,240 @@ interface FeatureEditorProps {
   }
 }
 
-export function FeatureEditor({ initialData }: FeatureEditorProps) {
-  const router = useRouter()
-  const t = useTranslations("Editor")
-  const tLoading = useTranslations("Loading")
-  const [title, setTitle] = React.useState(initialData?.title || "")
-  const [content, setContent] = React.useState(initialData?.content || "")
-  const [tags, setTags] = React.useState(initialData?.tags?.join(", ") || "")
-  const [isSaving, setIsSaving] = React.useState(false)
-  const [activeTab, setActiveTab] = React.useState<TabType>("write")
-  const [lineWrap, setLineWrap] = React.useState(false)
-  const { badge, showBadge, clearBadge } = useBadge()
+export function FeatureEditor({ initialData: Silian_initialData }: FeatureEditorProps) {
+  const Silian_router = Silian_useRouter()
+  const Silian_t = Silian_useTranslations("Editor")
+  const Silian_tLoading = Silian_useTranslations("Loading")
+  const [Silian_title, Silian_setTitle] = Silian_React.useState(Silian_initialData?.title || "")
+  const [Silian_content, Silian_setContent] = Silian_React.useState(Silian_initialData?.content || "")
+  const [Silian_tags, Silian_setTags] = Silian_React.useState(Silian_initialData?.tags?.join(", ") || "")
+  const [Silian_isSaving, Silian_setIsSaving] = Silian_React.useState(false)
+  const [Silian_activeTab, Silian_setActiveTab] = Silian_React.useState<TabType>("write")
+  const [Silian_lineWrap, Silian_setLineWrap] = Silian_React.useState(false)
+  const { badge: Silian_badge, showBadge: Silian_showBadge, clearBadge: Silian_clearBadge } = Silian_useBadge()
 
-  const textareaRef = React.useRef<any>(null)
-  const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const Silian_textareaRef = Silian_React.useRef<any>(null)
+  const Silian_fileInputRef = Silian_React.useRef<HTMLInputElement>(null)
 
-  const isReadOnly = false
+  const Silian_isReadOnly = false
 
-  const insertTextAtCursor = (text: string) => {
-    if (!textareaRef.current) return
-    const view = textareaRef.current.view
-    if (!view) return
+  const Silian_insertTextAtCursor = (Silian_text: string) => {
+    if (!Silian_textareaRef.current) return
+    const Silian_view = Silian_textareaRef.current.view
+    if (!Silian_view) return
 
-    const selection = view.state.selection.main
+    const Silian_selection = Silian_view.state.selection.main
 
-    view.dispatch({
+    Silian_view.dispatch({
       changes: {
-        from: selection.from,
-        to: selection.to,
-        insert: text,
+        from: Silian_selection.from,
+        to: Silian_selection.to,
+        insert: Silian_text,
       },
       selection: {
-        anchor: selection.from + text.length,
-        head: selection.from + text.length,
+        anchor: Silian_selection.from + Silian_text.length,
+        head: Silian_selection.from + Silian_text.length,
       },
     })
 
-    view.focus()
+    Silian_view.focus()
   }
 
-  const featureUploadAdapter = React.useCallback(
-    async (file: File) => {
-      const formData = new FormData()
-      formData.append("file", file)
+  const Silian_featureUploadAdapter = Silian_React.useCallback(
+    async (Silian_file: File) => {
+      const Silian_formData = new FormData()
+      Silian_formData.append("file", Silian_file)
 
-      const res = await fetch("/api/upload/feature", {
+      const Silian_res = await fetch("/api/upload/feature", {
         method: "POST",
-        body: formData,
+        body: Silian_formData,
       })
 
-      if (res.status === 413) {
-        throw new Error(t("errorFileTooLarge"))
+      if (Silian_res.status === 413) {
+        throw new Error(Silian_t("errorFileTooLarge"))
       }
 
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || t("errorUploadFailed"))
+      const Silian_data = await Silian_res.json()
+      if (!Silian_res.ok) throw new Error(Silian_data.error || Silian_t("errorUploadFailed"))
 
       return {
-        url: data.url,
-        filename: data.filename,
-        mimeType: data.mimeType,
-        fileSize: data.fileSize,
+        url: Silian_data.url,
+        filename: Silian_data.filename,
+        mimeType: Silian_data.mimeType,
+        fileSize: Silian_data.fileSize,
       }
     },
-    [t]
+    [Silian_t]
   )
 
-  const { uploadFile, isUploading, isCompressing } = useEditorUpload({
-    adapter: featureUploadAdapter,
-    onInsertContent: (text: string) => {
-      if (text === "") {
-        setContent((prev) =>
-          prev.replace(/<!-- UPLOAD_PENDING_[a-f0-9-]+ -->\n?/g, "")
+  const { uploadFile: Silian_uploadFile, isUploading: Silian_isUploading, isCompressing: Silian_isCompressing } = Silian_useEditorUpload({
+    adapter: Silian_featureUploadAdapter,
+    onInsertContent: (Silian_text: string) => {
+      if (Silian_text === "") {
+        Silian_setContent((Silian_prev) =>
+          Silian_prev.replace(/<!-- UPLOAD_PENDING_[a-f0-9-]+ -->\n?/g, "")
         )
-      } else if (text.startsWith("<!--")) {
-        insertTextAtCursor(text)
+      } else if (Silian_text.startsWith("<!--")) {
+        Silian_insertTextAtCursor(Silian_text)
       } else {
-        setContent((prev) =>
-          prev.replace(/<!-- UPLOAD_PENDING_[a-f0-9-]+ -->/, text)
+        Silian_setContent((Silian_prev) =>
+          Silian_prev.replace(/<!-- UPLOAD_PENDING_[a-f0-9-]+ -->/, Silian_text)
         )
       }
     },
-    onShowBadge: (message: string, type: "info" | "error" | "progress") => {
-      showBadge(message, type)
+    onShowBadge: (Silian_message: string, Silian_type: "info" | "error" | "progress") => {
+      Silian_showBadge(Silian_message, Silian_type)
     },
-    onClearBadge: clearBadge,
+    onClearBadge: Silian_clearBadge,
   })
 
-  const handleUploadWithCheck = (file: File) => {
-    if (!initialData?.id) {
-      showBadge(t("badgeCannotUploadBeforeSaving"), "error", 4000)
+  const Silian_handleUploadWithCheck = (Silian_file: File) => {
+    if (!Silian_initialData?.id) {
+      Silian_showBadge(Silian_t("badgeCannotUploadBeforeSaving"), "error", 4000)
       return
     }
-    uploadFile(file)
+    Silian_uploadFile(Silian_file)
   }
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
-    if (isReadOnly || isUploading) return
-    const items = e.clipboardData.items
-    for (const item of Array.from(items)) {
-      if (item.type.indexOf("image") !== -1) {
-        e.preventDefault()
-        const file = item.getAsFile()
-        if (file) {
-          handleUploadWithCheck(file)
+  const Silian_handlePaste = (Silian_e: Silian_React.ClipboardEvent<HTMLDivElement>) => {
+    if (Silian_isReadOnly || Silian_isUploading) return
+    const Silian_items = Silian_e.clipboardData.items
+    for (const Silian_item of Array.from(Silian_items)) {
+      if (Silian_item.type.indexOf("image") !== -1) {
+        Silian_e.preventDefault()
+        const Silian_file = Silian_item.getAsFile()
+        if (Silian_file) {
+          Silian_handleUploadWithCheck(Silian_file)
         }
         break
       }
     }
   }
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    if (isReadOnly || isUploading) return
-    e.preventDefault()
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0]
-      handleUploadWithCheck(file)
+  const Silian_handleDrop = (Silian_e: Silian_React.DragEvent<HTMLDivElement>) => {
+    if (Silian_isReadOnly || Silian_isUploading) return
+    Silian_e.preventDefault()
+    if (Silian_e.dataTransfer.files && Silian_e.dataTransfer.files.length > 0) {
+      const Silian_file = Silian_e.dataTransfer.files[0]
+      Silian_handleUploadWithCheck(Silian_file)
     }
   }
 
-  const insertSyntax = (prefix: string, suffix: string = "") => {
-    if (isReadOnly || !textareaRef.current) return
-    const view = textareaRef.current.view
-    if (!view) return
+  const Silian_insertSyntax = (Silian_prefix: string, Silian_suffix: string = "") => {
+    if (Silian_isReadOnly || !Silian_textareaRef.current) return
+    const Silian_view = Silian_textareaRef.current.view
+    if (!Silian_view) return
 
-    const selection = view.state.selection.main
-    const selectedText = view.state.sliceDoc(selection.from, selection.to)
-    const newText = prefix + selectedText + suffix
+    const Silian_selection = Silian_view.state.selection.main
+    const Silian_selectedText = Silian_view.state.sliceDoc(Silian_selection.from, Silian_selection.to)
+    const Silian_newText = Silian_prefix + Silian_selectedText + Silian_suffix
 
-    view.dispatch({
+    Silian_view.dispatch({
       changes: {
-        from: selection.from,
-        to: selection.to,
-        insert: newText,
+        from: Silian_selection.from,
+        to: Silian_selection.to,
+        insert: Silian_newText,
       },
       selection: {
-        anchor: selection.from + prefix.length,
-        head: selection.from + prefix.length + selectedText.length,
+        anchor: Silian_selection.from + Silian_prefix.length,
+        head: Silian_selection.from + Silian_prefix.length + Silian_selectedText.length,
       },
     })
 
-    view.focus()
+    Silian_view.focus()
   }
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const Silian_handleSave = async (Silian_e: Silian_React.FormEvent) => {
+    Silian_e.preventDefault()
 
-    const tagArray = tags
+    const Silian_tagArray = Silian_tags
       .split(",")
-      .map((t) => t.trim())
+      .map((Silian_t) => Silian_t.trim())
       .filter(Boolean)
 
-    if (!initialData?.id) {
+    if (!Silian_initialData?.id) {
       sessionStorage.setItem(
         "pendingFeatureCreate.v1",
-        JSON.stringify({ title, content, tags: tagArray })
+        JSON.stringify({ title: Silian_title, content: Silian_content, tags: Silian_tagArray })
       )
-      router.push("/features?created=true")
+      Silian_router.push("/features?created=true")
       return
     }
 
-    setIsSaving(true)
+    Silian_setIsSaving(true)
     try {
-      await updateFeature(initialData.id, {
-        title,
-        content,
-        tags: tagArray,
+      await Silian_updateFeature(Silian_initialData.id, {
+        title: Silian_title,
+        content: Silian_content,
+        tags: Silian_tagArray,
       })
-      showBadge(t("badgeFeatureUpdated"), "info", 3000)
-    } catch (error: unknown) {
-      console.error(error)
-      showBadge(
-        error instanceof Error ? error.message : t("badgeSaveFailed"),
+      Silian_showBadge(Silian_t("badgeFeatureUpdated"), "info", 3000)
+    } catch (Silian_error: unknown) {
+      console.error(Silian_error)
+      Silian_showBadge(
+        Silian_error instanceof Error ? Silian_error.message : Silian_t("badgeSaveFailed"),
         "error"
       )
     } finally {
-      setIsSaving(false)
+      Silian_setIsSaving(false)
     }
   }
 
   return (
     <form
-      onSubmit={handleSave}
+      onSubmit={Silian_handleSave}
       className="
         group relative flex w-full flex-col space-y-6 border border-tech-main
         bg-white/80 p-4 backdrop-blur-sm
         sm:p-6
       ">
-      <CornerBrackets />
+      <Silian_CornerBrackets />
 
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col space-y-2">
           <label htmlFor="feature-title" className="section-label">
-            {t("titleLabel")}
+            {Silian_t("titleLabel")}
           </label>
-          <InputBox
+          <Silian_InputBox
             id="feature-title"
             required
-            placeholder={t("titlePlaceholder")}
+            placeholder={Silian_t("titlePlaceholder")}
             className={`
               border-tech-main/40 py-3 font-mono text-lg backdrop-blur-sm
               focus:border-tech-main/60
               ${
-                isReadOnly
+                Silian_isReadOnly
                   ? `cursor-not-allowed bg-gray-100 opacity-70`
                   : `bg-white/80`
               }
             `}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            readOnly={isReadOnly}
-            aria-busy={isSaving}
+            value={Silian_title}
+            onChange={(Silian_e) => Silian_setTitle(Silian_e.target.value)}
+            readOnly={Silian_isReadOnly}
+            aria-busy={Silian_isSaving}
           />
         </div>
 
         <div className="flex flex-col space-y-2">
           <label htmlFor="feature-tags" className="section-label">
-            {t("tagsLabel")}
+            {Silian_t("tagsLabel")}
           </label>
-          <InputBox
+          <Silian_InputBox
             id="feature-tags"
-            placeholder={t("tagsPlaceholder")}
+            placeholder={Silian_t("tagsPlaceholder")}
             className={`
               border-tech-main/40 py-2 font-mono text-sm backdrop-blur-sm
               focus:border-tech-main/60
               ${
-                isReadOnly
+                Silian_isReadOnly
                   ? `cursor-not-allowed bg-gray-100 opacity-70`
                   : `bg-white/80`
               }
             `}
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            readOnly={isReadOnly}
-            aria-busy={isSaving}
+            value={Silian_tags}
+            onChange={(Silian_e) => Silian_setTags(Silian_e.target.value)}
+            readOnly={Silian_isReadOnly}
+            aria-busy={Silian_isSaving}
           />
         </div>
       </div>
@@ -277,29 +277,29 @@ export function FeatureEditor({ initialData }: FeatureEditorProps) {
           border-tech-main/40 bg-white/80 backdrop-blur-sm
         ">
         {/* Tab strip */}
-        <EditorTabStrip
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
+        <Silian_EditorTabStrip
+          activeTab={Silian_activeTab}
+          onTabChange={Silian_setActiveTab}
           writeId="editor-write-panel"
           previewId="editor-preview-panel"
         />
 
-        <EditorBadge badge={badge} onDismiss={clearBadge} />
+        <Silian_EditorBadge badge={Silian_badge} onDismiss={Silian_clearBadge} />
 
-        {activeTab === "write" && (
+        {Silian_activeTab === "write" && (
           <>
-            <EditorToolbar
-              onInsert={insertSyntax}
-              disabled={isReadOnly || isUploading}
-              lineWrap={lineWrap}
-              onWrapToggle={() => setLineWrap((v) => !v)}
+            <Silian_EditorToolbar
+              onInsert={Silian_insertSyntax}
+              disabled={Silian_isReadOnly || Silian_isUploading}
+              lineWrap={Silian_lineWrap}
+              onWrapToggle={() => Silian_setLineWrap((Silian_v) => !Silian_v)}
               fileUploadSlot={
-                <EditorFileUploadInput
-                  fileInputRef={fileInputRef}
-                  onFileSelect={handleUploadWithCheck}
-                  isUploading={isUploading}
-                  isCompressing={isCompressing}
-                  disabled={isReadOnly}
+                <Silian_EditorFileUploadInput
+                  fileInputRef={Silian_fileInputRef}
+                  onFileSelect={Silian_handleUploadWithCheck}
+                  isUploading={Silian_isUploading}
+                  isCompressing={Silian_isCompressing}
+                  disabled={Silian_isReadOnly}
                 />
               }
             />
@@ -310,24 +310,24 @@ export function FeatureEditor({ initialData }: FeatureEditorProps) {
           id="editor-write-panel"
           role="tabpanel"
           className="editor-grow"
-          hidden={activeTab !== "write"}>
+          hidden={Silian_activeTab !== "write"}>
           <div className="editor-surface">
-            <EditorTextarea
-              ref={textareaRef}
-              value={content}
-              onChange={(value: string) => setContent(value)}
-              onPaste={handlePaste}
-              onDrop={handleDrop}
-              onDragOver={(e: React.DragEvent<HTMLDivElement>) => {
-                if (!isReadOnly) e.preventDefault()
+            <Silian_EditorTextarea
+              ref={Silian_textareaRef}
+              value={Silian_content}
+              onChange={(Silian_value: string) => Silian_setContent(Silian_value)}
+              onPaste={Silian_handlePaste}
+              onDrop={Silian_handleDrop}
+              onDragOver={(Silian_e: Silian_React.DragEvent<HTMLDivElement>) => {
+                if (!Silian_isReadOnly) Silian_e.preventDefault()
               }}
-              onDragEnter={(e: React.DragEvent<HTMLDivElement>) => {
-                if (!isReadOnly) e.preventDefault()
+              onDragEnter={(Silian_e: Silian_React.DragEvent<HTMLDivElement>) => {
+                if (!Silian_isReadOnly) Silian_e.preventDefault()
               }}
-              isReadOnly={isReadOnly}
-              isSaving={isSaving}
-              placeholder={t("bodyPlaceholder")}
-              lineWrap={lineWrap}
+              isReadOnly={Silian_isReadOnly}
+              isSaving={Silian_isSaving}
+              placeholder={Silian_t("bodyPlaceholder")}
+              lineWrap={Silian_lineWrap}
             />
           </div>
         </div>
@@ -335,16 +335,16 @@ export function FeatureEditor({ initialData }: FeatureEditorProps) {
         <div
           id="editor-preview-panel"
           role="tabpanel"
-          hidden={activeTab !== "preview"}
+          hidden={Silian_activeTab !== "preview"}
           className="editor-grow">
-          {content?.trim() ? (
+          {Silian_content?.trim() ? (
             <div
               className="
                 w-full max-w-none overflow-hidden p-6 wrap-break-word
                 selection:bg-tech-main/20 selection:text-slate-900
                 sm:p-8
               ">
-              <LazyMarkdownPreview content={content} rawPath="" />
+              <Silian_LazyMarkdownPreview content={Silian_content} rawPath="" />
             </div>
           ) : (
             <p className="editor-panel">NOTHING_TO_PREVIEW_</p>
@@ -352,7 +352,7 @@ export function FeatureEditor({ initialData }: FeatureEditorProps) {
         </div>
       </div>
 
-      {!isReadOnly && (
+      {!Silian_isReadOnly && (
         <div
           className="
             relative mt-6 flex justify-end gap-4 border-t border-tech-main/10
@@ -360,26 +360,26 @@ export function FeatureEditor({ initialData }: FeatureEditorProps) {
           ">
           <div className="corner-tick" />
 
-          <TechButton
+          <Silian_TechButton
             type="button"
             variant="ghost"
-            onClick={() => router.back()}>
-            {t("cancelButton")}
-          </TechButton>
+            onClick={() => Silian_router.back()}>
+            {Silian_t("cancelButton")}
+          </Silian_TechButton>
 
-          <TechButton
+          <Silian_TechButton
             type="submit"
             variant="primary"
-            disabled={isSaving}
-            aria-busy={isSaving && initialData?.id ? true : false}>
-            {isSaving && initialData?.id ? (
-              <LoadingIndicator label={PENDING_LABELS.SAVING_FEATURE} />
-            ) : isSaving ? (
-              tLoading("saving")
+            disabled={Silian_isSaving}
+            aria-busy={Silian_isSaving && Silian_initialData?.id ? true : false}>
+            {Silian_isSaving && Silian_initialData?.id ? (
+              <Silian_LoadingIndicator label={Silian_PENDING_LABELS.SAVING_FEATURE} />
+            ) : Silian_isSaving ? (
+              Silian_tLoading("saving")
             ) : (
-              t("saveButton")
+              Silian_t("saveButton")
             )}
-          </TechButton>
+          </Silian_TechButton>
         </div>
       )}
     </form>

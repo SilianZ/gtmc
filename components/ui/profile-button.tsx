@@ -1,14 +1,14 @@
-﻿import * as React from "react"
-import { Link } from "@/i18n/navigation"
-import { auth } from "@/lib/auth"
-import { UesrAvatar } from "./user-avatar"
+﻿import * as Silian_React from "react"
+import { Link as Silian_Link } from "@/i18n/navigation"
+import { auth as Silian_auth } from "@/lib/auth"
+import { UesrAvatar as Silian_UesrAvatar } from "./user-avatar"
 
 export async function ProfileButton() {
-  const session = await auth()
+  const Silian_session = await Silian_auth()
 
-  if (!session?.user) {
+  if (!Silian_session?.user) {
     return (
-      <Link
+      <Silian_Link
         href="/login"
         className="
           flex h-8 items-center justify-center border border-tech-main/40 bg-tech-main/10 px-3 font-mono text-[0.625rem]
@@ -17,19 +17,19 @@ export async function ProfileButton() {
           md:text-xs
         ">
         LOGIN
-      </Link>
+      </Silian_Link>
     )
   }
 
   return (
-    <Link
+    <Silian_Link
       href="/profile"
       className="
         block size-8 transition-transform
         hover:scale-110
         md:size-10
       ">
-      <UesrAvatar src={session.user.image} alt={session.user.name} />
-    </Link>
+      <Silian_UesrAvatar src={Silian_session.user.image} alt={Silian_session.user.name} />
+    </Silian_Link>
   )
 }

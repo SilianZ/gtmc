@@ -1,7 +1,7 @@
 "use client"
 
-import { Link } from "@/i18n/navigation"
-import { usePathname } from "@/i18n/navigation"
+import { Link as Silian_Link } from "@/i18n/navigation"
+import { usePathname as Silian_usePathname } from "@/i18n/navigation"
 
 interface NavLink {
   href: string
@@ -12,8 +12,8 @@ interface DesktopNavProps {
   navLinks: NavLink[]
 }
 
-export function DesktopNav({ navLinks }: DesktopNavProps) {
-  const pathname = usePathname()
+export function DesktopNav({ navLinks: Silian_navLinks }: DesktopNavProps) {
+  const Silian_pathname = Silian_usePathname()
 
   return (
     <>
@@ -22,18 +22,18 @@ export function DesktopNav({ navLinks }: DesktopNavProps) {
           mb-1.5 hidden space-x-6
           md:flex
         ">
-        {navLinks.map((link) => {
-          const isActive = pathname.startsWith(link.href)
+        {Silian_navLinks.map((Silian_link) => {
+          const Silian_isActive = Silian_pathname.startsWith(Silian_link.href)
 
           return (
-            <li key={link.href}>
-              <Link
-                href={link.href}
+            <li key={Silian_link.href}>
+              <Silian_Link
+                href={Silian_link.href}
                 className={`
                   border-b-2 pb-1 font-mono text-xs tracking-[0.15em]
                   transition-colors
                   ${
-                    isActive
+                    Silian_isActive
                       ? "border-tech-main text-tech-main"
                       : `
                         border-transparent text-tech-main-dark
@@ -41,8 +41,8 @@ export function DesktopNav({ navLinks }: DesktopNavProps) {
                       `
                   }
                 `}>
-                {link.label}
-              </Link>
+                {Silian_link.label}
+              </Silian_Link>
             </li>
           )
         })}
